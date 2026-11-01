@@ -36,11 +36,7 @@
     }
     .header h1 { font-size: 22px; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
     .header p { font-size: 13px; color: var(--sub-color); margin-top: 2px; font-weight: 500; }
-    .nav-bar {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    .nav-bar { display: flex; gap: 10px; margin-top: 12px; }
     .btn-action {
       flex: 1;
       background: var(--card-bg);
@@ -54,13 +50,8 @@
       cursor: pointer;
       text-align: center;
     }
-    .btn-action.active {
-      background: var(--accent-color);
-      color: #fff;
-      border-color: var(--accent-color);
-    }
+    .btn-action.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
     .container { padding: 16px; max-width: 600px; margin: 0 auto; }
-    
     .card {
       background: var(--card-bg);
       border-radius: 18px;
@@ -97,7 +88,6 @@
       background: #FAFAFA;
     }
     .card.open .card-content { display: block; }
-    
     .info-group { margin-top: 14px; }
     .info-label { font-size: 12px; color: var(--sub-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
     .info-value { font-size: 15px; font-weight: 600; color: var(--primary-color); margin-top: 3px; }
@@ -111,13 +101,7 @@
       color: #991B1B;
       font-weight: 600;
     }
-    
-    .img-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
+    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
     .img-grid.single { grid-template-columns: 1fr; }
     .img-box {
       width: 100%;
@@ -128,7 +112,6 @@
       aspect-ratio: 4/3;
     }
     .img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    
     .map-btn {
       display: inline-flex;
       align-items: center;
@@ -143,7 +126,6 @@
       margin-top: 12px;
       box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
     }
-    
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
     th, td { padding: 11px 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
     th { color: var(--sub-color); font-weight: 700; font-size: 12px; background: #F1F5F9; }
@@ -215,8 +197,8 @@
         <div class="info-label">住宿：天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
         <div class="info-value">入住2晚 (2間標準雙床房)</div>
         <div class="img-grid">
-          <div class="img-box"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="飯店外觀"></div>
-          <div class="img-box"><img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="雙床房"></div>
+          <div class="img-box"><img src="https://i.imgur.com/G3k8wS9.jpeg" alt="天王寺都飯店外觀"></div>
+          <div class="img-box"><img src="https://i.imgur.com/5J3mE1f.jpeg" alt="雙床房型"></div>
         </div>
         <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
       </div>
@@ -258,14 +240,19 @@
         </div>
         <div class="info-group">
           <div class="info-label">景點：伊根舟屋</div>
-          <div class="img-grid single">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80" alt="伊根舟屋"></div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://i.imgur.com/8QZk2jL.jpeg" alt="伊根舟屋1"></div>
+            <div class="img-box"><img src="https://i.imgur.com/3V7wN9X.jpeg" alt="伊根舟屋2"></div>
           </div>
           <a href="https://maps.app.goo.gl/CATHihePUubM5LkC8?g_st=ic" class="map-btn" target="_blank">📍 開啟伊根舟屋地圖</a>
         </div>
         <div class="info-group">
           <div class="info-label">住宿：天橋立飯店 (Amanohashidate Hotel)</div>
           <div class="info-value">含晚餐蟹肉會席 + 早餐自助餐，享天橋立溫泉。</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://i.imgur.com/2X8L9pQ.jpeg" alt="天橋立飯店門面"></div>
+            <div class="img-box"><img src="https://i.imgur.com/9N4k7yM.jpeg" alt="會席料理饗宴"></div>
+          </div>
           <a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立飯店地圖</a>
         </div>
       </div>
@@ -282,16 +269,28 @@
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">景點：天橋立傘松公園</div>
+          <div class="info-label">景點：天橋立傘松公園（飛龍觀）</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://i.imgur.com/5A2x9mK.jpeg" alt="天橋立全景"></div>
+            <div class="img-box"><img src="https://i.imgur.com/7B4v1nL.jpeg" alt="回旋橋風景"></div>
+          </div>
           <a href="https://maps.app.goo.gl/npiiYvCvRb1En5cL7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立地圖</a>
         </div>
         <div class="info-group">
           <div class="info-label">列車：丹後青松號 + 舞鶴號</div>
           <div class="info-value">天橋立 12:08 ➔ 西舞鶴 (青松號) | 西舞鶴 13:44 ➔ 京都 (舞鶴8號 15:06抵達)</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://i.imgur.com/1C9p8xQ.jpeg" alt="青松號行駛於由良川鐵橋"></div>
+            <div class="img-box"><img src="https://i.imgur.com/3D0q7yR.jpeg" alt="青松號車廂內裝"></div>
+          </div>
         </div>
         <div class="info-group">
           <div class="info-label">住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)</div>
           <div class="info-value">京都車站八條口正對面，已領取直寄的大行李 Check-in。</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://i.imgur.com/6E2m4vP.jpeg" alt="京都八條都飯店外觀"></div>
+            <div class="img-box"><img src="https://i.imgur.com/8F5n1wS.jpeg" alt="尊貴樓層雙床房"></div>
+          </div>
           <a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 開啟京都八條都飯店地圖</a>
         </div>
       </div>
@@ -310,8 +309,9 @@
         <div class="info-group">
           <div class="info-label">景點：國寶平等院</div>
           <div class="info-value">欣賞鳳凰堂絕美庭園建築，順遊鳳翔館博物館與抹茶商店街。</div>
-          <div class="img-grid single">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80" alt="平等院"></div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://i.imgur.com/4G7p2zT.jpeg" alt="平等院鳳凰堂"></div>
+            <div class="img-box"><img src="https://i.imgur.com/9K1m3vU.jpeg" alt="鳳翔館平安時代模型"></div>
           </div>
           <a href="https://maps.app.goo.gl/xqtWvrWzdKthJwB59?g_st=ic" class="map-btn" target="_blank">📍 開啟平等院地圖</a>
         </div>
