@@ -101,7 +101,6 @@
       font-weight: 700;
     }
     .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-    .img-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
     .img-box {
       width: 100%;
       border-radius: 12px;
@@ -111,18 +110,18 @@
       aspect-ratio: 4/3;
     }
     .img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
     .map-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background: var(--tiffany-main);
       color: #fff;
-      padding: 9px 16px;
+      padding: 9px 14px;
       border-radius: 10px;
       font-size: 13px;
       font-weight: 700;
       text-decoration: none;
-      margin-top: 12px;
       box-shadow: 0 2px 6px rgba(0, 168, 150, 0.25);
     }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
@@ -184,8 +183,8 @@
     <div class="card">
       <div class="card-header" onclick="toggleCard(this)">
         <div>
-          <div class="card-title">Day 1：11/19 (週四) 抵達與大阪入住</div>
-          <div class="card-subtitle">關空 Haruka 直達天王寺飯店</div>
+          <div class="card-title">Day 1：11/19 (週四) 抵達大阪與購物散策</div>
+          <div class="card-subtitle">關空 Haruka 直達天王寺 + 阿倍野商圈</div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
       </div>
@@ -194,12 +193,23 @@
         <div class="info-value">長榮 BR182 (KHH 07:05 ➔ 10:55 KIX)</div>
         <div class="info-value">國泰 CX564 (TPE 11:15 ➔ 14:45 KIX)</div>
         <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <div class="info-label">住宿：天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
-        <div class="info-value">入住2晚 (2間標準雙床房)</div>
-        <div class="img-grid">
-          <div class="img-box"><img src="https://img.bigfang.tw/2022/11/1668339113-a260d8e4d912f21432165c384e2d8d94.jpg" alt="天王寺都城市飯店"></div>
+        <div class="info-group">
+          <div class="info-label">景點：天王寺阿倍野商圈</div>
+          <div class="info-value">結合熱門百貨與舒適步調非常適合全家大小輕鬆逛街購物</div>
+          <div class="info-value" style="font-size: 13px; color: var(--sub-color); margin-top: 4px;">漫步 Q's Mall 與 MIO 百貨公司，步調舒緩方便爸媽購物隨時休息。</div>
         </div>
-        <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
+        <div class="info-group">
+          <div class="info-label">住宿：天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
+          <div class="info-value">直通天王寺車站與阿倍野商圈交通極為便利且房間寬敞舒適</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://voniblog.com/wp-content/uploads/2025/01/%E5%A4%A7%E9%98%AA%E5%A4%A9%E7%8E%8B%E5%AF%BA-%E9%83%BD%E5%9F%8E%E5%B8%82%E9%85%92%E5%BA%97-MIYAKO-HOTELS-RESORTS-02.jpg" alt="天王寺都城市飯店"></div>
+            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/03/01/1000x1000_ea1e9d427fb5664c32c517a73e421e58_a9da26447db85e021edcda47c1aa474566d6379e.jpg" alt="天王寺都城市飯店房型"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -207,15 +217,50 @@
     <div class="card">
       <div class="card-header" onclick="toggleCard(this)">
         <div>
-          <div class="card-title">Day 2：11/20 (週五) 大阪市區輕鬆遊</div>
-          <div class="card-subtitle">難波、心齋橋與長輩舒緩散步</div>
+          <div class="card-title">Day 2：11/20 (週五) 奈良文化漫遊與麻婆豆腐美食</div>
+          <div class="card-subtitle">春日大社 + 奈良公園浮見堂 + 最大MUJI</div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">行程建議</div>
-          <div class="info-value">阿倍野 Harukas 300 展望台、黑門市場美饌、道頓堀巡禮。保持步調舒緩，方便爸媽隨時休息。</div>
+          <div class="info-label">景點 1：春日大社</div>
+          <div class="info-value">古木參天的千古神社走入石燈籠陣感受莊嚴古樸的自然寧靜</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://imagedelivery.net/Ahwf2rDz3ZiXm1qkpDKg1w/live/-/media/1DF124B3165D45E69862D0C75CE925A3.jpg/w=1536,q=65,format=auto" alt="春日大社"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/9VxYxDV89vdRZNj8A?g_st=ic" class="map-btn" target="_blank">📍 開啟春日大社地圖</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">景點 2：奈良公園與浮見堂</div>
+          <div class="info-value">綠意盎然的公園裡能近距離餵食可愛小鹿與欣賞湖畔浮見堂</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://assets.funliday.com/posts/wp-content/uploads/2024/08/23213330/306955644_462576185900232_8164762936253156203_n.jpg" alt="奈良公園與浮見堂"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/s8pEs1Fbe1vtTA1N7?g_st=ic" class="map-btn" target="_blank">📍 開啟浮見堂地圖</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">景點 3：無印良品 離子モール橿原</div>
+          <div class="info-value">超大規格旗艦店提供極為齊全的商品與舒適放鬆的逛街體驗</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://media.loom-app.com/roomie/dist/images/2025/03/shrkm250320_muji8.jpg?w=1200" alt="世界最大無印良品"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/9Bp5W8kfTkfMqs6y6" class="map-btn" target="_blank">📍 開啟橿原MUJI地圖</a>
+          </div>
+        </div>
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
+        <div class="info-group">
+          <div class="info-label">晚餐美饌：陳麻婆豆腐</div>
+          <div class="info-value">起源於四川的百年名店麻辣鮮香極致道地是極具人氣的配飯首選</div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/QBFsGPnsrv1yW5rt8?g_st=ic" class="map-btn" target="_blank">📍 LUCUA 1100店</a>
+            <a href="https://maps.app.goo.gl/n5F4pfk1pkWDVVTf8?g_st=ic" class="map-btn" target="_blank">📍 STORM 難波CITY店</a>
+          </div>
         </div>
       </div>
     </div>
@@ -224,8 +269,8 @@
     <div class="card">
       <div class="card-header" onclick="toggleCard(this)">
         <div>
-          <div class="card-title">Day 3：11/21 (週六) 天橋立與伊根舟屋</div>
-          <div class="card-subtitle">特急 Hashidate + 溫泉會席料理</div>
+          <div class="card-title">Day 3：11/21 (週六) 海之京都伊根舟屋</div>
+          <div class="card-subtitle">海上計程船 + 舟屋單車 + 蟹會席溫泉</div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
       </div>
@@ -238,24 +283,50 @@
           <div class="info-value">天王寺 ➔ 新大阪 (Haruka) ➔ 天橋立 (Hashidate 1號 09:25-11:32)</div>
         </div>
         <div class="info-group">
-          <div class="info-label">景點：伊根舟屋與天橋立</div>
+          <div class="info-label">景點：伊根舟屋散策</div>
+          <div class="info-value">海之京都的世外桃源能靜靜欣賞臨水而建的傳統舟屋獨特景致</div>
           <div class="img-grid">
             <div class="img-box"><img src="https://www.settour.com.tw/ss_img/info/location/OSA/A0/OSA0000154/OSA0000154_61116.jpg" alt="伊根舟屋1"></div>
             <div class="img-box"><img src="https://svcstrg.cld.navitime.jp/travelguide/p26270003/p26270003_01.jpg" alt="伊根舟屋2"></div>
-            <div class="img-box"><img src="https://res.klook.com/image/upload/activities/j3k6yir8av6hruayiumw.jpg" alt="天橋立1"></div>
-            <div class="img-box"><img src="https://i0.wp.com/boo2k.com/wp-content/uploads/2014/04/IMG_0974.jpg" alt="天橋立2"></div>
           </div>
-          <a href="https://maps.app.goo.gl/CATHihePUubM5LkC8?g_st=ic" class="map-btn" target="_blank">📍 開啟伊根舟屋地圖</a>
-          <a href="https://maps.app.goo.gl/npiiYvCvRb1En5cL7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立地圖</a>
         </div>
         <div class="info-group">
-          <div class="info-label">住宿：天橋立飯店 (Amanohashidate Hotel)</div>
-          <div class="info-value">含晚餐蟹肉會席 + 早餐自助餐，享天橋立溫泉。</div>
+          <div class="info-label">體驗：Re:ine 海上計程船與免費單車</div>
+          <div class="info-value">Re:ine海上計程船（搭乘小巧靈活的海上計程船能以近距離視角親近伊根舟屋的獨特風貌）</div>
+          <div class="info-value">伊根免費單車（騎乘單車悠閒穿梭於古樸漁村巷弄是漫遊伊根最極致舒心的體驗方式）</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://www.amanohashidate-htl.co.jp/common/img/ogp.jpg" alt="天橋立飯店1"></div>
-            <div class="img-box"><img src="https://followtotravel.com/wp-content/uploads/2025/06/jp-amano-hashidate2.jpg" alt="天橋立飯店2"></div>
+            <div class="img-box"><img src="https://static.wixstatic.com/media/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg/v1/fill/w_640,h_880,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg" alt="Re:ine海上計程船"></div>
+            <div class="img-box"><img src="https://joshuaworldtravel.com/wp-content/uploads/2020/12/P1140192-1.jpg" alt="伊根單車"></div>
           </div>
-          <a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立飯店地圖</a>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/HtWBWziEJAK9hWFi9?g_st=ic" class="map-btn" target="_blank">📍 Re:INE 舟屋乘船處</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">午餐選項：INE CAFE / 神慈や / 鮨割烹 海宮</div>
+          <div class="info-value">INE CAFE（臨海而建的純白無敵海景咖啡廳能近距離享受舟屋波光粼粼的絕景）</div>
+          <div class="info-value">神慈や（充滿溫馨氣息的在地日式食堂提供風味道地且份量實惠的家常料理）</div>
+          <div class="info-value">鮨割烹海宮（坐擁無敵海景的割烹餐廳能品嚐由伊根在地新鮮漁獲製作的頂級壽司）</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://static.gltjp.com/glt/data/directory/18000/17121/20250625_105548_294572df_w1920.webp" alt="INE CAFE"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/AQKCRnZCvWeVMSop6?g_st=ic" class="map-btn" target="_blank">📍 INE CAFE</a>
+            <a href="https://maps.app.goo.gl/eRJmZtvKbmhp57zQA?g_st=ic" class="map-btn" target="_blank">📍 神慈や</a>
+            <a href="https://maps.app.goo.gl/nWJQJAdS2zKUKeNi9?g_st=ic" class="map-btn" target="_blank">📍 鮨割烹 海宮</a>
+          </div>
+        </div>
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
+        <div class="info-group">
+          <div class="info-label">住宿：天橋立飯店 (Amanohashidate Hotel)</div>
+          <div class="info-value">坐擁天橋立絕景與優質溫泉能品嚐精緻豐盛的日式會席料理</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://www.amanohashidate-htl.co.jp/common/img/ogp.jpg" alt="天橋立飯店外觀"></div>
+            <div class="img-box"><img src="https://followtotravel.com/wp-content/uploads/2025/06/jp-amano-hashidate2.jpg" alt="天橋立飯店"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立飯店地圖</a>
+          </div>
         </div>
       </div>
     </div>
@@ -264,29 +335,70 @@
     <div class="card">
       <div class="card-header" onclick="toggleCard(this)">
         <div>
-          <div class="card-title">Day 4：11/22 (週日) 丹後青松號與京都入住</div>
-          <div class="card-subtitle">傘松公園飛龍觀 + 觀光列車</div>
+          <div class="card-title">Day 4：11/22 (週日) 天橋立雙觀景、丹後青松號與京都東洋亭</div>
+          <div class="card-subtitle">飛龍觀 + 橋立物產蟹便當 + 水上鐵道</div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">列車：丹後青松號 + 舞鶴號</div>
-          <div class="info-value">天橋立 12:08 ➔ 西舞鶴 (青松號) | 西舞鶴 13:44 ➔ 京都 (舞鶴8號 15:06抵達)</div>
+          <div class="info-label">景點：天橋立 View Land 飛龍觀與觀光船</div>
+          <div class="info-value">天橋立（日本三景之一可欣賞宛如飛龍延伸至天際的天然綠色沙洲美景）</div>
+          <div class="info-value">天橋立傘松公園飛龍觀（搭乘纜車登上展望台倒過來觀賞沙洲呈現飛上青天的龍形奇景）</div>
+          <div class="info-value">天橋立空中單車（懸空行駛於高空軌道之上能邊騎單車邊將天橋立沙洲絕景盡收眼底）</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://banbi.tw/wp-content/uploads/20190416190308_15.jpg" alt="青松號1"></div>
-            <div class="img-box"><img src="https://image.kkday.com/v2/image/get/c_fit%2Cq_55%2Ct_webp%2Cw_960/s1.kkday.com/product_249694/20240919150811_I9pLO/jpg" alt="青松號2"></div>
+            <div class="img-box"><img src="https://res.klook.com/image/upload/activities/j3k6yir8av6hruayiumw.jpg" alt="天橋立沙洲"></div>
+            <div class="img-box"><img src="https://www.viewland.jp/tw/wp-content/uploads/2026/10/6A412326547EAA7F31FB84032DC74945CFC0AAEE-250x170.png" alt="空中單車"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/H6T1GFKNiaMpyoRz5?g_st=ic" class="map-btn" target="_blank">📍 View Land 纜車</a>
+            <a href="https://maps.app.goo.gl/wBchTn4gr4vhEFsm7?g_st=ic" class="map-btn" target="_blank">📍 空中單車</a>
+            <a href="https://maps.app.goo.gl/oF2zGkgzzDKJpT649?g_st=ic" class="map-btn" target="_blank">📍 觀光船棧橋</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">車上便當：海鮮工房 橋立物產 松葉蟹直賣</div>
+          <div class="info-value">專營松葉蟹與新鮮海產外帶便當是在地品嚐鮮甜海味的首選店家</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://megapx-assets.dcard.tw/videos/ead8dba0-de16-4910-b49a-4dea1e189163/thumbnails/720.jpeg" alt="橋立物產鬆葉蟹便當"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/QD7ATmmpguViv8fPA?g_st=ic" class="map-btn" target="_blank">📍 開啟橋立物產地圖</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">列車體驗：丹後青松號 + 由良川鐵道景觀</div>
+          <div class="info-value">丹後青松號（由水戶岡銳治設計的復古木質車廂讓沿途海景宛如流動畫卷）</div>
+          <div class="info-value">由良川鐵路景觀（列車行駛於水面鐵橋之上宛如乘風破浪行駛於海面上的夢幻奇景）</div>
+          <div class="info-value" style="font-size: 13px; color: var(--sub-color); margin-top: 4px;">天橋立 12:08 ➔ 西舞鶴 (青松號) | 西舞鶴 13:44 ➔ 京都 (舞鶴8號 15:06抵達)</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://banbi.tw/wp-content/uploads/20190416190308_15.jpg" alt="丹後青松號1"></div>
+            <div class="img-box"><img src="https://image.kkday.com/v2/image/get/c_fit%2Cq_55%2Ct_webp%2Cw_960/s1.kkday.com/product_249694/20240919150811_I9pLO/jpg" alt="丹後青松號2"></div>
+          </div>
+        </div>
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
+        <div class="info-group">
+          <div class="info-label">晚餐美饌：Grill Capital 東洋亭</div>
+          <div class="info-value">京都百年洋食老店以招牌鋁箔包漢堡排與鮮美整顆番茄沙拉聞名</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://www.kyoto-station-building.co.jp/app/uploads/2025/02/img_toyotei2-1.jpg" alt="東洋亭招牌漢堡排"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/R1ZhNskY4FmHKwsS9?g_st=ic" class="map-btn" target="_blank">📍 伊勢丹店</a>
+            <a href="https://maps.app.goo.gl/Qtv4rpeqvSZ6iGiN6?g_st=ic" class="map-btn" target="_blank">📍 近鐵店</a>
+            <a href="https://maps.app.goo.gl/QpU2mTdfRAR3fsJm6?g_st=ic" class="map-btn" target="_blank">📍 Porta店</a>
           </div>
         </div>
         <div class="info-group">
           <div class="info-label">住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)</div>
-          <div class="info-value">京都車站八條口正對面，已領取直寄的大行李 Check-in。</div>
-          <div class="img-grid triple">
-            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/02/02/1100x2048_ea1e9d427fb5664c32c517a73e421e58_bcc40520da46ef3e73476a959b8335d182a887d9.jpg" alt="京都八條都飯店1"></div>
-            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2023/08/15/1800x2048_ea1e9d427fb5664c32c517a73e421e58_7e97ccbe9eb5d79c954864f85b77dba51aa10f80.jpg" alt="京都八條都飯店2"></div>
-            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/03/14/491x326_ea1e9d427fb5664c32c517a73e421e58_4760941da7a56a40489f2f1a4db78ebf9cd33296.jpg" alt="京都八條都飯店3"></div>
+          <div class="info-value">位於京都車站八條口正對面位置極佳且周邊機能齊全方便漫遊</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/02/02/1100x2048_ea1e9d427fb5664c32c517a73e421e58_bcc40520da46ef3e73476a959b8335d182a887d9.jpg" alt="京都八條都飯店"></div>
+            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2023/08/15/1800x2048_ea1e9d427fb5664c32c517a73e421e58_7e97ccbe9eb5d79c954864f85b77dba51aa10f80.jpg" alt="京都八條都飯店大廳"></div>
           </div>
-          <a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 開啟京都八條都飯店地圖</a>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 開啟京都八條都飯店地圖</a>
+          </div>
         </div>
       </div>
     </div>
@@ -295,22 +407,43 @@
     <div class="card">
       <div class="card-header" onclick="toggleCard(this)">
         <div>
-          <div class="card-title">Day 5：11/23 (週一) 宇治世界遺產半日遊</div>
-          <div class="card-subtitle">國寶平等院、宇治川與抹茶體驗</div>
+          <div class="card-title">Day 5：11/23 (週一) 宇治世界遺產與源氏文化深度遊</div>
+          <div class="card-subtitle">國寶平等院 + 源氏物語博物館 + 中村藤吉</div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">景點：國寶平等院與宇治散策</div>
-          <div class="info-value">欣賞鳳凰堂絕美庭園建築，順遊鳳翔館博物館與抹茶商店街。</div>
+          <div class="info-label">景點 1：國寶平等院</div>
+          <div class="info-value">佇立於池畔的鳳凰堂宛如淨土極樂宮殿展現平安時代建築美學</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://curly.com.tw/wp-content/uploads/2024/12/DSCF5201.jpg" alt="宇治1"></div>
-            <div class="img-box"><img src="https://www.tyh.kimonorental.shop/wp-content/uploads/2024/09/0099-1024x683.jpg" alt="宇治2"></div>
-            <div class="img-box"><img src="https://travel.ujicci.or.jp/images/spot/shop49/spot3.jpg" alt="宇治3"></div>
-            <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDoVa2z7O4WVxQ7l1C1YA9Dm3vGLV_LcApY1pH6d-ESWRez72b2QEOm4w&s=10" alt="宇治4"></div>
+            <div class="img-box"><img src="https://curly.com.tw/wp-content/uploads/2024/12/DSCF5201.jpg" alt="平等院1"></div>
+            <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDoVa2z7O4WVxQ7l1C1YA9Dm3vGLV_LcApY1pH6d-ESWRez72b2QEOm4w&s=10" alt="平等院2"></div>
           </div>
-          <a href="https://maps.app.goo.gl/xqtWvrWzdKthJwB59?g_st=ic" class="map-btn" target="_blank">📍 開啟平等院地圖</a>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/5ncyy7xh3bEjc1DF6?g_st=ic" class="map-btn" target="_blank">📍 開啟平等院地圖</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">景點 2：宇治市源氏物語博物館</div>
+          <div class="info-value">透過精緻展品與多媒體造景沉浸式體驗源氏物語的光影與美感</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://www.tyh.kimonorental.shop/wp-content/uploads/2024/09/0099-1024x683.jpg" alt="源氏物語博物館1"></div>
+            <div class="img-box"><img src="https://travel.ujicci.or.jp/images/spot/shop49/spot3.jpg" alt="源氏物語博物館2"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/3USKnkG2tJiaj5nD6?g_st=ic" class="map-btn" target="_blank">📍 開啟博物館地圖</a>
+          </div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">抹茶名店：中村藤吉 平等院店</div>
+          <div class="info-value">位於宇治川畔的老字號茶屋能邊賞水岸風光邊品嚐濃郁抹茶甜點</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkyaSAsu3Csm7VmaIDTZTKwBLpEN6j2NEZVgOSTqjbHd5oFqudc3ltUKg&s=10" alt="中村藤吉平等院店"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/dnXftCDur96nXuto9?g_st=ic" class="map-btn" target="_blank">📍 開啟中村藤吉地圖</a>
+          </div>
         </div>
       </div>
     </div>
@@ -320,18 +453,25 @@
       <div class="card-header" onclick="toggleCard(this)">
         <div>
           <div class="card-title">Day 6：11/24 (週二) 返台與機場接駁</div>
-          <div class="card-subtitle">Option 1 / Option 2 雙彈性方案</div>
+          <div class="card-subtitle">Option 1 臨空城Outlet / Option 2 京都漫遊</div>
         </div>
         <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">方案 1：爸媽與全家同行（前往臨空城 Outlet）</div>
-          <div class="info-value">京都搭乘 Haruka 列車直達關空/臨空城，輕鬆購物後搭機。</div>
+          <div class="info-label">方案 1：全家同行至臨空城 Outlet 購物</div>
+          <div class="info-value">臨空城 Outlet（鄰近關西機場的購物天堂擁有豐富品牌與寬敞舒心的逛街環境）</div>
+          <div class="info-value" style="font-size: 13px; color: var(--sub-color); margin-top: 4px;">京都搭乘 Haruka 直達關空/臨空城，輕鬆購物後前往機場搭機。</div>
+          <div class="img-grid">
+            <div class="img-box"><img src="https://image.co-trip.jp/content/book_contents/27010016_3896_1.jpg" alt="臨空城 Outlet"></div>
+          </div>
+          <div class="btn-group">
+            <a href="https://maps.app.goo.gl/CF3onCV5KVxyuQWn6?g_st=ic" class="map-btn" target="_blank">📍 開啟臨空城 Outlet 地圖</a>
+          </div>
         </div>
         <div class="info-group">
-          <div class="info-label">方案 2：爸媽留在京都飯店漫遊</div>
-          <div class="info-value">爸媽於京都八條都飯店周邊輕鬆逛街，下午再搭乘 Haruka 前往機場搭機。</div>
+          <div class="info-label">方案 2：爸媽留京都飯店周邊漫遊</div>
+          <div class="info-value">爸媽於京都八條都飯店周邊輕鬆逛街，下午再搭乘 Haruka 直關空搭機。</div>
         </div>
         <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
         <span class="badge">回程航班時間</span>
