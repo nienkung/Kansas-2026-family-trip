@@ -6,14 +6,14 @@
   <title>2026 日本關西家族之旅</title>
   <style>
     :root {
-      --bg-color: #F0FDF4; /* Tiffany 淺綠清爽底色 */
+      --bg-color: #E6FFFA; /* 典雅 Tiffany 淺綠清爽底色 */
       --card-bg: #FFFFFF;
-      --primary-color: #0F3D3E; /* 深綠墨字，高對比易讀 */
+      --primary-color: #0F3D3E; /* 深綠墨字，高對比大字體 */
       --tiffany-main: #00A896; /* 主色 Tiffany Blue */
-      --tiffany-light: #E6FFFA;
+      --tiffany-light: #F0FDF4;
       --tiffany-border: #B2F5EA;
       --sub-color: #4A5568;
-      --shadow: 0 4px 16px rgba(0, 168, 150, 0.08);
+      --shadow: 0 4px 16px rgba(0, 168, 150, 0.1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
@@ -26,7 +26,7 @@
     .header {
       position: sticky;
       top: 0;
-      background: rgba(240, 253, 244, 0.95);
+      background: rgba(230, 255, 250, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       z-index: 100;
@@ -55,7 +55,7 @@
       background: var(--card-bg);
       border-radius: 18px;
       margin-bottom: 16px;
-      border: 1px solid var(--tiffany-border);
+      border: 1.5px solid var(--tiffany-border);
       box-shadow: var(--shadow);
       overflow: hidden;
       transition: all 0.3s ease;
@@ -126,7 +126,7 @@
     }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
     th, td { padding: 11px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
-    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: var(--tiffany-light); }
+    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: #E6FFFA; }
     td { font-weight: 600; }
     .badge {
       display: inline-block;
@@ -134,7 +134,7 @@
       border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
-      background: var(--tiffany-light);
+      background: #E6FFFA;
       color: var(--tiffany-main);
       border: 1px solid var(--tiffany-border);
       margin-bottom: 6px;
@@ -196,8 +196,8 @@
         <div class="info-label">住宿：天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
         <div class="info-value">入住2晚 (2間標準雙床房)</div>
         <div class="img-grid">
-          <div class="img-box"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="天王寺飯店外觀"></div>
-          <div class="img-box"><img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="雙床房"></div>
+          <div class="img-box"><img src="IMG_1182.jpg" onerror="this.onerror=null;this.src='IMG_1182.png';this.onerror=null;this.src='IMG_1182.jpeg';"></div>
+          <div class="img-box"><img src="IMG_1183.jpg" onerror="this.onerror=null;this.src='IMG_1183.png';this.onerror=null;this.src='IMG_1183.jpeg';"></div>
         </div>
         <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
       </div>
@@ -240,8 +240,9 @@
         <div class="info-group">
           <div class="info-label">景點：伊根舟屋與天橋立</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="伊根舟屋"></div>
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80" alt="天橋立"></div>
+            <div class="img-box"><img src="IMG_1197.jpg" onerror="this.onerror=null;this.src='IMG_1197.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1200.jpg" onerror="this.onerror=null;this.src='IMG_1200.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1202.jpg" onerror="this.onerror=null;this.src='IMG_1202.jpeg';"></div>
           </div>
           <a href="https://maps.app.goo.gl/CATHihePUubM5LkC8?g_st=ic" class="map-btn" target="_blank">📍 開啟伊根舟屋地圖</a>
           <a href="https://maps.app.goo.gl/npiiYvCvRb1En5cL7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立地圖</a>
@@ -250,8 +251,10 @@
           <div class="info-label">住宿：天橋立飯店 (Amanohashidate Hotel)</div>
           <div class="info-value">含晚餐蟹肉會席 + 早餐自助餐，享天橋立溫泉。</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="日式溫泉旅館"></div>
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=600&q=80" alt="會席料理"></div>
+            <div class="img-box"><img src="IMG_1184.jpg" onerror="this.onerror=null;this.src='IMG_1184.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1186.jpg" onerror="this.onerror=null;this.src='IMG_1186.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1187.jpg" onerror="this.onerror=null;this.src='IMG_1187.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1188.jpg" onerror="this.onerror=null;this.src='IMG_1188.jpeg';"></div>
           </div>
           <a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立飯店地圖</a>
         </div>
@@ -272,16 +275,17 @@
           <div class="info-label">列車：丹後青松號 + 舞鶴號</div>
           <div class="info-value">天橋立 12:08 ➔ 西舞鶴 (青松號) | 西舞鶴 13:44 ➔ 京都 (舞鶴8號 15:06抵達)</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1532105956626-9569c03602f6?auto=format&fit=crop&w=600&q=80" alt="日本觀光列車"></div>
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80" alt="沿途海景"></div>
+            <div class="img-box"><img src="IMG_1195.jpg" onerror="this.onerror=null;this.src='IMG_1195.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1196.jpg" onerror="this.onerror=null;this.src='IMG_1196.jpeg';"></div>
           </div>
         </div>
         <div class="info-group">
           <div class="info-label">住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)</div>
           <div class="info-value">京都車站八條口正對面，已領取直寄的大行李 Check-in。</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="京都飯店"></div>
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="雙床房"></div>
+            <div class="img-box"><img src="IMG_1190.jpg" onerror="this.onerror=null;this.src='IMG_1190.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1193.jpg" onerror="this.onerror=null;this.src='IMG_1193.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1194.jpg" onerror="this.onerror=null;this.src='IMG_1194.jpeg';"></div>
           </div>
           <a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 開啟京都八條都飯店地圖</a>
         </div>
@@ -302,8 +306,8 @@
           <div class="info-label">景點：國寶平等院與宇治散策</div>
           <div class="info-value">欣賞鳳凰堂絕美庭園建築，順遊鳳翔館博物館與抹茶商店街。</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80" alt="平等院"></div>
-            <div class="img-box"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="宇治"></div>
+            <div class="img-box"><img src="IMG_1203.jpg" onerror="this.onerror=null;this.src='IMG_1203.jpeg';"></div>
+            <div class="img-box"><img src="IMG_1204.jpg" onerror="this.onerror=null;this.src='IMG_1204.jpeg';"></div>
           </div>
           <a href="https://maps.app.goo.gl/xqtWvrWzdKthJwB59?g_st=ic" class="map-btn" target="_blank">📍 開啟平等院地圖</a>
         </div>
