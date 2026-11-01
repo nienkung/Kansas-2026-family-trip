@@ -6,15 +6,14 @@
   <title>2026 日本關西家族之旅</title>
   <style>
     :root {
-      --bg-color: #FAF8F5;
+      --bg-color: #F0FDF4; /* Tiffany 淺綠清爽底色 */
       --card-bg: #FFFFFF;
-      --primary-color: #1E293B;
-      --accent-color: #D97706;
-      --accent-light: #FEF3C7;
-      --sub-color: #64748B;
-      --border-color: #E2E8F0;
-      --blue-accent: #2563EB;
-      --shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      --primary-color: #0F3D3E; /* 深綠墨字，高對比易讀 */
+      --tiffany-main: #00A896; /* 主色 Tiffany Blue */
+      --tiffany-light: #E6FFFA;
+      --tiffany-border: #B2F5EA;
+      --sub-color: #4A5568;
+      --shadow: 0 4px 16px rgba(0, 168, 150, 0.08);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
@@ -27,39 +26,39 @@
     .header {
       position: sticky;
       top: 0;
-      background: rgba(250, 248, 245, 0.95);
+      background: rgba(240, 253, 244, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       z-index: 100;
       padding: 18px 20px 14px;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--tiffany-border);
     }
     .header h1 { font-size: 22px; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
-    .header p { font-size: 13px; color: var(--sub-color); margin-top: 2px; font-weight: 500; }
+    .header p { font-size: 13px; color: var(--sub-color); margin-top: 2px; font-weight: 600; }
     .nav-bar { display: flex; gap: 10px; margin-top: 12px; }
     .btn-action {
       flex: 1;
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      border: 1.5px solid var(--tiffany-main);
       padding: 8px 16px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 700;
-      color: var(--primary-color);
+      color: var(--tiffany-main);
       box-shadow: 0 2px 4px rgba(0,0,0,0.03);
       cursor: pointer;
       text-align: center;
     }
-    .btn-action.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+    .btn-action.active { background: var(--tiffany-main); color: #fff; }
     .container { padding: 16px; max-width: 600px; margin: 0 auto; }
     .card {
       background: var(--card-bg);
       border-radius: 18px;
       margin-bottom: 16px;
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--tiffany-border);
       box-shadow: var(--shadow);
       overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s ease;
     }
     .card-header {
       padding: 18px;
@@ -71,44 +70,44 @@
       background: #FFFFFF;
     }
     .card-title { font-size: 18px; font-weight: 800; color: var(--primary-color); line-height: 1.3; }
-    .card-subtitle { font-size: 13px; color: var(--accent-color); font-weight: 700; margin-top: 4px; }
+    .card-subtitle { font-size: 13px; color: var(--tiffany-main); font-weight: 700; margin-top: 4px; }
     .chevron {
       width: 22px;
       height: 22px;
       transition: transform 0.3s ease;
-      stroke: var(--sub-color);
+      stroke: var(--tiffany-main);
       flex-shrink: 0;
       margin-left: 10px;
     }
-    .card.open .chevron { transform: rotate(180deg); stroke: var(--accent-color); }
+    .card.open .chevron { transform: rotate(180deg); }
     .card-content {
       display: none;
       padding: 16px 18px 20px;
-      border-top: 1px solid var(--border-color);
-      background: #FAFAFA;
+      border-top: 1px solid var(--tiffany-border);
+      background: #FAFDFC;
     }
     .card.open .card-content { display: block; }
     .info-group { margin-top: 14px; }
     .info-label { font-size: 12px; color: var(--sub-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
     .info-value { font-size: 15px; font-weight: 600; color: var(--primary-color); margin-top: 3px; }
     .highlight-box {
-      background: #FEF2F2;
-      border-left: 4px solid #EF4444;
+      background: #FFF5F5;
+      border-left: 4px solid #E53E3E;
       padding: 10px 12px;
       border-radius: 8px;
       margin-top: 10px;
       font-size: 14px;
-      color: #991B1B;
-      font-weight: 600;
+      color: #9B2C2C;
+      font-weight: 700;
     }
     .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-    .img-grid.single { grid-template-columns: 1fr; }
+    .img-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
     .img-box {
       width: 100%;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px solid var(--border-color);
-      background: #E2E8F0;
+      border: 1px solid var(--tiffany-border);
+      background: var(--tiffany-light);
       aspect-ratio: 4/3;
     }
     .img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -116,7 +115,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--blue-accent);
+      background: var(--tiffany-main);
       color: #fff;
       padding: 9px 16px;
       border-radius: 10px;
@@ -124,20 +123,21 @@
       font-weight: 700;
       text-decoration: none;
       margin-top: 12px;
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 2px 6px rgba(0, 168, 150, 0.25);
     }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
-    th, td { padding: 11px 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
-    th { color: var(--sub-color); font-weight: 700; font-size: 12px; background: #F1F5F9; }
+    th, td { padding: 11px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
+    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: var(--tiffany-light); }
     td { font-weight: 600; }
     .badge {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
-      background: var(--accent-light);
-      color: var(--accent-color);
+      background: var(--tiffany-light);
+      color: var(--tiffany-main);
+      border: 1px solid var(--tiffany-border);
       margin-bottom: 6px;
     }
   </style>
@@ -193,12 +193,12 @@
         <span class="badge">航班時間</span>
         <div class="info-value">長榮 BR182 (KHH 07:05 ➔ 10:55 KIX)</div>
         <div class="info-value">國泰 CX564 (TPE 11:15 ➔ 14:45 KIX)</div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-color);">
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
         <div class="info-label">住宿：天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
         <div class="info-value">入住2晚 (2間標準雙床房)</div>
         <div class="img-grid">
-          <div class="img-box"><img src="https://i.imgur.com/G3k8wS9.jpeg" alt="天王寺都飯店外觀"></div>
-          <div class="img-box"><img src="https://i.imgur.com/5J3mE1f.jpeg" alt="雙床房型"></div>
+          <div class="img-box"><img src="IMG_1182.jpeg" alt="天王寺都城市飯店外觀" onerror="this.onerror=null;this.src='IMG_1182.PNG';"></div>
+          <div class="img-box"><img src="IMG_1183.jpeg" alt="天王寺都城市飯店房型" onerror="this.onerror=null;this.src='IMG_1183.PNG';"></div>
         </div>
         <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
       </div>
@@ -239,19 +239,23 @@
           <div class="info-value">天王寺 ➔ 新大阪 (Haruka) ➔ 天橋立 (Hashidate 1號 09:25-11:32)</div>
         </div>
         <div class="info-group">
-          <div class="info-label">景點：伊根舟屋</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://i.imgur.com/8QZk2jL.jpeg" alt="伊根舟屋1"></div>
-            <div class="img-box"><img src="https://i.imgur.com/3V7wN9X.jpeg" alt="伊根舟屋2"></div>
+          <div class="info-label">景點：伊根舟屋與天橋立</div>
+          <div class="img-grid triple">
+            <div class="img-box"><img src="IMG_1197.jpeg" alt="天橋立與伊根美景1" onerror="this.onerror=null;this.src='IMG_1197.PNG';"></div>
+            <div class="img-box"><img src="IMG_1200.jpeg" alt="天橋立與伊根美景2" onerror="this.onerror=null;this.src='IMG_1200.PNG';"></div>
+            <div class="img-box"><img src="IMG_1202.jpeg" alt="天橋立與伊根美景3" onerror="this.onerror=null;this.src='IMG_1202.PNG';"></div>
           </div>
           <a href="https://maps.app.goo.gl/CATHihePUubM5LkC8?g_st=ic" class="map-btn" target="_blank">📍 開啟伊根舟屋地圖</a>
+          <a href="https://maps.app.goo.gl/npiiYvCvRb1En5cL7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立地圖</a>
         </div>
         <div class="info-group">
           <div class="info-label">住宿：天橋立飯店 (Amanohashidate Hotel)</div>
           <div class="info-value">含晚餐蟹肉會席 + 早餐自助餐，享天橋立溫泉。</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://i.imgur.com/2X8L9pQ.jpeg" alt="天橋立飯店門面"></div>
-            <div class="img-box"><img src="https://i.imgur.com/9N4k7yM.jpeg" alt="會席料理饗宴"></div>
+            <div class="img-box"><img src="IMG_1184.jpeg" alt="天橋立飯店設施1" onerror="this.onerror=null;this.src='IMG_1184.PNG';"></div>
+            <div class="img-box"><img src="IMG_1186.jpeg" alt="天橋立飯店設施2" onerror="this.onerror=null;this.src='IMG_1186.PNG';"></div>
+            <div class="img-box"><img src="IMG_1187.jpeg" alt="天橋立飯店設施3" onerror="this.onerror=null;this.src='IMG_1187.PNG';"></div>
+            <div class="img-box"><img src="IMG_1188.jpeg" alt="天橋立飯店設施4" onerror="this.onerror=null;this.src='IMG_1188.PNG';"></div>
           </div>
           <a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立飯店地圖</a>
         </div>
@@ -269,27 +273,20 @@
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">景點：天橋立傘松公園（飛龍觀）</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://i.imgur.com/5A2x9mK.jpeg" alt="天橋立全景"></div>
-            <div class="img-box"><img src="https://i.imgur.com/7B4v1nL.jpeg" alt="回旋橋風景"></div>
-          </div>
-          <a href="https://maps.app.goo.gl/npiiYvCvRb1En5cL7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立地圖</a>
-        </div>
-        <div class="info-group">
           <div class="info-label">列車：丹後青松號 + 舞鶴號</div>
           <div class="info-value">天橋立 12:08 ➔ 西舞鶴 (青松號) | 西舞鶴 13:44 ➔ 京都 (舞鶴8號 15:06抵達)</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://i.imgur.com/1C9p8xQ.jpeg" alt="青松號行駛於由良川鐵橋"></div>
-            <div class="img-box"><img src="https://i.imgur.com/3D0q7yR.jpeg" alt="青松號車廂內裝"></div>
+            <div class="img-box"><img src="IMG_1195.jpeg" alt="丹後青松號列車1" onerror="this.onerror=null;this.src='IMG_1195.PNG';"></div>
+            <div class="img-box"><img src="IMG_1196.jpeg" alt="丹後青松號列車2" onerror="this.onerror=null;this.src='IMG_1196.PNG';"></div>
           </div>
         </div>
         <div class="info-group">
           <div class="info-label">住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)</div>
           <div class="info-value">京都車站八條口正對面，已領取直寄的大行李 Check-in。</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://i.imgur.com/6E2m4vP.jpeg" alt="京都八條都飯店外觀"></div>
-            <div class="img-box"><img src="https://i.imgur.com/8F5n1wS.jpeg" alt="尊貴樓層雙床房"></div>
+          <div class="img-grid triple">
+            <div class="img-box"><img src="IMG_1190.jpeg" alt="京都八條都飯店1" onerror="this.onerror=null;this.src='IMG_1190.PNG';"></div>
+            <div class="img-box"><img src="IMG_1193.jpeg" alt="京都八條都飯店2" onerror="this.onerror=null;this.src='IMG_1193.PNG';"></div>
+            <div class="img-box"><img src="IMG_1194.jpeg" alt="京都八條都飯店3" onerror="this.onerror=null;this.src='IMG_1194.PNG';"></div>
           </div>
           <a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 開啟京都八條都飯店地圖</a>
         </div>
@@ -307,11 +304,11 @@
       </div>
       <div class="card-content">
         <div class="info-group">
-          <div class="info-label">景點：國寶平等院</div>
+          <div class="info-label">景點：國寶平等院與宇治散策</div>
           <div class="info-value">欣賞鳳凰堂絕美庭園建築，順遊鳳翔館博物館與抹茶商店街。</div>
           <div class="img-grid">
-            <div class="img-box"><img src="https://i.imgur.com/4G7p2zT.jpeg" alt="平等院鳳凰堂"></div>
-            <div class="img-box"><img src="https://i.imgur.com/9K1m3vU.jpeg" alt="鳳翔館平安時代模型"></div>
+            <div class="img-box"><img src="IMG_1203.jpeg" alt="宇治平等院1" onerror="this.onerror=null;this.src='IMG_1203.PNG';"></div>
+            <div class="img-box"><img src="IMG_1204.jpeg" alt="宇治平等院2" onerror="this.onerror=null;this.src='IMG_1204.PNG';"></div>
           </div>
           <a href="https://maps.app.goo.gl/xqtWvrWzdKthJwB59?g_st=ic" class="map-btn" target="_blank">📍 開啟平等院地圖</a>
         </div>
@@ -336,7 +333,7 @@
           <div class="info-label">方案 2：爸媽留在京都飯店漫遊</div>
           <div class="info-value">爸媽於京都八條都飯店周邊輕鬆逛街，下午再搭乘 Haruka 前往機場搭機。</div>
         </div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-color);">
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
         <span class="badge">回程航班時間</span>
         <div class="info-value">國泰 CX565 (KIX 16:15 ➔ 18:30 TPE)</div>
         <div class="info-value">長榮 BR147 (KIX 20:20 ➔ 22:55 KHH)</div>
