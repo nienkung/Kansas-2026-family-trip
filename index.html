@@ -173,21 +173,30 @@
       box-shadow: 0 2px 4px rgba(0, 168, 150, 0.2);
     }
 
-    /* Tab 2 預付表格 */
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
-    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: #E6FFFA; }
-    td { font-weight: 600; }
-    .highlight-box {
-      background: #FFF5F5;
-      border-left: 4px solid var(--danger);
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      font-size: 13px;
-      color: #9B2C2C;
-      font-weight: 700;
-    }
+   <!-- ==================== TAB 2：預付預算 ==================== -->
+    <div id="tab-prepaid" class="tab-content">
+      <div class="card open">
+        <div class="card-header">
+          <div>
+            <div class="card-title">💳 行程出發前預付明細</div>
+            <div class="card-subtitle">總計預付：TWD $181,384 (由錢粘先行墊付)</div>
+          </div>
+        </div>
+        <div class="card-content" style="display:block;">
+          <table>
+            <tr><th>預付項目</th><th>明細與房型說明</th><th>金額 (TWD)</th></tr>
+            <tr><td>機票 (長榮+國泰)</td><td>高雄往返2人 / 桃園往返2人</td><td>$80,601</td></tr>
+            <tr><td>天王寺都城市飯店</td><td>11/19–11/21 (2房,無早餐)</td><td>$20,876</td></tr>
+            <tr><td>天橋立飯店</td><td>11/21–11/22 (2房,含早晚餐)</td><td>$38,532</td></tr>
+            <tr><td>京都八條都飯店</td><td>11/22–11/24 (2房,無早餐)</td><td>$40,336</td></tr>
+            <tr><td>SoftBank 5G eSIM</td><td>3張 (錢粘、蝦、媽媽)</td><td>$1,039</td></tr>
+          </table>
+          <div style="margin-top: 14px; font-size: 13px; color: var(--sub-color); font-weight: 700;">
+            💡 預付分攤說明：eSIM 由錢粘、蝦、媽媽 3 人均分；機票與飯店之爸的份額由錢粘全額墊付負擔。
+          </div>
+        </div>
+      </div>
+    </div>
 
     /* Tab 3 記帳輸入與列表 */
     .form-group { margin-bottom: 12px; }
@@ -820,10 +829,21 @@
       container.innerHTML = html;
     }
 
-    // 渲染 Tab 4 結算拆帳
+   // 渲染 Tab 4 結算拆帳
     function renderSettlement() {
+      // 出發前預付拆分邏輯：
+      // 1. eSIM ($1,039) 由錢粘、蝦、媽媽 3 人均分 ($346.33/人)
+      // 2. 其餘預付 ($180,345) 4 人均分 ($45,086.25/人)，但爸的份額由錢粘墊付負擔
+      const esimShare = 1039 / 3;
+      const baseShare = 180345 / 4;
+
       let paidTWD = { '錢粘': PREPAID_TOTAL, '蝦': 0, '爸': 0, '媽': 0 };
-      let owedTWD = { '錢粘': PREPAID_TOTAL / 4, '蝦': PREPAID_TOTAL / 4, '爸': PREPAID_TOTAL / 4, '媽': PREPAID_TOTAL / 4 };
+      let owedTWD = {
+        '錢粘': esimShare + (baseShare * 2), // 自己與爸的份額
+        '蝦': esimShare + baseShare,
+        '媽': esimShare + baseShare,
+        '爸': 0 // 由錢粘全額墊付負擔
+      };
 
       let fieldTotalJPY = 0;
 
@@ -853,7 +873,7 @@
 
       document.getElementById('totalGroupExpense').innerText = `TWD $${Math.round(totalTWD).toLocaleString()}`;
       document.getElementById('totalGroupExpenseJPY').innerText = `現場支出 JPY ¥${fieldTotalJPY.toLocaleString()} + 預付 TWD $${PREPAID_TOTAL.toLocaleString()}`;
-      document.getElementById('perPersonShare').innerText = `每人平均應負擔：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
+      document.getElementById('perPersonShare').innerText = `全團人均參考：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
 
       // 渲染成員結算卡片
       let memberHtml = '';
