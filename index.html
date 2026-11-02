@@ -8,7 +8,7 @@
   <!-- Firebase SDK (v10 Modular via CDN) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAXbvtIH6HsWb0jduDabO9Qz8-UZkY0jOA",
@@ -29,6 +29,7 @@
     window.dbOnValue = onValue;
     window.dbRemove = remove;
     window.dbUpdate = update;
+    window.dbGet = get;
   </script>
 
   <style>
@@ -66,7 +67,7 @@
     .header h1 { font-size: 20px; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
     .header p { font-size: 12px; color: var(--sub-color); font-weight: 600; margin-top: 1px; }
 
-    /* 4-Tab 頁籤 Navigation */
+    /* 3-Tab 頁籤 Navigation */
     .tab-bar {
       display: flex;
       background: var(--card-bg);
@@ -78,9 +79,9 @@
     }
     .tab-btn {
       flex: 1;
-      padding: 8px 4px;
-      font-size: 13px;
-      font-weight: 700;
+      padding: 9px 4px;
+      font-size: 14px;
+      font-weight: 800;
       color: var(--sub-color);
       background: transparent;
       border: none;
@@ -173,11 +174,6 @@
       box-shadow: 0 2px 4px rgba(0, 168, 150, 0.2);
     }
 
-    /* Tab 2 預付表格 */
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
-    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: #E6FFFA; }
-    td { font-weight: 600; }
     .highlight-box {
       background: #FFF5F5;
       border-left: 4px solid var(--danger);
@@ -189,7 +185,7 @@
       font-weight: 700;
     }
 
-    /* Tab 3 記帳輸入與列表 */
+    /* Tab 2 記帳輸入與列表 */
     .form-group { margin-bottom: 12px; }
     .form-label { font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 4px; display: block; }
     .form-control {
@@ -254,7 +250,7 @@
       cursor: pointer;
     }
 
-    /* Tab 4 結算拆帳區 */
+    /* Tab 3 結算拆帳區 */
     .settle-summary {
       background: #FFF;
       border: 2px solid var(--tiffany-main);
@@ -308,11 +304,10 @@
     </div>
     <p>2026/11/19 – 11/24 (6天5夜) 行程與拆帳網頁</p>
 
-    <!-- 4 Tabs 按鈕 -->
+    <!-- 3 Tabs 按鈕 (已整合 D0 預付至記帳頁) -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('itinerary')">📍行程規劃</button>
-      <button class="tab-btn" onclick="switchTab('prepaid')">💳預付預算</button>
-      <button class="tab-btn" onclick="switchTab('expense')">📝每日記帳</button>
+      <button class="tab-btn" onclick="switchTab('expense')">📝旅程記帳</button>
       <button class="tab-btn" onclick="switchTab('settlement')">⚖️結算拆帳</button>
     </div>
   </div>
@@ -586,32 +581,7 @@
       </div>
     </div>
 
-    <!-- ==================== TAB 2：預付預算 ==================== -->
-    <div id="tab-prepaid" class="tab-content">
-      <div class="card open">
-        <div class="card-header">
-          <div>
-            <div class="card-title">💳 行程出發前預付明細</div>
-            <div class="card-subtitle">總計預付：TWD $181,384 (由錢粘先行墊付)</div>
-          </div>
-        </div>
-        <div class="card-content" style="display:block;">
-          <table>
-            <tr><th>預付項目</th><th>明細與房型說明</th><th>金額 (TWD)</th></tr>
-            <tr><td>機票 (長榮+國泰)</td><td>高雄往返2人 / 桃園往返2人</td><td>$80,601</td></tr>
-            <tr><td>天王寺都城市飯店</td><td>11/19–11/21 (2房,無早餐)</td><td>$20,876</td></tr>
-            <tr><td>天橋立飯店</td><td>11/21–11/22 (2房,含早晚餐)</td><td>$38,532</td></tr>
-            <tr><td>京都八條都飯店</td><td>11/22–11/24 (2房,無早餐)</td><td>$40,336</td></tr>
-            <tr><td>SoftBank 5G eSIM</td><td>3張 (錢粘、蝦、媽媽)</td><td>$1,039</td></tr>
-          </table>
-          <div style="margin-top: 14px; font-size: 13px; color: var(--sub-color); font-weight: 700;">
-            💡 預付分攤說明：eSIM 由錢粘、蝦、媽媽 3 人均分；機票與飯店之爸的份額由錢粘全額墊付負擔。
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== TAB 3：每日記帳 ==================== -->
+    <!-- ==================== TAB 2：旅程記帳 (包含 D0 預付) ==================== -->
     <div id="tab-expense" class="tab-content">
       <!-- 新增記帳表單卡片 -->
       <div class="card open">
@@ -623,7 +593,8 @@
             <div class="form-group">
               <label class="form-label">選擇天數</label>
               <select id="expDay" class="form-control">
-                <option value="D1">Day 1 (11/19 週四)</option>
+                <option value="D0">D0 (出發前預付項目)</option>
+                <option value="D1" selected>Day 1 (11/19 週四)</option>
                 <option value="D2">Day 2 (11/20 週五)</option>
                 <option value="D3">Day 3 (11/21 週六)</option>
                 <option value="D4">Day 4 (11/22 週日)</option>
@@ -636,8 +607,15 @@
               <input type="text" id="expItem" class="form-control" placeholder="例如：伊根舟屋咖啡" required>
             </div>
             <div class="form-group">
-              <label class="form-label">日幣金額 (JPY)</label>
+              <label class="form-label">金額 (日幣 JPY 或 台幣 TWD)</label>
               <input type="number" id="expAmount" class="form-control" placeholder="例如：3500" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">幣別</label>
+              <select id="expCurrency" class="form-control">
+                <option value="JPY" selected>日幣 (JPY)</option>
+                <option value="TWD">台幣 (TWD)</option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">付款方式</label>
@@ -673,12 +651,11 @@
       <div id="expenseDayList"></div>
     </div>
 
-    <!-- ==================== TAB 4：結算拆帳 ==================== -->
+    <!-- ==================== TAB 3：結算拆帳 ==================== -->
     <div id="tab-settlement" class="tab-content">
       <div class="settle-summary">
         <div class="settle-summary-title">全團總支出 (預付 + 現場折算)</div>
         <div class="settle-summary-val" id="totalGroupExpense">TWD $0</div>
-        <div style="font-size: 13px; color: var(--tiffany-main); font-weight: 700;" id="totalGroupExpenseJPY">JPY ¥0</div>
         <div style="font-size: 13px; color: var(--sub-color); margin-top: 4px; font-weight: 600;" id="perPersonShare">全團人均參考：TWD $0</div>
       </div>
 
@@ -705,6 +682,7 @@
         <div class="form-group">
           <label class="form-label">選擇天數</label>
           <select id="editExpDay" class="form-control">
+            <option value="D0">D0 (出發前預付項目)</option>
             <option value="D1">Day 1 (11/19 週四)</option>
             <option value="D2">Day 2 (11/20 週五)</option>
             <option value="D3">Day 3 (11/21 週六)</option>
@@ -718,8 +696,15 @@
           <input type="text" id="editExpItem" class="form-control" required>
         </div>
         <div class="form-group">
-          <label class="form-label">日幣金額 (JPY)</label>
+          <label class="form-label">金額</label>
           <input type="number" id="editExpAmount" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">幣別</label>
+          <select id="editExpCurrency" class="form-control">
+            <option value="JPY">日幣 (JPY)</option>
+            <option value="TWD">台幣 (TWD)</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">付款方式</label>
@@ -776,13 +761,19 @@
       });
     }
 
-    // 核心數據變數
     const FIXED_RATE = 0.2; // 固定匯率 0.2
-    const PREPAID_TOTAL = 181384; // 錢粘出發前預付 TWD
     const MEMBERS = ['錢粘', '蝦', '爸', '媽'];
     let rawExpenses = {};
 
-    // 讀取與儲存資料到 Firebase
+    // 出發前預付初始數據 (D0)
+    const PREPAID_INITIAL_ITEMS = [
+      { day: 'D0', item: '機票 (長榮+國泰)', amount: 80601, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'] },
+      { day: 'D0', item: '天王寺都城市飯店', amount: 20876, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'] },
+      { day: 'D0', item: '天橋立飯店', amount: 38532, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'] },
+      { day: 'D0', item: '京都八條都飯店', amount: 40336, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'] },
+      { day: 'D0', item: 'SoftBank 5G eSIM', amount: 1039, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '媽'] }
+    ];
+
     window.addEventListener('DOMContentLoaded', () => {
       const timer = setInterval(() => {
         if (window.db && window.dbRef && window.dbOnValue) {
@@ -794,6 +785,18 @@
 
     function initFirebaseSync() {
       const expensesRef = window.dbRef(window.db, 'expenses');
+
+      // 檢查是否已有 D0 預付資料，若無則自動寫入
+      window.dbGet(expensesRef).then((snapshot) => {
+        const val = snapshot.val();
+        if (!val) {
+          PREPAID_INITIAL_ITEMS.forEach(item => {
+            window.dbPush(expensesRef, { ...item, timestamp: Date.now() });
+          });
+        }
+      });
+
+      // 監聽 Firebase 資料庫變化
       window.dbOnValue(expensesRef, (snapshot) => {
         rawExpenses = snapshot.val() || {};
         renderExpenses();
@@ -807,6 +810,7 @@
       const day = document.getElementById('expDay').value;
       const item = document.getElementById('expItem').value.trim();
       const amount = parseFloat(document.getElementById('expAmount').value);
+      const currency = document.getElementById('expCurrency').value;
       const payment = document.getElementById('expPayment').value;
       const payer = document.getElementById('expPayer').value;
       
@@ -819,7 +823,7 @@
       }
 
       const newExpense = {
-        day, item, amountJPY: amount, payment, payer, splitMembers, timestamp: Date.now()
+        day, item, amount, currency, payment, payer, splitMembers, timestamp: Date.now()
       };
 
       const expensesRef = window.dbRef(window.db, 'expenses');
@@ -845,7 +849,8 @@
       document.getElementById('editExpId').value = id;
       document.getElementById('editExpDay').value = data.day || 'D1';
       document.getElementById('editExpItem').value = data.item || '';
-      document.getElementById('editExpAmount').value = data.amountJPY || 0;
+      document.getElementById('editExpAmount').value = data.amount || 0;
+      document.getElementById('editExpCurrency').value = data.currency || (data.amountJPY ? 'JPY' : 'TWD');
       document.getElementById('editExpPayment').value = data.payment || '信用卡';
       document.getElementById('editExpPayer').value = data.payer || '錢粘';
 
@@ -869,6 +874,7 @@
       const day = document.getElementById('editExpDay').value;
       const item = document.getElementById('editExpItem').value.trim();
       const amount = parseFloat(document.getElementById('editExpAmount').value);
+      const currency = document.getElementById('editExpCurrency').value;
       const payment = document.getElementById('editExpPayment').value;
       const payer = document.getElementById('editExpPayer').value;
 
@@ -881,7 +887,7 @@
       }
 
       const updatedData = {
-        day, item, amountJPY: amount, payment, payer, splitMembers
+        day, item, amount, currency, payment, payer, splitMembers
       };
 
       const itemRef = window.dbRef(window.db, 'expenses/' + id);
@@ -890,41 +896,51 @@
       });
     }
 
-    // 渲染 Tab 3 記帳明細
+    // 渲染 Tab 2 記帳明細
     function renderExpenses() {
       const container = document.getElementById('expenseDayList');
-      const days = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
-      const dayNames = { D1: 'Day 1', D2: 'Day 2', D3: 'Day 3', D4: 'Day 4', D5: 'Day 5', D6: 'Day 6' };
+      const days = ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
+      const dayNames = { D0: 'D0 (出發前預付)', D1: 'Day 1', D2: 'Day 2', D3: 'Day 3', D4: 'Day 4', D5: 'Day 5', D6: 'Day 6' };
 
       let html = '';
       days.forEach(day => {
         const items = Object.entries(rawExpenses).filter(([id, data]) => data.day === day);
-        const dayTotalJPY = items.reduce((sum, [id, data]) => sum + (data.amountJPY || 0), 0);
+        
+        let dayTotalTWD = 0;
+        items.forEach(([id, data]) => {
+          const amt = data.amount || data.amountJPY || 0;
+          const curr = data.currency || 'JPY';
+          dayTotalTWD += (curr === 'JPY' ? amt * FIXED_RATE : amt);
+        });
 
         html += `
           <div class="card ${items.length > 0 ? 'open' : ''}">
             <div class="card-header" onclick="toggleCard(this)">
               <div>
-                <div class="card-title">${dayNames[day]} 記帳明細</div>
-                <div class="card-subtitle">當日小計：¥${dayTotalJPY.toLocaleString()} JPY (約 TWD $${Math.round(dayTotalJPY * FIXED_RATE).toLocaleString()})</div>
+                <div class="card-title">${dayNames[day]} 明細</div>
+                <div class="card-subtitle">當日小計：約 TWD $${Math.round(dayTotalTWD).toLocaleString()}</div>
               </div>
               <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
             </div>
             <div class="card-content">
-              ${items.length === 0 ? '<div style="font-size:13px; color:var(--sub-color); font-weight:600;">尚無記帳紀錄</div>' : ''}
-              ${items.map(([id, data]) => `
-                <div class="expense-item">
-                  <div class="expense-info">
-                    <div class="expense-title">${data.item}</div>
-                    <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
+              ${items.length === 0 ? '<div style="font-size:13px; color:var(--sub-color); font-weight:600;">尚無紀錄</div>' : ''}
+              ${items.map(([id, data]) => {
+                const amt = data.amount || data.amountJPY || 0;
+                const curr = data.currency || 'JPY';
+                return `
+                  <div class="expense-item">
+                    <div class="expense-info">
+                      <div class="expense-title">${data.item}</div>
+                      <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <div class="expense-amount">${curr === 'JPY' ? '¥' : '$'}${amt.toLocaleString()} ${curr}</div>
+                      <button class="btn-delete" style="background:#E6FFFA; color:var(--tiffany-main); border-color:var(--tiffany-border);" onclick="openEditModal('${id}')">修改</button>
+                      <button class="btn-delete" onclick="deleteExpense('${id}')">刪除</button>
+                    </div>
                   </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <div class="expense-amount">¥${data.amountJPY.toLocaleString()}</div>
-                    <button class="btn-delete" style="background:#E6FFFA; color:var(--tiffany-main); border-color:var(--tiffany-border);" onclick="openEditModal('${id}')">修改</button>
-                    <button class="btn-delete" onclick="deleteExpense('${id}')">刪除</button>
-                  </div>
-                </div>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
           </div>
         `;
@@ -933,33 +949,25 @@
       container.innerHTML = html;
     }
 
-    // 渲染 Tab 4 結算拆帳
+    // 渲染 Tab 3 結算拆帳
     function renderSettlement() {
-      // 出發前預付拆分邏輯：
-      // 1. eSIM ($1,039) 由錢粘、蝦、媽媽 3 人均分 ($346.33/人)
-      // 2. 其餘預付 ($180,345) 4 人均分 ($45,086.25/人)，但爸的份額由錢粘墊付負擔
-      const esimShare = 1039 / 3;
-      const baseShare = 180345 / 4;
-
-      let paidTWD = { '錢粘': PREPAID_TOTAL, '蝦': 0, '爸': 0, '媽': 0 };
-      let owedTWD = {
-        '錢粘': esimShare + (baseShare * 2), // 自己與爸的份額
-        '蝦': esimShare + baseShare,
-        '媽': esimShare + baseShare,
-        '爸': 0 // 由錢粘全額墊付負擔
-      };
-
-      let fieldTotalJPY = 0;
+      let paidTWD = { '錢粘': 0, '蝦': 0, '爸': 0, '媽': 0 };
+      let owedTWD = { '錢粘': 0, '蝦': 0, '爸': 0, '媽': 0 };
+      let totalGroupTWD = 0;
 
       Object.values(rawExpenses).forEach(item => {
-        const jpy = item.amountJPY || 0;
-        const twd = jpy * FIXED_RATE;
-        fieldTotalJPY += jpy;
+        const amt = item.amount || item.amountJPY || 0;
+        const curr = item.currency || 'JPY';
+        const twd = (curr === 'JPY' ? amt * FIXED_RATE : amt);
 
+        totalGroupTWD += twd;
+
+        // 支付者加上實付
         if (paidTWD[item.payer] !== undefined) {
           paidTWD[item.payer] += twd;
         }
 
+        // 分攤者加上應付
         if (item.splitMembers && item.splitMembers.length > 0) {
           const shareTWD = twd / item.splitMembers.length;
           item.splitMembers.forEach(m => {
@@ -970,11 +978,9 @@
         }
       });
 
-      const totalTWD = PREPAID_TOTAL + (fieldTotalJPY * FIXED_RATE);
-      const perPersonTWD = totalTWD / 4;
+      const perPersonTWD = totalGroupTWD / 4;
 
-      document.getElementById('totalGroupExpense').innerText = `TWD $${Math.round(totalTWD).toLocaleString()}`;
-      document.getElementById('totalGroupExpenseJPY').innerText = `現場支出 JPY ¥${fieldTotalJPY.toLocaleString()} + 預付 TWD $${PREPAID_TOTAL.toLocaleString()}`;
+      document.getElementById('totalGroupExpense').innerText = `TWD $${Math.round(totalGroupTWD).toLocaleString()}`;
       document.getElementById('perPersonShare').innerText = `全團人均參考：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
 
       let memberHtml = '';
@@ -987,7 +993,7 @@
         memberHtml += `
           <div class="member-settle-card">
             <div class="member-name">${m}</div>
-            <div class="member-row"><span>實際掏出 (含預付/代墊):</span><span>TWD $${Math.round(paidTWD[m]).toLocaleString()}</span></div>
+            <div class="member-row"><span>實際掏出 (包含代墊):</span><span>TWD $${Math.round(paidTWD[m]).toLocaleString()}</span></div>
             <div class="member-row"><span>應分攤總額:</span><span>TWD $${Math.round(owedTWD[m]).toLocaleString()}</span></div>
             <div class="member-status">
               <span>結算狀態:</span>
