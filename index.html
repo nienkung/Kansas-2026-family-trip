@@ -173,30 +173,21 @@
       box-shadow: 0 2px 4px rgba(0, 168, 150, 0.2);
     }
 
-   <!-- ==================== TAB 2：預付預算 ==================== -->
-    <div id="tab-prepaid" class="tab-content">
-      <div class="card open">
-        <div class="card-header">
-          <div>
-            <div class="card-title">💳 行程出發前預付明細</div>
-            <div class="card-subtitle">總計預付：TWD $181,384 (由錢粘先行墊付)</div>
-          </div>
-        </div>
-        <div class="card-content" style="display:block;">
-          <table>
-            <tr><th>預付項目</th><th>明細與房型說明</th><th>金額 (TWD)</th></tr>
-            <tr><td>機票 (長榮+國泰)</td><td>高雄往返2人 / 桃園往返2人</td><td>$80,601</td></tr>
-            <tr><td>天王寺都城市飯店</td><td>11/19–11/21 (2房,無早餐)</td><td>$20,876</td></tr>
-            <tr><td>天橋立飯店</td><td>11/21–11/22 (2房,含早晚餐)</td><td>$38,532</td></tr>
-            <tr><td>京都八條都飯店</td><td>11/22–11/24 (2房,無早餐)</td><td>$40,336</td></tr>
-            <tr><td>SoftBank 5G eSIM</td><td>3張 (錢粘、蝦、媽媽)</td><td>$1,039</td></tr>
-          </table>
-          <div style="margin-top: 14px; font-size: 13px; color: var(--sub-color); font-weight: 700;">
-            💡 預付分攤說明：eSIM 由錢粘、蝦、媽媽 3 人均分；機票與飯店之爸的份額由錢粘全額墊付負擔。
-          </div>
-        </div>
-      </div>
-    </div>
+    /* Tab 2 預付表格 */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
+    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: #E6FFFA; }
+    td { font-weight: 600; }
+    .highlight-box {
+      background: #FFF5F5;
+      border-left: 4px solid var(--danger);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #9B2C2C;
+      font-weight: 700;
+    }
 
     /* Tab 3 記帳輸入與列表 */
     .form-group { margin-bottom: 12px; }
@@ -260,7 +251,6 @@
       border-radius: 6px;
       font-size: 12px;
       font-weight: 700;
-      margin-left: 10px;
       cursor: pointer;
     }
 
@@ -615,7 +605,7 @@
             <tr><td>SoftBank 5G eSIM</td><td>3張 (錢粘、蝦、媽媽)</td><td>$1,039</td></tr>
           </table>
           <div style="margin-top: 14px; font-size: 13px; color: var(--sub-color); font-weight: 700;">
-            註：此金額已自動納入【Tab 4 結算拆帳】中，由 4 位成員均分計算。
+            💡 預付分攤說明：eSIM 由錢粘、蝦、媽媽 3 人均分；機票與飯店之爸的份額由錢粘全額墊付負擔。
           </div>
         </div>
       </div>
@@ -689,7 +679,7 @@
         <div class="settle-summary-title">全團總支出 (預付 + 現場折算)</div>
         <div class="settle-summary-val" id="totalGroupExpense">TWD $0</div>
         <div style="font-size: 13px; color: var(--tiffany-main); font-weight: 700;" id="totalGroupExpenseJPY">JPY ¥0</div>
-        <div style="font-size: 13px; color: var(--sub-color); margin-top: 4px; font-weight: 600;" id="perPersonShare">每人平均應負擔：TWD $0</div>
+        <div style="font-size: 13px; color: var(--sub-color); margin-top: 4px; font-weight: 600;" id="perPersonShare">全團人均參考：TWD $0</div>
       </div>
 
       <div style="font-size: 15px; font-weight: 800; color: var(--primary-color); margin-bottom: 10px;">👥 成員個人結算</div>
@@ -701,6 +691,67 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- 編輯記帳彈窗 Modal -->
+  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; padding:16px;">
+    <div style="background:#FFF; width:100%; max-width:500px; border-radius:18px; padding:20px; border:2px solid var(--tiffany-main); max-height:90vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="font-size:18px; font-weight:800; color:var(--primary-color);">✏️ 修改記帳內容</h3>
+        <button onclick="closeEditModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-color); cursor:pointer;">✕</button>
+      </div>
+      <form id="editForm" onsubmit="updateExpense(event)">
+        <input type="hidden" id="editExpId">
+        <div class="form-group">
+          <label class="form-label">選擇天數</label>
+          <select id="editExpDay" class="form-control">
+            <option value="D1">Day 1 (11/19 週四)</option>
+            <option value="D2">Day 2 (11/20 週五)</option>
+            <option value="D3">Day 3 (11/21 週六)</option>
+            <option value="D4">Day 4 (11/22 週日)</option>
+            <option value="D5">Day 5 (11/23 週一)</option>
+            <option value="D6">Day 6 (11/24 週二)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">消費品名</label>
+          <input type="text" id="editExpItem" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">日幣金額 (JPY)</label>
+          <input type="number" id="editExpAmount" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">付款方式</label>
+          <select id="editExpPayment" class="form-control">
+            <option value="信用卡">💳 信用卡</option>
+            <option value="現金">💴 現金</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">付款人</label>
+          <select id="editExpPayer" class="form-control">
+            <option value="錢粘">錢粘</option>
+            <option value="蝦">蝦</option>
+            <option value="爸">爸</option>
+            <option value="媽">媽</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">分攤對象 (可複選)</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label"><input type="checkbox" name="editSplitMember" value="錢粘"> 錢粘</label>
+            <label class="checkbox-label"><input type="checkbox" name="editSplitMember" value="蝦"> 蝦</label>
+            <label class="checkbox-label"><input type="checkbox" name="editSplitMember" value="爸"> 爸</label>
+            <label class="checkbox-label"><input type="checkbox" name="editSplitMember" value="媽"> 媽</label>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:14px;">
+          <button type="submit" class="btn-submit" style="flex:1;">儲存修改</button>
+          <button type="button" class="btn-submit" style="flex:1; background:var(--sub-color);" onclick="closeEditModal()">取消</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -733,7 +784,6 @@
 
     // 讀取與儲存資料到 Firebase
     window.addEventListener('DOMContentLoaded', () => {
-      // 輪詢確認 Firebase 初始化完成
       const timer = setInterval(() => {
         if (window.db && window.dbRef && window.dbOnValue) {
           clearInterval(timer);
@@ -787,6 +837,59 @@
       }
     }
 
+    // 打開編輯彈窗
+    function openEditModal(id) {
+      const data = rawExpenses[id];
+      if (!data) return;
+
+      document.getElementById('editExpId').value = id;
+      document.getElementById('editExpDay').value = data.day || 'D1';
+      document.getElementById('editExpItem').value = data.item || '';
+      document.getElementById('editExpAmount').value = data.amountJPY || 0;
+      document.getElementById('editExpPayment').value = data.payment || '信用卡';
+      document.getElementById('editExpPayer').value = data.payer || '錢粘';
+
+      const splitMembers = data.splitMembers || [];
+      document.querySelectorAll('input[name="editSplitMember"]').forEach(cb => {
+        cb.checked = splitMembers.includes(cb.value);
+      });
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    // 關閉編輯彈窗
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    // 儲存修改至 Firebase
+    function updateExpense(e) {
+      e.preventDefault();
+      const id = document.getElementById('editExpId').value;
+      const day = document.getElementById('editExpDay').value;
+      const item = document.getElementById('editExpItem').value.trim();
+      const amount = parseFloat(document.getElementById('editExpAmount').value);
+      const payment = document.getElementById('editExpPayment').value;
+      const payer = document.getElementById('editExpPayer').value;
+
+      const splitCheckboxes = document.querySelectorAll('input[name="editSplitMember"]:checked');
+      const splitMembers = Array.from(splitCheckboxes).map(cb => cb.value);
+
+      if (!item || isNaN(amount) || amount <= 0 || splitMembers.length === 0) {
+        alert('請填寫完整的品名、金額與至少一位分攤成員！');
+        return;
+      }
+
+      const updatedData = {
+        day, item, amountJPY: amount, payment, payer, splitMembers
+      };
+
+      const itemRef = window.dbRef(window.db, 'expenses/' + id);
+      window.dbUpdate(itemRef, updatedData).then(() => {
+        closeEditModal();
+      });
+    }
+
     // 渲染 Tab 3 記帳明細
     function renderExpenses() {
       const container = document.getElementById('expenseDayList');
@@ -813,10 +916,11 @@
                 <div class="expense-item">
                   <div class="expense-info">
                     <div class="expense-title">${data.item}</div>
-                    <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers.join(', ')}</div>
+                    <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
                   </div>
-                  <div style="display:flex; align-items:center;">
+                  <div style="display:flex; align-items:center; gap:6px;">
                     <div class="expense-amount">¥${data.amountJPY.toLocaleString()}</div>
+                    <button class="btn-delete" style="background:#E6FFFA; color:var(--tiffany-main); border-color:var(--tiffany-border);" onclick="openEditModal('${id}')">修改</button>
                     <button class="btn-delete" onclick="deleteExpense('${id}')">刪除</button>
                   </div>
                 </div>
@@ -829,7 +933,7 @@
       container.innerHTML = html;
     }
 
-   // 渲染 Tab 4 結算拆帳
+    // 渲染 Tab 4 結算拆帳
     function renderSettlement() {
       // 出發前預付拆分邏輯：
       // 1. eSIM ($1,039) 由錢粘、蝦、媽媽 3 人均分 ($346.33/人)
@@ -852,12 +956,10 @@
         const twd = jpy * FIXED_RATE;
         fieldTotalJPY += jpy;
 
-        // 支付者加上實付
         if (paidTWD[item.payer] !== undefined) {
           paidTWD[item.payer] += twd;
         }
 
-        // 分攤者加上應付
         if (item.splitMembers && item.splitMembers.length > 0) {
           const shareTWD = twd / item.splitMembers.length;
           item.splitMembers.forEach(m => {
@@ -875,7 +977,6 @@
       document.getElementById('totalGroupExpenseJPY').innerText = `現場支出 JPY ¥${fieldTotalJPY.toLocaleString()} + 預付 TWD $${PREPAID_TOTAL.toLocaleString()}`;
       document.getElementById('perPersonShare').innerText = `全團人均參考：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
 
-      // 渲染成員結算卡片
       let memberHtml = '';
       let balances = {};
 
@@ -899,14 +1000,13 @@
       });
       document.getElementById('memberSettleList').innerHTML = memberHtml;
 
-      // 計算最簡找補指引
       calculateTransfers(balances);
     }
 
     // 簡化找補演算法
     function calculateTransfers(balances) {
-      let debtors = []; // 需給錢的人
-      let creditors = []; // 應拿錢的人
+      let debtors = [];
+      let creditors = [];
 
       Object.entries(balances).forEach(([name, amount]) => {
         const rounded = Math.round(amount);
