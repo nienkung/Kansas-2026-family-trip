@@ -4,16 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>2026 日本關西家族之旅</title>
+  
+  <!-- Firebase SDK (v10 Modular via CDN) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXbvtIH6HsWb0jduDabO9Qz8-UZkY0jOA",
+      authDomain: "kansai-family-trip-2026.firebaseapp.com",
+      databaseURL: "https://kansai-family-trip-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "kansai-family-trip-2026",
+      storageBucket: "kansai-family-trip-2026.firebasestorage.app",
+      messagingSenderId: "567305731001",
+      appId: "1:567305731001:web:6d6f70d3294595a65c1468",
+      measurementId: "G-ZKPNN1TE2S"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.db = db;
+    window.dbRef = ref;
+    window.dbPush = push;
+    window.dbOnValue = onValue;
+    window.dbRemove = remove;
+    window.dbUpdate = update;
+  </script>
+
   <style>
     :root {
-      --bg-color: #E6FFFA; /* 典雅 Tiffany 淺綠清爽底色 */
+      --bg-color: #E6FFFA;
       --card-bg: #FFFFFF;
-      --primary-color: #0F3D3E; /* 深綠墨字，高對比大字體 */
-      --tiffany-main: #00A896; /* 主色 Tiffany Blue */
+      --primary-color: #0F3D3E;
+      --tiffany-main: #00A896;
       --tiffany-light: #F0FDF4;
       --tiffany-border: #B2F5EA;
       --sub-color: #4A5568;
       --shadow: 0 4px 16px rgba(0, 168, 150, 0.1);
+      --danger: #E53E3E;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
@@ -21,8 +49,10 @@
       background-color: var(--bg-color);
       color: var(--primary-color);
       line-height: 1.6;
-      padding-bottom: 50px;
+      padding-bottom: 70px;
     }
+
+    /* 頁首 header */
     .header {
       position: sticky;
       top: 0;
@@ -30,27 +60,47 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       z-index: 100;
-      padding: 18px 20px 14px;
+      padding: 14px 16px 10px;
       border-bottom: 1px solid var(--tiffany-border);
     }
-    .header h1 { font-size: 22px; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
-    .header p { font-size: 13px; color: var(--sub-color); margin-top: 2px; font-weight: 600; }
-    .nav-bar { display: flex; gap: 10px; margin-top: 12px; }
-    .btn-action {
-      flex: 1;
+    .header h1 { font-size: 20px; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
+    .header p { font-size: 12px; color: var(--sub-color); font-weight: 600; margin-top: 1px; }
+
+    /* 4-Tab 頁籤 Navigation */
+    .tab-bar {
+      display: flex;
       background: var(--card-bg);
-      border: 1.5px solid var(--tiffany-main);
-      padding: 8px 16px;
-      border-radius: 20px;
+      border-radius: 14px;
+      padding: 4px;
+      margin-top: 10px;
+      border: 1px solid var(--tiffany-border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 8px 4px;
       font-size: 13px;
       font-weight: 700;
-      color: var(--tiffany-main);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      color: var(--sub-color);
+      background: transparent;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
       text-align: center;
+      transition: all 0.2s ease;
     }
-    .btn-action.active { background: var(--tiffany-main); color: #fff; }
+    .tab-btn.active {
+      background: var(--tiffany-main);
+      color: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 168, 150, 0.3);
+    }
+
+    /* 內容容器 Container */
     .container { padding: 16px; max-width: 600px; margin: 0 auto; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* 通用卡片外觀 */
     .card {
       background: var(--card-bg);
       border-radius: 18px;
@@ -58,10 +108,9 @@
       border: 1.5px solid var(--tiffany-border);
       box-shadow: var(--shadow);
       overflow: hidden;
-      transition: all 0.3s ease;
     }
     .card-header {
-      padding: 18px;
+      padding: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -69,41 +118,40 @@
       user-select: none;
       background: #FFFFFF;
     }
-    .card-title { font-size: 18px; font-weight: 800; color: var(--primary-color); line-height: 1.3; }
-    .card-subtitle { font-size: 13px; color: var(--tiffany-main); font-weight: 700; margin-top: 4px; }
+    .card-title { font-size: 17px; font-weight: 800; color: var(--primary-color); }
+    .card-subtitle { font-size: 13px; color: var(--tiffany-main); font-weight: 700; margin-top: 2px; }
     .chevron {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       transition: transform 0.3s ease;
       stroke: var(--tiffany-main);
       flex-shrink: 0;
-      margin-left: 10px;
+      margin-left: 8px;
     }
     .card.open .chevron { transform: rotate(180deg); }
     .card-content {
       display: none;
-      padding: 16px 18px 20px;
+      padding: 16px;
       border-top: 1px solid var(--tiffany-border);
       background: #FAFDFC;
     }
     .card.open .card-content { display: block; }
-    .info-group { margin-top: 14px; }
-    .info-label { font-size: 12px; color: var(--sub-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .info-value { font-size: 15px; font-weight: 600; color: var(--primary-color); margin-top: 3px; }
-    .highlight-box {
-      background: #FFF5F5;
-      border-left: 4px solid #E53E3E;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-top: 10px;
-      font-size: 14px;
-      color: #9B2C2C;
-      font-weight: 700;
+
+    /* Tab 1 行程獨立景點小卡 */
+    .spot-card {
+      background: #FFFFFF;
+      border: 1px solid var(--tiffany-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
-    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .spot-title { font-size: 16px; font-weight: 800; color: var(--primary-color); }
+    .spot-desc { font-size: 14px; color: var(--sub-color); font-weight: 600; margin-top: 6px; line-height: 1.5; }
+    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
     .img-box {
       width: 100%;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
       border: 1px solid var(--tiffany-border);
       background: var(--tiffany-light);
@@ -114,384 +162,760 @@
     .map-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: var(--tiffany-main);
       color: #fff;
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 2px 6px rgba(0, 168, 150, 0.25);
-    }
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
-    th, td { padding: 11px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
-    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: #E6FFFA; }
-    td { font-weight: 600; }
-    .badge {
-      display: inline-block;
-      padding: 3px 10px;
+      padding: 8px 12px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
-      background: #E6FFFA;
-      color: var(--tiffany-main);
-      border: 1px solid var(--tiffany-border);
-      margin-bottom: 6px;
+      text-decoration: none;
+      box-shadow: 0 2px 4px rgba(0, 168, 150, 0.2);
     }
+
+    /* Tab 2 預付表格 */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--tiffany-border); }
+    th { color: var(--primary-color); font-weight: 700; font-size: 12px; background: #E6FFFA; }
+    td { font-weight: 600; }
+    .highlight-box {
+      background: #FFF5F5;
+      border-left: 4px solid var(--danger);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #9B2C2C;
+      font-weight: 700;
+    }
+
+    /* Tab 3 記帳輸入與列表 */
+    .form-group { margin-bottom: 12px; }
+    .form-label { font-size: 13px; font-weight: 700; color: var(--primary-color); margin-bottom: 4px; display: block; }
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--tiffany-border);
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+      background: #FFF;
+    }
+    .form-control:focus { border-color: var(--tiffany-main); }
+    .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #E6FFFA;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--tiffany-border);
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--tiffany-main);
+      color: #FFF;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3);
+      margin-top: 6px;
+    }
+    .expense-item {
+      background: #FFF;
+      border: 1px solid var(--tiffany-border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .expense-info { flex: 1; }
+    .expense-title { font-size: 15px; font-weight: 800; color: var(--primary-color); }
+    .expense-meta { font-size: 12px; color: var(--sub-color); margin-top: 2px; font-weight: 600; }
+    .expense-amount { font-size: 16px; font-weight: 800; color: var(--tiffany-main); text-align: right; }
+    .btn-delete {
+      background: #FFF5F5;
+      color: var(--danger);
+      border: 1px solid #FEB2B2;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    /* Tab 4 結算拆帳區 */
+    .settle-summary {
+      background: #FFF;
+      border: 2px solid var(--tiffany-main);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .settle-summary-title { font-size: 14px; color: var(--sub-color); font-weight: 700; }
+    .settle-summary-val { font-size: 24px; font-weight: 900; color: var(--primary-color); margin: 4px 0; }
+    .member-settle-card {
+      background: #FFF;
+      border: 1.5px solid var(--tiffany-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .member-name { font-size: 16px; font-weight: 800; color: var(--primary-color); }
+    .member-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--sub-color); }
+    .member-status {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--tiffany-border);
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+    }
+    .text-plus { color: #2B6CB0; }
+    .text-minus { color: var(--danger); }
+    .transfer-guide {
+      background: var(--tiffany-light);
+      border: 1.5px dashed var(--tiffany-main);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+    .transfer-title { font-size: 15px; font-weight: 800; color: var(--primary-color); margin-bottom: 8px; }
+    .transfer-item { font-size: 14px; font-weight: 700; color: var(--tiffany-main); margin-top: 4px; }
+    .sync-status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #48BB78; margin-right: 4px; }
   </style>
 </head>
 <body>
 
+  <!-- 頂部頁首 -->
   <div class="header">
-    <h1>2026 關西家族之旅</h1>
-    <p>2026/11/19 – 11/24 (6天5夜) 行程總覽</p>
-    <div class="nav-bar">
-      <button class="btn-action active" onclick="toggleAll(true)">全部展開</button>
-      <button class="btn-action" onclick="toggleAll(false)">全部收合</button>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h1>2026 關西家族之旅</h1>
+      <span style="font-size: 11px; font-weight: 700; color: #48BB78; display: flex; align-items: center;"><span class="sync-status"></span>多機即時同步</span>
+    </div>
+    <p>2026/11/19 – 11/24 (6天5夜) 行程與拆帳網頁</p>
+
+    <!-- 4 Tabs 按鈕 -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('itinerary')">📍行程規劃</button>
+      <button class="tab-btn" onclick="switchTab('prepaid')">💳預付預算</button>
+      <button class="tab-btn" onclick="switchTab('expense')">📝每日記帳</button>
+      <button class="tab-btn" onclick="switchTab('settlement')">⚖️結算拆帳</button>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- 預算明細 -->
-    <div class="card open">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">💰 費用與預訂總覽</div>
-          <div class="card-subtitle">總計已預付：TWD 181,384</div>
-        </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+    <!-- ==================== TAB 1：行程規劃 ==================== -->
+    <div id="tab-itinerary" class="tab-content active">
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <button class="map-btn" style="flex:1; justify-content:center;" onclick="toggleAllCards(true)">全數展開</button>
+        <button class="map-btn" style="flex:1; justify-content:center; background:var(--sub-color);" onclick="toggleAllCards(false)">全數收合</button>
       </div>
-      <div class="card-content">
-        <table>
-          <tr><th>項目</th><th>細節說明</th><th>已付金額</th></tr>
-          <tr><td>長榮/國泰機票</td><td>高出2人 / 桃出2人</td><td>$80,601</td></tr>
-          <tr><td>天王寺都城市飯店</td><td>11/19–11/21 (2房,無早餐)</td><td>$20,876</td></tr>
-          <tr><td>天橋立飯店</td><td>11/21–11/22 (2房,含早晚餐)</td><td>$38,532</td></tr>
-          <tr><td>京都八條都飯店</td><td>11/22–11/24 (2房,無早餐)</td><td>$40,336</td></tr>
-          <tr><td>SoftBank 5G eSIM</td><td>3張（錢粘、蝦、媽媽，每日5G）</td><td>$1,039</td></tr>
-        </table>
-        <div class="info-group">
-          <div class="info-label">成員 (4人)</div>
-          <div class="info-value">KUNG CHENGLIEN (錢粘)、HSU MANNING (蝦)、KUNG JUIHUNG (爸)、CENG YINGHSUAN (媽)</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Day 1 -->
-    <div class="card">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">Day 1：11/19 (週四) 抵達大阪與購物散策</div>
-          <div class="card-subtitle">關空 Haruka 直達天王寺 + 阿倍野商圈</div>
-        </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
-      </div>
-      <div class="card-content">
-        <span class="badge">航班時間</span>
-        <div class="info-value">長榮 BR182 (KHH 07:05 ➔ 10:55 KIX)</div>
-        <div class="info-value">國泰 CX564 (TPE 11:15 ➔ 14:45 KIX)</div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <div class="info-group">
-          <div class="info-label">景點：天王寺阿倍野商圈</div>
-          <div class="info-value">結合熱門百貨與舒適步調非常適合全家大小輕鬆逛街購物</div>
-          <div class="info-value" style="font-size: 13px; color: var(--sub-color); margin-top: 4px;">漫步 Q's Mall 與 MIO 百貨公司，步調舒緩方便爸媽購物隨時休息。</div>
-        </div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <div class="info-group">
-          <div class="info-label">住宿：天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
-          <div class="info-value">直通天王寺車站與阿倍野商圈交通極為便利且房間寬敞舒適</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://voniblog.com/wp-content/uploads/2025/01/%E5%A4%A7%E9%98%AA%E5%A4%A9%E7%8E%8B%E5%AF%BA-%E9%83%BD%E5%9F%8E%E5%B8%82%E9%85%92%E5%BA%97-MIYAKO-HOTELS-RESORTS-02.jpg" alt="天王寺都城市飯店"></div>
-            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/03/01/1000x1000_ea1e9d427fb5664c32c517a73e421e58_a9da26447db85e021edcda47c1aa474566d6379e.jpg" alt="天王寺都城市飯店房型"></div>
+      <!-- D1 -->
+      <div class="card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div>
+            <div class="card-title">Day 1：11/19 (週四) 抵達大阪與購物散策</div>
+            <div class="card-subtitle">關空 Haruka 直達天王寺 + 阿倍野商圈散步</div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="card-content">
+          <div class="spot-card">
+            <div class="spot-title">✈️ 航班抵達資訊</div>
+            <div class="spot-desc">長榮 BR182 (高雄 KHH 07:05 ➔ 10:55 關空 KIX)<br>國泰 CX564 (桃園 TPE 11:15 ➔ 14:45 關空 KIX)</div>
+          </div>
+          <div class="spot-card">
+            <div class="spot-title">🛍️ 天王寺阿倍野商圈</div>
+            <div class="spot-desc">結合熱門百貨與舒適步調，漫步 Q's Mall 與 MIO 百貨公司，非常適合全家大小輕鬆逛街購物與隨時休息。</div>
+          </div>
+          <div class="spot-card">
+            <div class="spot-title">🏨 天王寺都城市飯店 (Miyako City Osaka Tennoji)</div>
+            <div class="spot-desc">直通天王寺車站與阿倍野商圈，交通極為便利，且房間寬敞舒適。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://voniblog.com/wp-content/uploads/2025/01/%E5%A4%A7%E9%98%AA%E5%A4%A9%E7%8E%8B%E5%AF%BA-%E9%83%BD%E5%9F%8E%E5%B8%82%E9%85%92%E5%BA%97-MIYAKO-HOTELS-RESORTS-02.jpg" alt="天王寺都城市飯店外觀"></div>
+              <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/03/01/1000x1000_ea1e9d427fb5664c32c517a73e421e58_a9da26447db85e021edcda47c1aa474566d6379e.jpg" alt="天王寺都城市飯店房型"></div>
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" class="map-btn" target="_blank">📍 開啟飯店 Google 地圖</a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Day 2 -->
-    <div class="card">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">Day 2：11/20 (週五) 奈良文化漫遊與麻婆豆腐美食</div>
-          <div class="card-subtitle">春日大社 + 奈良公園浮見堂 + 最大MUJI</div>
+      <!-- D2 -->
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div>
+            <div class="card-title">Day 2：11/20 (週五) 奈良文化漫遊與大阪麻婆豆腐</div>
+            <div class="card-subtitle">春日大社 + 浮見堂 + 世界最大無印良品</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
-      </div>
-      <div class="card-content">
-        <div class="info-group">
-          <div class="info-label">景點 1：春日大社</div>
-          <div class="info-value">古木參天的千古神社走入石燈籠陣感受莊嚴古樸的自然寧靜</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://imagedelivery.net/Ahwf2rDz3ZiXm1qkpDKg1w/live/-/media/1DF124B3165D45E69862D0C75CE925A3.jpg/w=1536,q=65,format=auto" alt="春日大社"></div>
+        <div class="card-content">
+          <div class="spot-card">
+            <div class="spot-title">⛩️ 春日大社</div>
+            <div class="spot-desc">古木參天的千古神社，走入石燈籠陣中，能深切感受莊嚴古樸的自然寧靜氣氛。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://imagedelivery.net/Ahwf2rDz3ZiXm1qkpDKg1w/live/-/media/1DF124B3165D45E69862D0C75CE925A3.jpg/w=1536,q=65,format=auto" alt="春日大社"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/9VxYxDV89vdRZNj8A?g_st=ic" class="map-btn" target="_blank">📍 春日大社地圖</a></div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/9VxYxDV89vdRZNj8A?g_st=ic" class="map-btn" target="_blank">📍 開啟春日大社地圖</a>
+          <div class="spot-card">
+            <div class="spot-title">🦌 奈良公園與浮見堂</div>
+            <div class="spot-desc">綠意盎然的公園裡，能近距離餵食可愛小鹿，並欣賞湖畔浮見堂倒影倒映於水面之美。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://assets.funliday.com/posts/wp-content/uploads/2024/08/23213330/306955644_462576185900232_8164762936253156203_n.jpg" alt="浮見堂"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/s8pEs1Fbe1vtTA1N7?g_st=ic" class="map-btn" target="_blank">📍 浮見堂地圖</a></div>
           </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">景點 2：奈良公園與浮見堂</div>
-          <div class="info-value">綠意盎然的公園裡能近距離餵食可愛小鹿與欣賞湖畔浮見堂</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://assets.funliday.com/posts/wp-content/uploads/2024/08/23213330/306955644_462576185900232_8164762936253156203_n.jpg" alt="奈良公園與浮見堂"></div>
+          <div class="spot-card">
+            <div class="spot-title">🛍️ 無印良品 離子モール橿原</div>
+            <div class="spot-desc">超大規格的世界最大級旗艦店，提供極為齊全的商品與舒適放鬆的逛街體驗。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://media.loom-app.com/roomie/dist/images/2025/03/shrkm250320_muji8.jpg?w=1200" alt="橿原無印良品"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/9Bp5W8kfTkfMqs6y6" class="map-btn" target="_blank">📍 橿原MUJI地圖</a></div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/s8pEs1Fbe1vtTA1N7?g_st=ic" class="map-btn" target="_blank">📍 開啟浮見堂地圖</a>
-          </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">景點 3：無印良品 離子モール橿原</div>
-          <div class="info-value">超大規格旗艦店提供極為齊全的商品與舒適放鬆的逛街體驗</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://media.loom-app.com/roomie/dist/images/2025/03/shrkm250320_muji8.jpg?w=1200" alt="世界最大無印良品"></div>
-          </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/9Bp5W8kfTkfMqs6y6" class="map-btn" target="_blank">📍 開啟橿原MUJI地圖</a>
-          </div>
-        </div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <div class="info-group">
-          <div class="info-label">晚餐美饌：陳麻婆豆腐</div>
-          <div class="info-value">起源於四川的百年名店麻辣鮮香極致道地是極具人氣的配飯首選</div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/QBFsGPnsrv1yW5rt8?g_st=ic" class="map-btn" target="_blank">📍 LUCUA 1100店</a>
-            <a href="https://maps.app.goo.gl/n5F4pfk1pkWDVVTf8?g_st=ic" class="map-btn" target="_blank">📍 STORM 難波CITY店</a>
+          <div class="spot-card">
+            <div class="spot-title">🌶️ 晚餐首選：陳麻婆豆腐</div>
+            <div class="spot-desc">起源於四川的百年名店，麻辣鮮香極致道地，是極具人氣的配飯首選名店。</div>
+            <div class="btn-group">
+              <a href="https://maps.app.goo.gl/QBFsGPnsrv1yW5rt8?g_st=ic" class="map-btn" target="_blank">📍 LUCUA 1100店</a>
+              <a href="https://maps.app.goo.gl/n5F4pfk1pkWDVVTf8?g_st=ic" class="map-btn" target="_blank">📍 STORM 難波CITY店</a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Day 3 -->
-    <div class="card">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">Day 3：11/21 (週六) 海之京都伊根舟屋</div>
-          <div class="card-subtitle">海上計程船 + 舟屋單車 + 蟹會席溫泉</div>
-        </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
-      </div>
-      <div class="card-content">
-        <div class="highlight-box">
-          ⚠️ 重點提醒：請於早上 09:00 前於天王寺飯店櫃檯辦理大行李宅急便，直寄第 4 天「京都八條都飯店」！今日僅攜帶輕便一日包出發。
-        </div>
-        <div class="info-group">
-          <div class="info-label">JR 車次安排</div>
-          <div class="info-value">天王寺 ➔ 新大阪 (Haruka) ➔ 天橋立 (Hashidate 1號 09:25-11:32)</div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">景點：伊根舟屋散策</div>
-          <div class="info-value">海之京都的世外桃源能靜靜欣賞臨水而建的傳統舟屋獨特景致</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://www.settour.com.tw/ss_img/info/location/OSA/A0/OSA0000154/OSA0000154_61116.jpg" alt="伊根舟屋1"></div>
-            <div class="img-box"><img src="https://svcstrg.cld.navitime.jp/travelguide/p26270003/p26270003_01.jpg" alt="伊根舟屋2"></div>
+      <!-- D3 -->
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div>
+            <div class="card-title">Day 3：11/21 (週六) 海之京都伊根舟屋漫遊</div>
+            <div class="card-subtitle">海上計程船 + 舟屋單車 + 蟹會席溫泉飯店</div>
           </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
         </div>
-        <div class="info-group">
-          <div class="info-label">體驗：Re:ine 海上計程船與免費單車</div>
-          <div class="info-value">Re:ine海上計程船（搭乘小巧靈活的海上計程船能以近距離視角親近伊根舟屋的獨特風貌）</div>
-          <div class="info-value">伊根免費單車（騎乘單車悠閒穿梭於古樸漁村巷弄是漫遊伊根最極致舒心的體驗方式）</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://static.wixstatic.com/media/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg/v1/fill/w_640,h_880,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg" alt="Re:ine海上計程船"></div>
-            <div class="img-box"><img src="https://joshuaworldtravel.com/wp-content/uploads/2020/12/P1140192-1.jpg" alt="伊根單車"></div>
+        <div class="card-content">
+          <div class="highlight-box">
+            ⚠️ 關鍵提醒：請於早上 09:00 前於天王寺飯店櫃檯辦理行李寄送，直寄第 4 天「京都八條都飯店」！今日僅攜帶輕便過夜包出發。
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/HtWBWziEJAK9hWFi9?g_st=ic" class="map-btn" target="_blank">📍 Re:INE 舟屋乘船處</a>
+          <div class="spot-card">
+            <div class="spot-title">🚤 Re:ine 伊根灣海上計程船</div>
+            <div class="spot-desc">搭乘小巧靈活的海上計程船，能以近距離視角親近伊根舟屋臨海而建的獨特風貌。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://static.wixstatic.com/media/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg/v1/fill/w_640,h_880,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg" alt="海上計程船"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/HtWBWziEJAK9hWFi9?g_st=ic" class="map-btn" target="_blank">📍 Re:INE 乘船處地圖</a></div>
           </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">午餐選項：INE CAFE / 神慈や / 鮨割烹 海宮</div>
-          <div class="info-value">INE CAFE（臨海而建的純白無敵海景咖啡廳能近距離享受舟屋波光粼粼的絕景）</div>
-          <div class="info-value">神慈や（充滿溫馨氣息的在地日式食堂提供風味道地且份量實惠的家常料理）</div>
-          <div class="info-value">鮨割烹海宮（坐擁無敵海景的割烹餐廳能品嚐由伊根在地新鮮漁獲製作的頂級壽司）</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://static.gltjp.com/glt/data/directory/18000/17121/20250625_105548_294572df_w1920.webp" alt="INE CAFE"></div>
+          <div class="spot-card">
+            <div class="spot-title">🚲 伊根免費單車漫遊</div>
+            <div class="spot-desc">免費騎乘單車悠閒穿梭於古樸漁村巷弄間，是漫遊伊根最極致舒心的體驗方式。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://joshuaworldtravel.com/wp-content/uploads/2020/12/P1140192-1.jpg" alt="伊根單車"></div>
+            </div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/AQKCRnZCvWeVMSop6?g_st=ic" class="map-btn" target="_blank">📍 INE CAFE</a>
-            <a href="https://maps.app.goo.gl/eRJmZtvKbmhp57zQA?g_st=ic" class="map-btn" target="_blank">📍 神慈や</a>
-            <a href="https://maps.app.goo.gl/nWJQJAdS2zKUKeNi9?g_st=ic" class="map-btn" target="_blank">📍 鮨割烹 海宮</a>
+          <div class="spot-card">
+            <div class="spot-title">☕ 午餐首選：INE CAFE / 神慈や / 鮨割烹 海宮</div>
+            <div class="spot-desc">INE CAFE：臨海而建純白咖啡廳，享受波光粼粼絕景。<br>神慈や：溫馨在地食堂。<br>海宮：無敵海景割烹壽司。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://static.gltjp.com/glt/data/directory/18000/17121/20250625_105548_294572df_w1920.webp" alt="INE CAFE"></div>
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.app.goo.gl/AQKCRnZCvWeVMSop6?g_st=ic" class="map-btn" target="_blank">📍 INE CAFE</a>
+              <a href="https://maps.app.goo.gl/eRJmZtvKbmhp57zQA?g_st=ic" class="map-btn" target="_blank">📍 神慈や</a>
+              <a href="https://maps.app.goo.gl/nWJQJAdS2zKUKeNi9?g_st=ic" class="map-btn" target="_blank">📍 鮨割烹 海宮</a>
+            </div>
           </div>
-        </div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <div class="info-group">
-          <div class="info-label">住宿：天橋立飯店 (Amanohashidate Hotel)</div>
-          <div class="info-value">坐擁天橋立絕景與優質溫泉能品嚐精緻豐盛的日式會席料理</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://www.amanohashidate-htl.co.jp/common/img/ogp.jpg" alt="天橋立飯店外觀"></div>
-            <div class="img-box"><img src="https://followtotravel.com/wp-content/uploads/2025/06/jp-amano-hashidate2.jpg" alt="天橋立飯店"></div>
-          </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 開啟天橋立飯店地圖</a>
+          <div class="spot-card">
+            <div class="spot-title">♨️ 住宿：天橋立飯店 (Amanohashidate Hotel)</div>
+            <div class="spot-desc">坐擁天橋立絕景與優質溫泉，晚餐能在飯店內細細品嚐精緻豐盛的松葉蟹日式會席料理。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://www.amanohashidate-htl.co.jp/common/img/ogp.jpg" alt="天橋立飯店"></div>
+              <div class="img-box"><img src="https://followtotravel.com/wp-content/uploads/2025/06/jp-amano-hashidate2.jpg" alt="天橋立飯店溫泉"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" class="map-btn" target="_blank">📍 天橋立飯店地圖</a></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Day 4 -->
-    <div class="card">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">Day 4：11/22 (週日) 天橋立雙觀景、丹後青松號與京都東洋亭</div>
-          <div class="card-subtitle">飛龍觀 + 橋立物產蟹便當 + 水上鐵道</div>
+      <!-- D4 -->
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div>
+            <div class="card-title">Day 4：11/22 (週日) 雙觀景、蟹便當與丹後青松號</div>
+            <div class="card-subtitle">飛龍觀 + 空中單車 + 鐵道海景 + 東洋亭</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
-      </div>
-      <div class="card-content">
-        <div class="info-group">
-          <div class="info-label">景點：天橋立 View Land 飛龍觀與觀光船</div>
-          <div class="info-value">天橋立（日本三景之一可欣賞宛如飛龍延伸至天際的天然綠色沙洲美景）</div>
-          <div class="info-value">天橋立傘松公園飛龍觀（搭乘纜車登上展望台倒過來觀賞沙洲呈現飛上青天的龍形奇景）</div>
-          <div class="info-value">天橋立空中單車（懸空行駛於高空軌道之上能邊騎單車邊將天橋立沙洲絕景盡收眼底）</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://res.klook.com/image/upload/activities/j3k6yir8av6hruayiumw.jpg" alt="天橋立沙洲"></div>
-            <div class="img-box"><img src="https://www.viewland.jp/tw/wp-content/uploads/2026/10/6A412326547EAA7F31FB84032DC74945CFC0AAEE-250x170.png" alt="空中單車"></div>
+        <div class="card-content">
+          <div class="spot-card">
+            <div class="spot-title">🐉 天橋立 View Land 飛龍觀與觀光船</div>
+            <div class="spot-desc">搭乘纜車登上展望台倒過來觀賞沙洲呈現飛上青天的龍形奇景，並能體驗懸空行駛的高空單車。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://res.klook.com/image/upload/activities/j3k6yir8av6hruayiumw.jpg" alt="天橋立飛龍觀"></div>
+              <div class="img-box"><img src="https://www.viewland.jp/tw/wp-content/uploads/2026/10/6A412326547EAA7F31FB84032DC74945CFC0AAEE-250x170.png" alt="空中單車"></div>
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.app.goo.gl/H6T1GFKNiaMpyoRz5?g_st=ic" class="map-btn" target="_blank">📍 View Land纜車</a>
+              <a href="https://maps.app.goo.gl/wBchTn4gr4vhEFsm7?g_st=ic" class="map-btn" target="_blank">📍 空中單車</a>
+              <a href="https://maps.app.goo.gl/oF2zGkgzzDKJpT649?g_st=ic" class="map-btn" target="_blank">📍 觀光船棧橋</a>
+            </div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/H6T1GFKNiaMpyoRz5?g_st=ic" class="map-btn" target="_blank">📍 View Land 纜車</a>
-            <a href="https://maps.app.goo.gl/wBchTn4gr4vhEFsm7?g_st=ic" class="map-btn" target="_blank">📍 空中單車</a>
-            <a href="https://maps.app.goo.gl/oF2zGkgzzDKJpT649?g_st=ic" class="map-btn" target="_blank">📍 觀光船棧橋</a>
+          <div class="spot-card">
+            <div class="spot-title">🦀 海鮮工房 橋立物產 松葉蟹直賣</div>
+            <div class="spot-desc">專營松葉蟹與新鮮海產外帶便當，買好便當帶上青松號觀光列車品嚐最在地優質的海味。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://megapx-assets.dcard.tw/videos/ead8dba0-de16-4910-b49a-4dea1e189163/thumbnails/720.jpeg" alt="橋立物產便當"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/QD7ATmmpguViv8fPA?g_st=ic" class="map-btn" target="_blank">📍 橋立物產地圖</a></div>
           </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">車上便當：海鮮工房 橋立物產 松葉蟹直賣</div>
-          <div class="info-value">專營松葉蟹與新鮮海產外帶便當是在地品嚐鮮甜海味的首選店家</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://megapx-assets.dcard.tw/videos/ead8dba0-de16-4910-b49a-4dea1e189163/thumbnails/720.jpeg" alt="橋立物產鬆葉蟹便當"></div>
+          <div class="spot-card">
+            <div class="spot-title">🚃 丹後青松號與由良川鐵道景觀</div>
+            <div class="spot-desc">水戶岡銳治設計的復古木質車廂，當列車行駛於水面鐵橋之上，宛如乘風破浪行駛於海面。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://banbi.tw/wp-content/uploads/20190416190308_15.jpg" alt="青松號內裝"></div>
+              <div class="img-box"><img src="https://image.kkday.com/v2/image/get/c_fit%2Cq_55%2Ct_webp%2Cw_960/s1.kkday.com/product_249694/20240919150811_I9pLO/jpg" alt="由良川鐵橋"></div>
+            </div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/QD7ATmmpguViv8fPA?g_st=ic" class="map-btn" target="_blank">📍 開啟橋立物產地圖</a>
+          <div class="spot-card">
+            <div class="spot-title">🍳 晚餐美饌：Grill Capital 東洋亭</div>
+            <div class="spot-desc">京都百年洋食老店，以招牌鋁箔包漢堡排與冰鎮鮮美整顆番茄沙拉聞名遐邇。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://www.kyoto-station-building.co.jp/app/uploads/2025/02/img_toyotei2-1.jpg" alt="東洋亭漢堡排"></div>
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.app.goo.gl/R1ZhNskY4FmHKwsS9?g_st=ic" class="map-btn" target="_blank">📍 伊勢丹店</a>
+              <a href="https://maps.app.goo.gl/Qtv4rpeqvSZ6iGiN6?g_st=ic" class="map-btn" target="_blank">📍 近鐵店</a>
+              <a href="https://maps.app.goo.gl/QpU2mTdfRAR3fsJm6?g_st=ic" class="map-btn" target="_blank">📍 Porta店</a>
+            </div>
           </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">列車體驗：丹後青松號 + 由良川鐵道景觀</div>
-          <div class="info-value">丹後青松號（由水戶岡銳治設計的復古木質車廂讓沿途海景宛如流動畫卷）</div>
-          <div class="info-value">由良川鐵路景觀（列車行駛於水面鐵橋之上宛如乘風破浪行駛於海面上的夢幻奇景）</div>
-          <div class="info-value" style="font-size: 13px; color: var(--sub-color); margin-top: 4px;">天橋立 12:08 ➔ 西舞鶴 (青松號) | 西舞鶴 13:44 ➔ 京都 (舞鶴8號 15:06抵達)</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://banbi.tw/wp-content/uploads/20190416190308_15.jpg" alt="丹後青松號1"></div>
-            <div class="img-box"><img src="https://image.kkday.com/v2/image/get/c_fit%2Cq_55%2Ct_webp%2Cw_960/s1.kkday.com/product_249694/20240919150811_I9pLO/jpg" alt="丹後青松號2"></div>
-          </div>
-        </div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <div class="info-group">
-          <div class="info-label">晚餐美饌：Grill Capital 東洋亭</div>
-          <div class="info-value">京都百年洋食老店以招牌鋁箔包漢堡排與鮮美整顆番茄沙拉聞名</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://www.kyoto-station-building.co.jp/app/uploads/2025/02/img_toyotei2-1.jpg" alt="東洋亭招牌漢堡排"></div>
-          </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/R1ZhNskY4FmHKwsS9?g_st=ic" class="map-btn" target="_blank">📍 伊勢丹店</a>
-            <a href="https://maps.app.goo.gl/Qtv4rpeqvSZ6iGiN6?g_st=ic" class="map-btn" target="_blank">📍 近鐵店</a>
-            <a href="https://maps.app.goo.gl/QpU2mTdfRAR3fsJm6?g_st=ic" class="map-btn" target="_blank">📍 Porta店</a>
-          </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)</div>
-          <div class="info-value">位於京都車站八條口正對面位置極佳且周邊機能齊全方便漫遊</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/02/02/1100x2048_ea1e9d427fb5664c32c517a73e421e58_bcc40520da46ef3e73476a959b8335d182a887d9.jpg" alt="京都八條都飯店"></div>
-            <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2023/08/15/1800x2048_ea1e9d427fb5664c32c517a73e421e58_7e97ccbe9eb5d79c954864f85b77dba51aa10f80.jpg" alt="京都八條都飯店大廳"></div>
-          </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 開啟京都八條都飯店地圖</a>
+          <div class="spot-card">
+            <div class="spot-title">🏨 住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)</div>
+            <div class="spot-desc">位於京都車站八條口正對面，位置極佳，且周邊機能極度齊全方便漫遊。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://www.miyakohotels.ne.jp/datas/cache/images/2022/02/02/1100x2048_ea1e9d427fb5664c32c517a73e421e58_bcc40520da46ef3e73476a959b8335d182a887d9.jpg" alt="京都八條都飯店"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" class="map-btn" target="_blank">📍 京都八條都飯店地圖</a></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Day 5 -->
-    <div class="card">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">Day 5：11/23 (週一) 宇治世界遺產與源氏文化深度遊</div>
-          <div class="card-subtitle">國寶平等院 + 源氏物語博物館 + 中村藤吉</div>
+      <!-- D5 -->
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div>
+            <div class="card-title">Day 5：11/23 (週一) 宇治世界遺產與源氏文化深度遊</div>
+            <div class="card-subtitle">國寶平等院 + 源氏物語博物館 + 中村藤吉</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+        <div class="card-content">
+          <div class="spot-card">
+            <div class="spot-title">⛩️ 國寶平等院</div>
+            <div class="spot-desc">佇立於池畔的鳳凰堂宛如淨土極樂宮殿，展現平安時代極致的建築美學與歷史底蘊。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://curly.com.tw/wp-content/uploads/2024/12/DSCF5201.jpg" alt="平等院1"></div>
+              <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDoVa2z7O4WVxQ7l1C1YA9Dm3vGLV_LcApY1pH6d-ESWRez72b2QEOm4w&s=10" alt="平等院2"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/5ncyy7xh3bEjc1DF6?g_st=ic" class="map-btn" target="_blank">📍 平等院地圖</a></div>
+          </div>
+          <div class="spot-card">
+            <div class="spot-title">📖 宇治市源氏物語博物館</div>
+            <div class="spot-desc">透過精緻展品與多媒體造景，沉浸式體驗源氏物語的光影與平安時代美感。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://www.tyh.kimonorental.shop/wp-content/uploads/2024/09/0099-1024x683.jpg" alt="源氏物語博物館1"></div>
+              <div class="img-box"><img src="https://travel.ujicci.or.jp/images/spot/shop49/spot3.jpg" alt="源氏物語博物館2"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/3USKnkG2tJiaj5nD6?g_st=ic" class="map-btn" target="_blank">📍 博物館地圖</a></div>
+          </div>
+          <div class="spot-card">
+            <div class="spot-title">🍵 中村藤吉 平等院店</div>
+            <div class="spot-desc">位於宇治川畔的老字號茶屋，能邊欣賞水岸風光，邊品嚐濃郁道地的抹茶甜點與餐點。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkyaSAsu3Csm7VmaIDTZTKwBLpEN6j2NEZVgOSTqjbHd5oFqudc3ltUKg&s=10" alt="中村藤吉平等院店"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/dnXftCDur96nXuto9?g_st=ic" class="map-btn" target="_blank">📍 中村藤吉地圖</a></div>
+          </div>
+        </div>
       </div>
-      <div class="card-content">
-        <div class="info-group">
-          <div class="info-label">景點 1：國寶平等院</div>
-          <div class="info-value">佇立於池畔的鳳凰堂宛如淨土極樂宮殿展現平安時代建築美學</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://curly.com.tw/wp-content/uploads/2024/12/DSCF5201.jpg" alt="平等院1"></div>
-            <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDoVa2z7O4WVxQ7l1C1YA9Dm3vGLV_LcApY1pH6d-ESWRez72b2QEOm4w&s=10" alt="平等院2"></div>
+
+      <!-- D6 -->
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div>
+            <div class="card-title">Day 6：11/24 (週二) 返台與機場接駁</div>
+            <div class="card-subtitle">Option 1 臨空城Outlet / Option 2 京都漫遊</div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/5ncyy7xh3bEjc1DF6?g_st=ic" class="map-btn" target="_blank">📍 開啟平等院地圖</a>
-          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
         </div>
-        <div class="info-group">
-          <div class="info-label">景點 2：宇治市源氏物語博物館</div>
-          <div class="info-value">透過精緻展品與多媒體造景沉浸式體驗源氏物語的光影與美感</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://www.tyh.kimonorental.shop/wp-content/uploads/2024/09/0099-1024x683.jpg" alt="源氏物語博物館1"></div>
-            <div class="img-box"><img src="https://travel.ujicci.or.jp/images/spot/shop49/spot3.jpg" alt="源氏物語博物館2"></div>
+        <div class="card-content">
+          <div class="spot-card">
+            <div class="spot-title">🛍️ 方案 1：臨空城 Outlet 購物</div>
+            <div class="spot-desc">鄰近關西機場的購物天堂，擁有豐富品牌與寬敞舒心的逛街環境。</div>
+            <div class="img-grid">
+              <div class="img-box"><img src="https://image.co-trip.jp/content/book_contents/27010016_3896_1.jpg" alt="臨空城Outlet"></div>
+            </div>
+            <div class="btn-group"><a href="https://maps.app.goo.gl/CF3onCV5KVxyuQWn6?g_st=ic" class="map-btn" target="_blank">📍 臨空城 Outlet 地圖</a></div>
           </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/3USKnkG2tJiaj5nD6?g_st=ic" class="map-btn" target="_blank">📍 開啟博物館地圖</a>
+          <div class="spot-card">
+            <div class="spot-title">☕ 方案 2：爸媽留京都飯店周邊漫遊</div>
+            <div class="spot-desc">爸媽可在京都八條都飯店周邊悠閒逛街散步，下午搭乘 Haruka 直達關空會合搭機。</div>
           </div>
-        </div>
-        <div class="info-group">
-          <div class="info-label">抹茶名店：中村藤吉 平等院店</div>
-          <div class="info-value">位於宇治川畔的老字號茶屋能邊賞水岸風光邊品嚐濃郁抹茶甜點</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkyaSAsu3Csm7VmaIDTZTKwBLpEN6j2NEZVgOSTqjbHd5oFqudc3ltUKg&s=10" alt="中村藤吉平等院店"></div>
-          </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/dnXftCDur96nXuto9?g_st=ic" class="map-btn" target="_blank">📍 開啟中村藤吉地圖</a>
+          <div class="spot-card">
+            <div class="spot-title">✈️ 回程航班資訊</div>
+            <div class="spot-desc">國泰 CX565 (關空 KIX 16:15 ➔ 18:30 桃園 TPE)<br>長榮 BR147 (關空 KIX 20:20 ➔ 22:55 高雄 KHH)</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Day 6 -->
-    <div class="card">
-      <div class="card-header" onclick="toggleCard(this)">
-        <div>
-          <div class="card-title">Day 6：11/24 (週二) 返台與機場接駁</div>
-          <div class="card-subtitle">Option 1 臨空城Outlet / Option 2 京都漫遊</div>
+    <!-- ==================== TAB 2：預付預算 ==================== -->
+    <div id="tab-prepaid" class="tab-content">
+      <div class="card open">
+        <div class="card-header">
+          <div>
+            <div class="card-title">💳 行程出發前預付明細</div>
+            <div class="card-subtitle">總計預付：TWD $181,384 (由錢粘先行墊付)</div>
+          </div>
         </div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+        <div class="card-content" style="display:block;">
+          <table>
+            <tr><th>預付項目</th><th>明細與房型說明</th><th>金額 (TWD)</th></tr>
+            <tr><td>機票 (長榮+國泰)</td><td>高雄往返2人 / 桃園往返2人</td><td>$80,601</td></tr>
+            <tr><td>天王寺都城市飯店</td><td>11/19–11/21 (2房,無早餐)</td><td>$20,876</td></tr>
+            <tr><td>天橋立飯店</td><td>11/21–11/22 (2房,含早晚餐)</td><td>$38,532</td></tr>
+            <tr><td>京都八條都飯店</td><td>11/22–11/24 (2房,無早餐)</td><td>$40,336</td></tr>
+            <tr><td>SoftBank 5G eSIM</td><td>3張 (錢粘、蝦、媽媽)</td><td>$1,039</td></tr>
+          </table>
+          <div style="margin-top: 14px; font-size: 13px; color: var(--sub-color); font-weight: 700;">
+            註：此金額已自動納入【Tab 4 結算拆帳】中，由 4 位成員均分計算。
+          </div>
+        </div>
       </div>
-      <div class="card-content">
-        <div class="info-group">
-          <div class="info-label">方案 1：全家同行至臨空城 Outlet 購物</div>
-          <div class="info-value">臨空城 Outlet（鄰近關西機場的購物天堂擁有豐富品牌與寬敞舒心的逛街環境）</div>
-          <div class="info-value" style="font-size: 13px; color: var(--sub-color); margin-top: 4px;">京都搭乘 Haruka 直達關空/臨空城，輕鬆購物後前往機場搭機。</div>
-          <div class="img-grid">
-            <div class="img-box"><img src="https://image.co-trip.jp/content/book_contents/27010016_3896_1.jpg" alt="臨空城 Outlet"></div>
-          </div>
-          <div class="btn-group">
-            <a href="https://maps.app.goo.gl/CF3onCV5KVxyuQWn6?g_st=ic" class="map-btn" target="_blank">📍 開啟臨空城 Outlet 地圖</a>
-          </div>
+    </div>
+
+    <!-- ==================== TAB 3：每日記帳 ==================== -->
+    <div id="tab-expense" class="tab-content">
+      <!-- 新增記帳表單卡片 -->
+      <div class="card open">
+        <div class="card-header">
+          <div class="card-title">➕ 新增現場記帳</div>
         </div>
-        <div class="info-group">
-          <div class="info-label">方案 2：爸媽留京都飯店周邊漫遊</div>
-          <div class="info-value">爸媽於京都八條都飯店周邊輕鬆逛街，下午再搭乘 Haruka 直關空搭機。</div>
+        <div class="card-content" style="display:block;">
+          <form id="expenseForm" onsubmit="saveExpense(event)">
+            <div class="form-group">
+              <label class="form-label">選擇天數</label>
+              <select id="expDay" class="form-control">
+                <option value="D1">Day 1 (11/19 週四)</option>
+                <option value="D2">Day 2 (11/20 週五)</option>
+                <option value="D3">Day 3 (11/21 週六)</option>
+                <option value="D4">Day 4 (11/22 週日)</option>
+                <option value="D5">Day 5 (11/23 週一)</option>
+                <option value="D6">Day 6 (11/24 週二)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">消費品名</label>
+              <input type="text" id="expItem" class="form-control" placeholder="例如：伊根舟屋咖啡" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">日幣金額 (JPY)</label>
+              <input type="number" id="expAmount" class="form-control" placeholder="例如：3500" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">付款方式</label>
+              <select id="expPayment" class="form-control">
+                <option value="信用卡" selected>💳 信用卡</option>
+                <option value="現金">💴 現金</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">付款人 (誰先付的)</label>
+              <select id="expPayer" class="form-control">
+                <option value="錢粘">錢粘</option>
+                <option value="蝦">蝦</option>
+                <option value="爸">爸</option>
+                <option value="媽">媽</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">分攤對象 (可複選)</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" name="splitMember" value="錢粘" checked> 錢粘</label>
+                <label class="checkbox-label"><input type="checkbox" name="splitMember" value="蝦" checked> 蝦</label>
+                <label class="checkbox-label"><input type="checkbox" name="splitMember" value="爸" checked> 爸</label>
+                <label class="checkbox-label"><input type="checkbox" name="splitMember" value="媽" checked> 媽</label>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit">新增記帳 (同步至全員手機)</button>
+          </form>
         </div>
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--tiffany-border);">
-        <span class="badge">回程航班時間</span>
-        <div class="info-value">國泰 CX565 (KIX 16:15 ➔ 18:30 TPE)</div>
-        <div class="info-value">長榮 BR147 (KIX 20:20 ➔ 22:55 KHH)</div>
+      </div>
+
+      <!-- 每日帳目明細列表 -->
+      <div id="expenseDayList"></div>
+    </div>
+
+    <!-- ==================== TAB 4：結算拆帳 ==================== -->
+    <div id="tab-settlement" class="tab-content">
+      <div class="settle-summary">
+        <div class="settle-summary-title">全團總支出 (預付 + 現場折算)</div>
+        <div class="settle-summary-val" id="totalGroupExpense">TWD $0</div>
+        <div style="font-size: 13px; color: var(--tiffany-main); font-weight: 700;" id="totalGroupExpenseJPY">JPY ¥0</div>
+        <div style="font-size: 13px; color: var(--sub-color); margin-top: 4px; font-weight: 600;" id="perPersonShare">每人平均應負擔：TWD $0</div>
+      </div>
+
+      <div style="font-size: 15px; font-weight: 800; color: var(--primary-color); margin-bottom: 10px;">👥 成員個人結算</div>
+      <div id="memberSettleList"></div>
+
+      <div class="transfer-guide">
+        <div class="transfer-title">💡 建議最簡找補方案</div>
+        <div id="transferInstructions">計算中...</div>
       </div>
     </div>
 
   </div>
 
   <script>
-    function toggleCard(header) {
-      const card = header.parentElement;
-      card.classList.toggle('open');
+    // Tab 切換
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
     }
-    function toggleAll(open) {
-      document.querySelectorAll('.card').forEach(card => {
+
+    // 手動折疊卡片
+    function toggleCard(header) {
+      header.parentElement.classList.toggle('open');
+    }
+    function toggleAllCards(open) {
+      document.querySelectorAll('#tab-itinerary .card').forEach(card => {
         if(open) card.classList.add('open');
         else card.classList.remove('open');
       });
+    }
+
+    // 核心數據變數
+    const FIXED_RATE = 0.2; // 固定匯率 0.2
+    const PREPAID_TOTAL = 181384; // 錢粘出發前預付 TWD
+    const MEMBERS = ['錢粘', '蝦', '爸', '媽'];
+    let rawExpenses = {};
+
+    // 讀取與儲存資料到 Firebase
+    window.addEventListener('DOMContentLoaded', () => {
+      // 輪詢確認 Firebase 初始化完成
+      const timer = setInterval(() => {
+        if (window.db && window.dbRef && window.dbOnValue) {
+          clearInterval(timer);
+          initFirebaseSync();
+        }
+      }, 100);
+    });
+
+    function initFirebaseSync() {
+      const expensesRef = window.dbRef(window.db, 'expenses');
+      window.dbOnValue(expensesRef, (snapshot) => {
+        rawExpenses = snapshot.val() || {};
+        renderExpenses();
+        renderSettlement();
+      });
+    }
+
+    // 新增記帳
+    function saveExpense(e) {
+      e.preventDefault();
+      const day = document.getElementById('expDay').value;
+      const item = document.getElementById('expItem').value.trim();
+      const amount = parseFloat(document.getElementById('expAmount').value);
+      const payment = document.getElementById('expPayment').value;
+      const payer = document.getElementById('expPayer').value;
+      
+      const splitCheckboxes = document.querySelectorAll('input[name="splitMember"]:checked');
+      const splitMembers = Array.from(splitCheckboxes).map(cb => cb.value);
+
+      if (!item || isNaN(amount) || amount <= 0 || splitMembers.length === 0) {
+        alert('請填寫完整的品名、金額與至少一位分攤成員！');
+        return;
+      }
+
+      const newExpense = {
+        day, item, amountJPY: amount, payment, payer, splitMembers, timestamp: Date.now()
+      };
+
+      const expensesRef = window.dbRef(window.db, 'expenses');
+      window.dbPush(expensesRef, newExpense);
+
+      document.getElementById('expItem').value = '';
+      document.getElementById('expAmount').value = '';
+    }
+
+    // 刪除記帳
+    function deleteExpense(id) {
+      if (confirm('確定要刪除這筆記帳紀錄嗎？')) {
+        const itemRef = window.dbRef(window.db, 'expenses/' + id);
+        window.dbRemove(itemRef);
+      }
+    }
+
+    // 渲染 Tab 3 記帳明細
+    function renderExpenses() {
+      const container = document.getElementById('expenseDayList');
+      const days = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
+      const dayNames = { D1: 'Day 1', D2: 'Day 2', D3: 'Day 3', D4: 'Day 4', D5: 'Day 5', D6: 'Day 6' };
+
+      let html = '';
+      days.forEach(day => {
+        const items = Object.entries(rawExpenses).filter(([id, data]) => data.day === day);
+        const dayTotalJPY = items.reduce((sum, [id, data]) => sum + (data.amountJPY || 0), 0);
+
+        html += `
+          <div class="card ${items.length > 0 ? 'open' : ''}">
+            <div class="card-header" onclick="toggleCard(this)">
+              <div>
+                <div class="card-title">${dayNames[day]} 記帳明細</div>
+                <div class="card-subtitle">當日小計：¥${dayTotalJPY.toLocaleString()} JPY (約 TWD $${Math.round(dayTotalJPY * FIXED_RATE).toLocaleString()})</div>
+              </div>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="card-content">
+              ${items.length === 0 ? '<div style="font-size:13px; color:var(--sub-color); font-weight:600;">尚無記帳紀錄</div>' : ''}
+              ${items.map(([id, data]) => `
+                <div class="expense-item">
+                  <div class="expense-info">
+                    <div class="expense-title">${data.item}</div>
+                    <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers.join(', ')}</div>
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <div class="expense-amount">¥${data.amountJPY.toLocaleString()}</div>
+                    <button class="btn-delete" onclick="deleteExpense('${id}')">刪除</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 渲染 Tab 4 結算拆帳
+    function renderSettlement() {
+      let paidTWD = { '錢粘': PREPAID_TOTAL, '蝦': 0, '爸': 0, '媽': 0 };
+      let owedTWD = { '錢粘': PREPAID_TOTAL / 4, '蝦': PREPAID_TOTAL / 4, '爸': PREPAID_TOTAL / 4, '媽': PREPAID_TOTAL / 4 };
+
+      let fieldTotalJPY = 0;
+
+      Object.values(rawExpenses).forEach(item => {
+        const jpy = item.amountJPY || 0;
+        const twd = jpy * FIXED_RATE;
+        fieldTotalJPY += jpy;
+
+        // 支付者加上實付
+        if (paidTWD[item.payer] !== undefined) {
+          paidTWD[item.payer] += twd;
+        }
+
+        // 分攤者加上應付
+        if (item.splitMembers && item.splitMembers.length > 0) {
+          const shareTWD = twd / item.splitMembers.length;
+          item.splitMembers.forEach(m => {
+            if (owedTWD[m] !== undefined) {
+              owedTWD[m] += shareTWD;
+            }
+          });
+        }
+      });
+
+      const totalTWD = PREPAID_TOTAL + (fieldTotalJPY * FIXED_RATE);
+      const perPersonTWD = totalTWD / 4;
+
+      document.getElementById('totalGroupExpense').innerText = `TWD $${Math.round(totalTWD).toLocaleString()}`;
+      document.getElementById('totalGroupExpenseJPY').innerText = `現場支出 JPY ¥${fieldTotalJPY.toLocaleString()} + 預付 TWD $${PREPAID_TOTAL.toLocaleString()}`;
+      document.getElementById('perPersonShare').innerText = `每人平均應負擔：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
+
+      // 渲染成員結算卡片
+      let memberHtml = '';
+      let balances = {};
+
+      MEMBERS.forEach(m => {
+        const net = paidTWD[m] - owedTWD[m];
+        balances[m] = net;
+
+        memberHtml += `
+          <div class="member-settle-card">
+            <div class="member-name">${m}</div>
+            <div class="member-row"><span>實際掏出 (含預付/代墊):</span><span>TWD $${Math.round(paidTWD[m]).toLocaleString()}</span></div>
+            <div class="member-row"><span>應分攤總額:</span><span>TWD $${Math.round(owedTWD[m]).toLocaleString()}</span></div>
+            <div class="member-status">
+              <span>結算狀態:</span>
+              <span class="${net >= 0 ? 'text-plus' : 'text-minus'}">
+                ${net >= 0 ? '應收回 TWD $' + Math.round(net).toLocaleString() : '應補繳 TWD $' + Math.round(Math.abs(net)).toLocaleString()}
+              </span>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('memberSettleList').innerHTML = memberHtml;
+
+      // 計算最簡找補指引
+      calculateTransfers(balances);
+    }
+
+    // 簡化找補演算法
+    function calculateTransfers(balances) {
+      let debtors = []; // 需給錢的人
+      let creditors = []; // 應拿錢的人
+
+      Object.entries(balances).forEach(([name, amount]) => {
+        const rounded = Math.round(amount);
+        if (rounded < -1) debtors.push({ name, amount: Math.abs(rounded) });
+        else if (rounded > 1) creditors.push({ name, amount: rounded });
+      });
+
+      let instructions = [];
+      let i = 0, j = 0;
+
+      while (i < debtors.length && j < creditors.length) {
+        let debtor = debtors[i];
+        let creditor = creditors[j];
+        let amount = Math.min(debtor.amount, creditor.amount);
+
+        instructions.push(`👉 <strong>${debtor.name}</strong> 需支付給 <strong>${creditor.name}</strong>：TWD $${amount.toLocaleString()}`);
+
+        debtor.amount -= amount;
+        creditor.amount -= amount;
+
+        if (debtor.amount === 0) i++;
+        if (creditor.amount === 0) j++;
+      }
+
+      if (instructions.length === 0) {
+        document.getElementById('transferInstructions').innerHTML = '<div class="transfer-item">🎉 目前收支完美平衡，無需找補！</div>';
+      } else {
+        document.getElementById('transferInstructions').innerHTML = instructions.map(inst => `<div class="transfer-item">${inst}</div>`).join('');
+      }
     }
   </script>
 </body>
