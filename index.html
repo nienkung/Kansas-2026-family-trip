@@ -33,17 +33,14 @@
   </script>
 
   <style>
-    /* =========================================================
-       🎨 全站視覺主題設定區 (Theme Tokens)
-       ========================================================= */
     :root {
-      --brand-main: #00A896;            /* Tiffany 綠主色 */
-      --brand-dark: #0F3D3E;            /* 質感深青文字色 */
-      --brand-bg: #E6FFFA;              /* 全站主背景色 */
-      --brand-light: #F0FDF4;           /* 區塊淺色背景 */
-      --brand-border: #B2F5EA;          /* Tiffany 淺綠邊框 */
-      --sub-text: #4A5568;              /* 次要文字色 */
-      --card-bg: #FFFFFF;               /* 卡片背景 */
+      --brand-main: #00A896;
+      --brand-dark: #0F3D3E;
+      --brand-bg: #E6FFFA;
+      --brand-light: #F0FDF4;
+      --brand-border: #B2F5EA;
+      --sub-text: #4A5568;
+      --card-bg: #FFFFFF;
       --shadow-sm: 0 2px 6px rgba(0,0,0,0.03);
       --shadow-md: 0 4px 16px rgba(0, 168, 150, 0.12);
       --shadow-lg: 0 10px 30px rgba(0, 168, 150, 0.18);
@@ -108,9 +105,7 @@
       justify-content: center;
       gap: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      transition: all 0.2s ease;
     }
-    .btn-google:active { scale: 0.98; background: #F7FAFC; }
 
     /* VIEW 2: 專案大廳樣式 */
     .navbar {
@@ -186,7 +181,7 @@
     .role-member { background: #EBF8FF; color: #2B6CB0; border: 1px solid #90CDF4; }
     .project-members { margin-top: 10px; font-size: 12px; color: var(--sub-text); font-weight: 600; }
 
-    /* VIEW 3: 專案內部頁面樣式 */
+    /* VIEW 3: 專案內部頁面與卡片樣式 */
     .tab-bar {
       display: flex;
       background: #FFFFFF;
@@ -215,54 +210,113 @@
       box-shadow: 0 2px 6px rgba(0, 168, 150, 0.3);
     }
 
+    .tab-subcontent { display: none; }
+    .tab-subcontent.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      margin-bottom: 16px;
+      border: 1.5px solid var(--brand-border);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      background: #FFFFFF;
+    }
+    .card-title { font-size: 17px; font-weight: 800; color: var(--brand-dark); }
+    .card-subtitle { font-size: 13px; color: var(--brand-main); font-weight: 700; margin-top: 2px; }
+    .chevron {
+      width: 20px; height: 20px; transition: transform 0.3s ease; stroke: var(--brand-main); flex-shrink: 0; margin-left: 8px;
+    }
+    .card.open .chevron { transform: rotate(180deg); }
+    .card-content {
+      display: none; padding: 16px; border-top: 1px solid var(--brand-border); background: #FAFDFC;
+    }
+    .card.open .card-content { display: block; }
+
+    .spot-card {
+      background: #FFFFFF;
+      border: 1px solid var(--brand-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .spot-time {
+      display: inline-block; background: #E6FFFA; color: var(--brand-main); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--brand-border);
+    }
+    .spot-title { font-size: 16px; font-weight: 800; color: var(--brand-dark); }
+    .spot-desc { font-size: 14px; color: var(--sub-text); font-weight: 600; margin-top: 6px; line-height: 1.5; white-space: pre-line; }
+    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .img-box { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--brand-border); background: var(--brand-light); aspect-ratio: 4/3; }
+    .img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .map-btn {
+      display: inline-flex; align-items: center; gap: 5px; background: var(--brand-main); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 2px 4px rgba(0, 168, 150, 0.2);
+    }
+
     .form-group { margin-bottom: 12px; }
     .form-label { font-size: 13px; font-weight: 700; color: var(--brand-dark); margin-bottom: 4px; display: block; }
     .form-control {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1.5px solid var(--brand-border);
-      font-size: 15px;
-      font-weight: 600;
-      outline: none;
-      background: #FFF;
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--brand-border); font-size: 15px; font-weight: 600; outline: none; background: #FFF;
     }
     .form-control:focus { border-color: var(--brand-main); }
+    .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .checkbox-label {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; cursor: pointer; background: #E6FFFA; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--brand-border);
+    }
     .btn-submit {
-      width: 100%;
-      background: var(--brand-main);
-      color: #FFF;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3);
-      margin-top: 6px;
+      width: 100%; background: var(--brand-main); color: #FFF; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3); margin-top: 6px;
+    }
+    .expense-item {
+      background: #FFF; border: 1px solid var(--brand-border); border-radius: 12px; padding: 12px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .expense-info { flex: 1; }
+    .expense-title { font-size: 15px; font-weight: 800; color: var(--brand-dark); }
+    .expense-meta { font-size: 12px; color: var(--sub-text); margin-top: 2px; font-weight: 600; }
+    .expense-amount { font-size: 16px; font-weight: 800; color: var(--brand-main); text-align: right; }
+    .btn-delete {
+      background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
 
-    /* Modal 樣式 */
+    .settle-summary {
+      background: #FFF; border: 2px solid var(--brand-main); border-radius: 16px; padding: 16px; margin-bottom: 16px; text-align: center; box-shadow: var(--shadow-md);
+    }
+    .settle-summary-title { font-size: 14px; color: var(--sub-text); font-weight: 700; }
+    .settle-summary-val { font-size: 24px; font-weight: 900; color: var(--brand-dark); margin: 4px 0; }
+    .member-settle-card {
+      background: #FFF; border: 1.5px solid var(--brand-border); border-radius: 14px; padding: 14px; margin-bottom: 12px;
+    }
+    .member-name { font-size: 16px; font-weight: 800; color: var(--brand-dark); }
+    .member-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--sub-text); }
+    .member-status {
+      margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--brand-border); font-size: 15px; font-weight: 800; display: flex; justify-content: space-between;
+    }
+    .text-plus { color: #2B6CB0; }
+    .text-minus { color: var(--danger); }
+    .transfer-guide {
+      background: var(--brand-light); border: 1.5px dashed var(--brand-main); border-radius: 14px; padding: 14px; margin-top: 16px;
+    }
+    .transfer-title { font-size: 15px; font-weight: 800; color: var(--brand-dark); margin-bottom: 8px; }
+    .transfer-item { font-size: 14px; font-weight: 700; color: var(--brand-main); margin-top: 4px; }
+
     .modal-mask {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 16px;
     }
     .modal-box {
-      background: #FFF;
-      width: 100%;
-      max-width: 500px;
-      border-radius: 18px;
-      padding: 20px;
-      border: 2px solid var(--brand-main);
-      max-height: 90vh;
-      overflow-y: auto;
+      background: #FFF; width: 100%; max-width: 500px; border-radius: 18px; padding: 20px; border: 2px solid var(--brand-main); max-height: 90vh; overflow-y: auto;
     }
+    .currency-item {
+      padding: 10px; border-bottom: 1px solid var(--brand-border); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;
+    }
+    .currency-item:hover { background: var(--brand-light); }
   </style>
 </head>
 <body>
@@ -307,11 +361,11 @@
     </div>
   </div>
 
-  <!-- VIEW 3：專案內部 -->
+  <!-- VIEW 3：專案內部 (3 Tabs) -->
   <div id="view-project" class="page-view">
     <div class="navbar">
       <div style="display:flex; align-items:center; gap:8px;">
-        <button class="btn-logout" onclick="navigateToDashboard()">← 返回大廳</button>
+        <button class="btn-logout" onclick="navigateToDashboard()">← 大廳</button>
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
       <button id="adminSettingsBtn" class="btn-logout" style="display:none; background:var(--brand-main); color:#FFF; border:none;" onclick="openAdminSettingsModal()">⚙️ 專案設定</button>
@@ -325,11 +379,94 @@
       </div>
 
       <div id="projectTabContent" style="margin-top: 16px;">
-        <div style="background:#FFF; border-radius:16px; padding:24px; text-align:center; border:1.5px solid var(--brand-border); box-shadow:var(--shadow-md);">
-          <div style="font-size:32px; margin-bottom:8px;">✨</div>
-          <div style="font-size:16px; font-weight:800; color:var(--brand-dark);">專案獨立資料庫準備就緒</div>
-          <div style="font-size:13px; color:var(--sub-text); margin-top:4px; font-weight:600;">已與雲端資料連結，可開始進行專屬行程規劃與多幣別記帳。</div>
+        
+        <!-- TAB 1: 行程規劃 -->
+        <div id="subtab-itinerary" class="tab-subcontent active">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button class="map-btn" style="flex:1; justify-content:center;" onclick="toggleAllCards(true)">全數展開</button>
+            <button class="map-btn" style="flex:1; justify-content:center; background:var(--sub-text);" onclick="toggleAllCards(false)">全數收合</button>
+          </div>
+          <div id="itineraryContainer"></div>
         </div>
+
+        <!-- TAB 2: 旅程記帳 -->
+        <div id="subtab-expense" class="tab-subcontent">
+          <div class="card open">
+            <div class="card-header">
+              <div class="card-title">➕ 新增記帳</div>
+            </div>
+            <div class="card-content" style="display:block;">
+              <form id="expenseForm" onsubmit="saveExpense(event)">
+                <div class="form-group">
+                  <label class="form-label">選擇天數</label>
+                  <select id="expDay" class="form-control">
+                    <option value="D0">D0 (出發前預付項目)</option>
+                    <option value="D1" selected>Day 1</option>
+                    <option value="D2">Day 2</option>
+                    <option value="D3">Day 3</option>
+                    <option value="D4">Day 4</option>
+                    <option value="D5">Day 5</option>
+                    <option value="D6">Day 6</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">消費品名</label>
+                  <input type="text" id="expItem" class="form-control" placeholder="例如：伊根舟屋咖啡" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">金額</label>
+                  <input type="number" step="any" id="expAmount" class="form-control" placeholder="例如：3500" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">選擇幣別</label>
+                  <select id="expCurrency" class="form-control" onchange="handleCurrencySelect(this)">
+                    <!-- JS 動態帶入 -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">付款方式</label>
+                  <select id="expPayment" class="form-control">
+                    <option value="信用卡" selected>💳 信用卡</option>
+                    <option value="現金">💴 現金</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">付款人 (誰先付的)</label>
+                  <select id="expPayer" class="form-control" id="expPayerSelect">
+                    <!-- JS 動態帶入成員選項 -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">分攤對象 (可複選)</label>
+                  <div class="checkbox-group" id="expSplitMembersContainer">
+                    <!-- JS 動態帶入成員 Checkbox -->
+                  </div>
+                </div>
+                <button type="submit" class="btn-submit">新增記帳 (同步至專案雲端)</button>
+              </form>
+            </div>
+          </div>
+
+          <div id="expenseDayList"></div>
+        </div>
+
+        <!-- TAB 3: 結算拆帳 -->
+        <div id="subtab-settlement" class="tab-subcontent">
+          <div class="settle-summary">
+            <div class="settle-summary-title">專案總支出 (折算台幣)</div>
+            <div class="settle-summary-val" id="totalGroupExpense">TWD $0</div>
+            <div style="font-size: 13px; color: var(--sub-text); margin-top: 4px; font-weight: 600;" id="perPersonShare">全團人均參考：TWD $0</div>
+          </div>
+
+          <div style="font-size: 15px; font-weight: 800; color: var(--brand-dark); margin-bottom: 10px;">👥 成員個人結算</div>
+          <div id="memberSettleList"></div>
+
+          <div class="transfer-guide">
+            <div class="transfer-title">💡 建議最簡找補方案</div>
+            <div id="transferInstructions">計算中...</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -350,6 +487,10 @@
           <label class="form-label">旅遊日期區間</label>
           <input type="text" id="newProjDates" class="form-control" placeholder="例如：2027/01/09 – 01/17 (9天)" required>
         </div>
+        <div class="form-group">
+          <label class="form-label">成員名單 (以逗號分隔)</label>
+          <input type="text" id="newProjMembers" class="form-control" placeholder="錢粘, 蝦, 爸, 媽" value="錢粘, 蝦, 爸, 媽" required>
+        </div>
         <button type="submit" class="btn-submit">建立專案並進入</button>
       </form>
     </div>
@@ -362,7 +503,7 @@
         <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">⚙️ 專案權限與資訊管理</h3>
         <button onclick="closeAdminSettingsModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
       </div>
-      <div style="font-size:13px; color:var(--sub-color); margin-bottom:12px; font-weight:700;">
+      <div style="font-size:13px; color:var(--sub-text); margin-bottom:12px; font-weight:700;">
         👑 您是此專案的建立者 (Owner)，具備最高管理權限。
       </div>
       <div class="form-group">
@@ -370,11 +511,23 @@
         <input type="text" id="adminProjTitle" class="form-control">
       </div>
       <div class="form-group">
-        <label class="form-label">邀請成員 Email (以逗號分隔)</label>
-        <input type="text" id="adminProjMembers" class="form-control" placeholder="lisha@example.com, dad@example.com">
+        <label class="form-label">修改成員名單 (以逗號分隔)</label>
+        <input type="text" id="adminProjMembers" class="form-control">
       </div>
       <button class="btn-submit" onclick="saveAdminSettings()">儲存設定修改</button>
       <button class="btn-submit" style="background:#FFF5F5; color:var(--danger); border:1px solid #FEB2B2; margin-top:12px;" onclick="deleteCurrentProject()">🗑️ 刪除此專案</button>
+    </div>
+  </div>
+
+  <!-- Modal 3: 全球 160+ 幣別搜尋 Modal -->
+  <div id="currencySearchModal" class="modal-mask">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:17px; font-weight:800;">🌐 搜尋並新增國家幣別</h3>
+        <button onclick="closeCurrencyModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-text); cursor:pointer;">✕</button>
+      </div>
+      <input type="text" id="currencySearchInput" class="form-control" placeholder="輸入國家或幣別 (例如: 捷克, HUF, 泰國)..." oninput="filterCurrencyList()" style="margin-bottom:12px;">
+      <div id="currencySearchResults" style="max-height: 50vh; overflow-y: auto;"></div>
     </div>
   </div>
 
@@ -390,32 +543,63 @@
       ]
     };
 
+    const KANSAI_ITINERARY_DATA = {
+      D1: {
+        title: "Day 1：11/19 (週四) 抵達大阪與購物散策",
+        subtitle: "關空 Haruka 直達天王寺 + 阿倍野商圈散步",
+        spots: [
+          { time: "10:55", title: "✈️ 航班抵達資訊", desc: "長榮 BR182 (高雄 KHH 07:05 ➔ 10:55 關空 KIX)\n國泰 CX564 (桃園 TPE 11:15 ➔ 14:45 關空 KIX)" },
+          { time: "15:30", title: "🛍️ 天王寺阿倍野商圈", desc: "結合熱門百貨與舒適步調，漫步 Q's Mall 與 MIO 百貨公司，非常適合全家大小輕鬆逛街購物與隨時休息。" },
+          { time: "17:00", title: "🏨 天王寺都城市飯店 (Miyako City Osaka Tennoji)", desc: "直通天王寺車站與阿倍野商圈，交通極為便利，且房間寬敞舒適。", images: ["https://voniblog.com/wp-content/uploads/2025/01/%E5%A4%A7%E9%98%AA%E5%A4%A9%E7%8E%8B%E5%AF%BA-%E9%83%BD%E5%9F%8E%E5%B8%82%E9%85%92%E5%BA%97-MIYAKO-HOTELS-RESORTS-02.jpg"], maps: [{ label: "📍 開啟飯店 Google 地圖", url: "https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" }] }
+        ]
+      },
+      D2: {
+        title: "Day 2：11/20 (週五) 奈良文化漫遊與大阪麻婆豆腐",
+        subtitle: "春日大社 + 浮見堂 + 世界最大無印良品",
+        spots: [
+          { time: "09:30", title: "⛩️ 春日大社", desc: "古木參天的千古神社，走入石燈籠陣中，能深切感受莊嚴古樸的自然寧靜氣氛。", images: ["https://imagedelivery.net/Ahwf2rDz3ZiXm1qkpDKg1w/live/-/media/1DF124B3165D45E69862D0C75CE925A3.jpg/w=1536,q=65,format=auto"], maps: [{ label: "📍 春日大社地圖", url: "https://maps.app.goo.gl/9VxYxDV89vdRZNj8A?g_st=ic" }] },
+          { time: "11:30", title: "🦌 奈良公園與浮見堂", desc: "綠意盎然的公園裡，能近距離餵食可愛小鹿，並欣賞湖畔浮見堂倒影倒映於水面之美。", images: ["https://assets.funliday.com/posts/wp-content/uploads/2024/08/23213330/306955644_462576185900232_8164762936253156203_n.jpg"], maps: [{ label: "📍 浮見堂地圖", url: "https://maps.app.goo.gl/s8pEs1Fbe1vtTA1N7?g_st=ic" }] }
+        ]
+      }
+    };
+
+    const GLOBAL_CURRENCIES = [
+      { code: 'JPY', name: '日圓', symbol: '💴', rate: 0.2 },
+      { code: 'TWD', name: '新台幣', symbol: 'NT$', rate: 1.0 },
+      { code: 'USD', name: '美元', symbol: '💵', rate: 32.0 },
+      { code: 'EUR', name: '歐元', symbol: '💶', rate: 34.5 },
+      { code: 'KRW', name: '韓元', symbol: '₩', rate: 0.023 },
+      { code: 'THB', name: '泰銖', symbol: '฿', rate: 0.92 },
+      { code: 'HKD', name: '港幣', symbol: 'HK$', rate: 4.1 },
+      { code: 'GBP', name: '英鎊', symbol: '£', rate: 41.2 },
+      { code: 'HUF', name: '匈牙利福林', symbol: 'Ft', rate: 0.085 },
+      { code: 'CZK', name: '捷克克朗', symbol: 'Kč', rate: 1.38 }
+    ];
+
+    let pinnedCurrencies = ['JPY', 'TWD', 'USD', 'EUR', 'KRW', 'THB', 'HKD', 'GBP'];
+    let rates = {};
+    GLOBAL_CURRENCIES.forEach(c => { rates[c.code] = c.rate; });
+
     let currentUser = {
       name: "錢粘 (Robert)",
       email: "robertcl.kung@ogilvy.com"
     };
 
-    let mockProjects = [
-      {
-        id: "proj_kansai_2026",
-        title: "2026 日本關西家族之旅",
-        dates: "2026/11/19 – 11/24 (6天5夜)",
-        ownerEmail: "robertcl.kung@ogilvy.com",
-        members: ["robertcl.kung@ogilvy.com", "lisha@example.com"]
-      },
-      {
-        id: "proj_europe_2027",
-        title: "2027 生日東歐獨旅",
-        dates: "2027/01/09 – 01/17 (9天)",
-        ownerEmail: "robertcl.kung@ogilvy.com",
-        members: ["robertcl.kung@ogilvy.com"]
-      }
-    ];
-
+    let allProjects = {};
     let activeProjectId = null;
+    let activeProjectData = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       initSiteConfig();
+      updateCurrencyDropdown();
+      fetchLiveExchangeRates();
+
+      const timer = setInterval(() => {
+        if (window.db && window.dbRef && window.dbOnValue) {
+          clearInterval(timer);
+          initFirebaseProjectsSync();
+        }
+      }, 100);
     });
 
     function initSiteConfig() {
@@ -437,6 +621,47 @@
       `).join('');
     }
 
+    async function fetchLiveExchangeRates() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/TWD');
+        const data = await res.json();
+        if (data && data.rates) {
+          Object.keys(data.rates).forEach(code => { rates[code] = 1 / data.rates[code]; });
+        }
+      } catch (e) {}
+    }
+
+    function initFirebaseProjectsSync() {
+      const projRef = window.dbRef(window.db, 'projects');
+      window.dbOnValue(projRef, (snapshot) => {
+        allProjects = snapshot.val() || {};
+
+        // 如果雲端尚無專案，自動寫入預設關西專案
+        if (Object.keys(allProjects).length === 0) {
+          seedDefaultProject();
+        } else {
+          renderDashboardProjects();
+          if (activeProjectId && allProjects[activeProjectId]) {
+            activeProjectData = allProjects[activeProjectId];
+            renderActiveProjectContent();
+          }
+        }
+      });
+    }
+
+    function seedDefaultProject() {
+      const defaultId = 'proj_kansai_2026';
+      const defaultProj = {
+        title: "2026 日本關西家族之旅",
+        dates: "2026/11/19 – 11/24 (6天5夜)",
+        ownerEmail: "robertcl.kung@ogilvy.com",
+        members: ["錢粘", "蝦", "爸", "媽"],
+        itinerary: KANSAI_ITINERARY_DATA,
+        expenses: {}
+      };
+      window.dbSet(window.dbRef(window.db, 'projects/' + defaultId), defaultProj);
+    }
+
     function switchView(viewId) {
       document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
       document.getElementById('view-' + viewId).classList.add('active');
@@ -447,16 +672,17 @@
       renderDashboardProjects();
     }
 
-    function handleLogout() {
-      switchView('login');
-    }
+    function handleLogout() { switchView('login'); }
 
     function renderDashboardProjects() {
       const grid = document.getElementById('projectGridList');
-      grid.innerHTML = mockProjects.map(p => {
+      const entries = Object.entries(allProjects);
+
+      grid.innerHTML = entries.map(([id, p]) => {
         const isOwner = p.ownerEmail === currentUser.email;
+        const memberList = Array.isArray(p.members) ? p.members.join(', ') : '';
         return `
-          <div class="project-card" onclick="enterProject('${p.id}')">
+          <div class="project-card" onclick="enterProject('${id}')">
             <div class="project-header">
               <div>
                 <div class="project-name">${p.title}</div>
@@ -466,7 +692,7 @@
                 ${isOwner ? '👑 專案建立者' : '👥 受邀團員'}
               </span>
             </div>
-            <div class="project-members">成員: ${p.members.length} 位 · 結算幣別: TWD (台幣)</div>
+            <div class="project-members">成員: ${memberList}</div>
           </div>
         `;
       }).join('');
@@ -474,86 +700,381 @@
 
     function enterProject(projectId) {
       activeProjectId = projectId;
-      const proj = mockProjects.find(p => p.id === projectId);
-      if (!proj) return;
+      activeProjectData = allProjects[projectId];
+      if (!activeProjectData) return;
 
-      document.getElementById('activeProjectTitle').innerText = proj.title;
+      document.getElementById('activeProjectTitle').innerText = activeProjectData.title;
 
       const adminBtn = document.getElementById('adminSettingsBtn');
-      if (proj.ownerEmail === currentUser.email) {
+      if (activeProjectData.ownerEmail === currentUser.email) {
         adminBtn.style.display = 'block';
       } else {
         adminBtn.style.display = 'none';
       }
 
+      setupProjectMembersUI();
+      renderActiveProjectContent();
       switchView('project');
     }
 
-    function navigateToDashboard() {
-      switchView('dashboard');
+    function setupProjectMembersUI() {
+      const members = activeProjectData.members || ['錢粘'];
+      
+      const payerSelect = document.getElementById('expPayerSelect');
+      payerSelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
+
+      const splitBox = document.getElementById('expSplitMembersContainer');
+      splitBox.innerHTML = members.map(m => `
+        <label class="checkbox-label">
+          <input type="checkbox" name="splitMember" value="${m}" checked> ${m}
+        </label>
+      `).join('');
     }
 
-    function openNewProjectModal() {
-      document.getElementById('newProjectModal').style.display = 'flex';
+    function renderActiveProjectContent() {
+      if (!activeProjectData) return;
+      renderItineraryFromJSON(activeProjectData.itinerary || {});
+      renderExpenses();
+      renderSettlement();
     }
-    function closeNewProjectModal() {
-      document.getElementById('newProjectModal').style.display = 'none';
+
+    function renderItineraryFromJSON(data) {
+      const container = document.getElementById('itineraryContainer');
+      if (!data || Object.keys(data).length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--sub-text); font-weight:700;">尚無行程點位，可自由新增。</div>';
+        return;
+      }
+
+      let html = '';
+      Object.keys(data).forEach((dayKey, idx) => {
+        const day = data[dayKey];
+        const isOpen = idx === 0 ? 'open' : '';
+
+        html += `
+          <div class="card ${isOpen}">
+            <div class="card-header" onclick="toggleCard(this)">
+              <div>
+                <div class="card-title">${day.title}</div>
+                <div class="card-subtitle">${day.subtitle || ''}</div>
+              </div>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="card-content">
+              ${day.spots ? day.spots.map(spot => `
+                <div class="spot-card">
+                  ${spot.time ? `<span class="spot-time">⏰ ${spot.time}</span>` : ''}
+                  <div class="spot-title">${spot.title}</div>
+                  <div class="spot-desc">${spot.desc}</div>
+                  ${spot.images && spot.images.length > 0 ? `
+                    <div class="img-grid">
+                      ${spot.images.map(imgUrl => `<div class="img-box"><img src="${imgUrl}" alt="景點照片"></div>`).join('')}
+                    </div>
+                  ` : ''}
+                  ${spot.maps && spot.maps.length > 0 ? `
+                    <div class="btn-group">
+                      ${spot.maps.map(map => `<a href="${map.url}" class="map-btn" target="_blank">${map.label}</a>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('') : ''}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
     }
+
+    function saveExpense(e) {
+      e.preventDefault();
+      if (!activeProjectId) return;
+
+      const day = document.getElementById('expDay').value;
+      const item = document.getElementById('expItem').value.trim();
+      const amount = parseFloat(document.getElementById('expAmount').value);
+      const currency = document.getElementById('expCurrency').value;
+      const payment = document.getElementById('expPayment').value;
+      const payer = document.getElementById('expPayerSelect').value;
+      
+      const splitCheckboxes = document.querySelectorAll('input[name="splitMember"]:checked');
+      const splitMembers = Array.from(splitCheckboxes).map(cb => cb.value);
+
+      if (!item || isNaN(amount) || amount <= 0 || splitMembers.length === 0) {
+        alert('請填寫品名、金額與分攤成員！');
+        return;
+      }
+
+      const rate = rates[currency] || 1;
+      const newExpense = {
+        day, item, amount, currency, exchangeRate: rate, payment, payer, splitMembers, timestamp: Date.now()
+      };
+
+      const expensesRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses`);
+      window.dbPush(expensesRef, newExpense);
+
+      document.getElementById('expItem').value = '';
+      document.getElementById('expAmount').value = '';
+    }
+
+    function deleteExpense(id) {
+      if (confirm('確定刪除這筆記帳嗎？')) {
+        const itemRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses/${id}`);
+        window.dbRemove(itemRef);
+      }
+    }
+
+    function renderExpenses() {
+      const container = document.getElementById('expenseDayList');
+      const expenses = activeProjectData.expenses || {};
+      const days = ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
+
+      let html = '';
+      days.forEach(day => {
+        const items = Object.entries(expenses).filter(([id, data]) => data.day === day);
+        let dayTotalTWD = 0;
+        items.forEach(([id, data]) => {
+          const amt = data.amount || 0;
+          const curr = data.currency || 'JPY';
+          const rate = data.exchangeRate || rates[curr] || 1;
+          dayTotalTWD += amt * rate;
+        });
+
+        html += `
+          <div class="card ${items.length > 0 ? 'open' : ''}">
+            <div class="card-header" onclick="toggleCard(this)">
+              <div>
+                <div class="card-title">${day} 明細</div>
+                <div class="card-subtitle">小計：約 TWD $${Math.round(dayTotalTWD).toLocaleString()}</div>
+              </div>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="card-content">
+              ${items.length === 0 ? '<div style="font-size:13px; color:var(--sub-text);">尚無紀錄</div>' : ''}
+              ${items.map(([id, data]) => `
+                <div class="expense-item">
+                  <div class="expense-info">
+                    <div class="expense-title">${data.item}</div>
+                    <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="expense-amount">${(data.amount || 0).toLocaleString()} ${data.currency}</div>
+                    <button class="btn-delete" onclick="deleteExpense('${id}')">刪除</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderSettlement() {
+      const expenses = activeProjectData.expenses || {};
+      const members = activeProjectData.members || ['錢粘'];
+
+      let paidTWD = {};
+      let owedTWD = {};
+      members.forEach(m => { paidTWD[m] = 0; owedTWD[m] = 0; });
+
+      let totalGroupTWD = 0;
+
+      Object.values(expenses).forEach(item => {
+        const amt = item.amount || 0;
+        const curr = item.currency || 'JPY';
+        const rate = item.exchangeRate || rates[curr] || 1;
+        const twd = amt * rate;
+
+        totalGroupTWD += twd;
+
+        if (paidTWD[item.payer] !== undefined) paidTWD[item.payer] += twd;
+
+        if (item.splitMembers && item.splitMembers.length > 0) {
+          const shareTWD = twd / item.splitMembers.length;
+          item.splitMembers.forEach(m => {
+            if (owedTWD[m] !== undefined) owedTWD[m] += shareTWD;
+          });
+        }
+      });
+
+      const perPersonTWD = totalGroupTWD / (members.length || 1);
+
+      document.getElementById('totalGroupExpense').innerText = `TWD $${Math.round(totalGroupTWD).toLocaleString()}`;
+      document.getElementById('perPersonShare').innerText = `全團人均參考：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
+
+      let memberHtml = '';
+      let balances = {};
+
+      members.forEach(m => {
+        const net = paidTWD[m] - owedTWD[m];
+        balances[m] = net;
+
+        memberHtml += `
+          <div class="member-settle-card">
+            <div class="member-name">${m}</div>
+            <div class="member-row"><span>實際掏出 (包含代墊):</span><span>TWD $${Math.round(paidTWD[m]).toLocaleString()}</span></div>
+            <div class="member-row"><span>應分攤總額:</span><span>TWD $${Math.round(owedTWD[m]).toLocaleString()}</span></div>
+            <div class="member-status">
+              <span>結算狀態:</span>
+              <span class="${net >= 0 ? 'text-plus' : 'text-minus'}">
+                ${net >= 0 ? '應收回 TWD $' + Math.round(net).toLocaleString() : '應補繳 TWD $' + Math.round(Math.abs(net)).toLocaleString()}
+              </span>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('memberSettleList').innerHTML = memberHtml;
+
+      calculateTransfers(balances);
+    }
+
+    function calculateTransfers(balances) {
+      let debtors = [];
+      let creditors = [];
+
+      Object.entries(balances).forEach(([name, amount]) => {
+        const rounded = Math.round(amount);
+        if (rounded < -1) debtors.push({ name, amount: Math.abs(rounded) });
+        else if (rounded > 1) creditors.push({ name, amount: rounded });
+      });
+
+      let instructions = [];
+      let i = 0, j = 0;
+
+      while (i < debtors.length && j < creditors.length) {
+        let debtor = debtors[i];
+        let creditor = creditors[j];
+        let amount = Math.min(debtor.amount, creditor.amount);
+
+        instructions.push(`👉 <strong>${debtor.name}</strong> 需支付給 <strong>${creditor.name}</strong>：TWD $${amount.toLocaleString()}`);
+
+        debtor.amount -= amount;
+        creditor.amount -= amount;
+
+        if (debtor.amount === 0) i++;
+        if (creditor.amount === 0) j++;
+      }
+
+      if (instructions.length === 0) {
+        document.getElementById('transferInstructions').innerHTML = '<div class="transfer-item">🎉 目前收支完美平衡，無需找補！</div>';
+      } else {
+        document.getElementById('transferInstructions').innerHTML = instructions.map(inst => `<div class="transfer-item">${inst}</div>`).join('');
+      }
+    }
+
+    function toggleCard(header) { header.parentElement.classList.toggle('open'); }
+    function toggleAllCards(open) {
+      document.querySelectorAll('#subtab-itinerary .card').forEach(card => {
+        if(open) card.classList.add('open'); else card.classList.remove('open');
+      });
+    }
+
+    function navigateToDashboard() { switchView('dashboard'); }
+    function openNewProjectModal() { document.getElementById('newProjectModal').style.display = 'flex'; }
+    function closeNewProjectModal() { document.getElementById('newProjectModal').style.display = 'none'; }
 
     function saveNewProject(e) {
       e.preventDefault();
       const title = document.getElementById('newProjTitle').value.trim();
       const dates = document.getElementById('newProjDates').value.trim();
+      const membersRaw = document.getElementById('newProjMembers').value.trim();
 
-      const newProj = {
-        id: 'proj_' + Date.now(),
+      const members = membersRaw.split(',').map(m => m.trim()).filter(m => m.length > 0);
+
+      const newProjId = 'proj_' + Date.now();
+      const newProjData = {
         title, dates,
         ownerEmail: currentUser.email,
-        members: [currentUser.email]
+        members: members.length > 0 ? members : ['錢粘'],
+        itinerary: {},
+        expenses: {}
       };
 
-      mockProjects.unshift(newProj);
-      closeNewProjectModal();
-      renderDashboardProjects();
-      enterProject(newProj.id);
+      window.dbSet(window.dbRef(window.db, 'projects/' + newProjId), newProjData).then(() => {
+        closeNewProjectModal();
+        enterProject(newProjId);
+      });
     }
 
     function openAdminSettingsModal() {
-      const proj = mockProjects.find(p => p.id === activeProjectId);
-      if (!proj) return;
-
-      document.getElementById('adminProjTitle').value = proj.title;
-      document.getElementById('adminProjMembers').value = proj.members.join(', ');
+      if (!activeProjectData) return;
+      document.getElementById('adminProjTitle').value = activeProjectData.title || '';
+      document.getElementById('adminProjMembers').value = (activeProjectData.members || []).join(', ');
       document.getElementById('adminSettingsModal').style.display = 'flex';
     }
 
-    function closeAdminSettingsModal() {
-      document.getElementById('adminSettingsModal').style.display = 'none';
-    }
+    function closeAdminSettingsModal() { document.getElementById('adminSettingsModal').style.display = 'none'; }
 
     function saveAdminSettings() {
-      const proj = mockProjects.find(p => p.id === activeProjectId);
-      if (!proj) return;
+      if (!activeProjectId) return;
+      const title = document.getElementById('adminProjTitle').value.trim();
+      const membersRaw = document.getElementById('adminProjMembers').value.trim();
+      const members = membersRaw.split(',').map(m => m.trim()).filter(m => m.length > 0);
 
-      proj.title = document.getElementById('adminProjTitle').value.trim();
-      document.getElementById('activeProjectTitle').innerText = proj.title;
-      closeAdminSettingsModal();
-      renderDashboardProjects();
+      const updateData = { title, members };
+      window.dbUpdate(window.dbRef(window.db, 'projects/' + activeProjectId), updateData).then(() => {
+        closeAdminSettingsModal();
+      });
     }
 
     function deleteCurrentProject() {
       if (confirm('確定要刪除此專案嗎？此動作無法復原！')) {
-        mockProjects = mockProjects.filter(p => p.id !== activeProjectId);
-        closeAdminSettingsModal();
-        switchView('dashboard');
-        renderDashboardProjects();
+        window.dbRemove(window.dbRef(window.db, 'projects/' + activeProjectId)).then(() => {
+          closeAdminSettingsModal();
+          switchView('dashboard');
+        });
       }
     }
 
     function switchProjectTab(tabName) {
       document.querySelectorAll('#view-project .tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-subcontent').forEach(sub => sub.classList.remove('active'));
+
       const activeBtn = Array.from(document.querySelectorAll('#view-project .tab-btn')).find(b => b.getAttribute('onclick').includes(tabName));
       if (activeBtn) activeBtn.classList.add('active');
+
+      const targetSub = document.getElementById('subtab-' + tabName);
+      if (targetSub) targetSub.classList.add('active');
+    }
+
+    function updateCurrencyDropdown() {
+      const select = document.getElementById('expCurrency');
+      if (!select) return;
+      let html = '';
+      pinnedCurrencies.forEach(code => {
+        const item = GLOBAL_CURRENCIES.find(c => c.code === code) || { code, name: code, symbol: '$' };
+        html += `<option value="${code}">${item.symbol} ${code} - ${item.name}</option>`;
+      });
+      html += `<option value="__SEARCH__">＋ 搜尋/新增其他國家貨幣...</option>`;
+      select.innerHTML = html;
+    }
+
+    function handleCurrencySelect(selectElem) {
+      if (selectElem.value === '__SEARCH__') {
+        openCurrencyModal();
+        selectElem.value = pinnedCurrencies[0];
+      }
+    }
+
+    function openCurrencyModal() { document.getElementById('currencySearchModal').style.display = 'flex'; filterCurrencyList(); }
+    function closeCurrencyModal() { document.getElementById('currencySearchModal').style.display = 'none'; }
+
+    function filterCurrencyList() {
+      const query = document.getElementById('currencySearchInput').value.toLowerCase().trim();
+      const container = document.getElementById('currencySearchResults');
+      const filtered = GLOBAL_CURRENCIES.filter(c => c.code.toLowerCase().includes(query) || c.name.toLowerCase().includes(query));
+      container.innerHTML = filtered.map(c => `
+        <div class="currency-item" onclick="selectAndPinCurrency('${c.code}')">
+          <span>${c.symbol} ${c.code} (${c.name})</span>
+          <span style="color:var(--brand-main); font-size:13px;">＋ 加入清單</span>
+        </div>
+      `).join('');
+    }
+
+    function selectAndPinCurrency(code) {
+      if (!pinnedCurrencies.includes(code)) pinnedCurrencies.push(code);
+      updateCurrencyDropdown();
+      document.getElementById('expCurrency').value = code;
+      closeCurrencyModal();
     }
   </script>
 </body>
