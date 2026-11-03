@@ -34,11 +34,11 @@
 
   <style>
     /* =========================================================
-       🎨 全站視覺主題設定區 (Theme Tokens) - 修改配色/陰影請改這裡！
+       🎨 全站視覺主題設定區 (Theme Tokens)
        ========================================================= */
     :root {
       --brand-main: #00A896;            /* Tiffany 綠主色 */
-      --brand-dark: #0F3D3E;            /* 質感深青文字與標題色 */
+      --brand-dark: #0F3D3E;            /* 質感深青文字色 */
       --brand-bg: #E6FFFA;              /* 全站主背景色 */
       --brand-light: #F0FDF4;           /* 區塊淺色背景 */
       --brand-border: #B2F5EA;          /* Tiffany 淺綠邊框 */
@@ -63,9 +63,7 @@
     .page-view { display: none; width: 100%; min-height: 100vh; }
     .page-view.active { display: block; }
 
-    /* =========================================================
-       1. 登入頁面樣式 (Login View)
-       ========================================================= */
+    /* VIEW 1: 登入頁樣式 */
     .login-container {
       max-width: 440px;
       margin: 0 auto;
@@ -76,24 +74,9 @@
       justify-content: center;
       min-height: 100vh;
     }
-    .login-logo {
-      font-size: 54px;
-      margin-bottom: 8px;
-    }
-    .login-title {
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--brand-dark);
-      letter-spacing: -0.5px;
-    }
-    .login-subtitle {
-      font-size: 14px;
-      color: var(--sub-text);
-      font-weight: 600;
-      margin-top: 4px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
+    .login-logo { font-size: 54px; margin-bottom: 8px; }
+    .login-title { font-size: 26px; font-weight: 900; color: var(--brand-dark); letter-spacing: -0.5px; }
+    .login-subtitle { font-size: 14px; color: var(--sub-text); font-weight: 600; margin-top: 4px; margin-bottom: 24px; text-align: center; }
     .glass-card {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(16px);
@@ -105,12 +88,7 @@
       box-shadow: var(--shadow-lg);
     }
     .feature-list { margin-bottom: 24px; }
-    .feature-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
+    .feature-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
     .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
     .feature-text h4 { font-size: 14px; font-weight: 800; color: var(--brand-dark); }
     .feature-text p { font-size: 12px; color: var(--sub-text); font-weight: 600; }
@@ -134,9 +112,7 @@
     }
     .btn-google:active { scale: 0.98; background: #F7FAFC; }
 
-    /* =========================================================
-       2. 專案大廳樣式 (Dashboard View)
-       ========================================================= */
+    /* VIEW 2: 專案大廳樣式 */
     .navbar {
       position: sticky;
       top: 0;
@@ -193,8 +169,7 @@
       padding: 16px;
       box-shadow: var(--shadow-md);
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
+      transition: transform 0.2s ease;
     }
     .project-card:active { transform: scale(0.99); }
     .project-header { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -211,9 +186,7 @@
     .role-member { background: #EBF8FF; color: #2B6CB0; border: 1px solid #90CDF4; }
     .project-members { margin-top: 10px; font-size: 12px; color: var(--sub-text); font-weight: 600; }
 
-    /* =========================================================
-       3. 專案內部頁面樣式 (Project Detail View)
-       ========================================================= */
+    /* VIEW 3: 專案內部頁面樣式 */
     .tab-bar {
       display: flex;
       background: #FFFFFF;
@@ -269,7 +242,7 @@
       margin-top: 6px;
     }
 
-    /* 通用 Modal 樣式 */
+    /* Modal 樣式 */
     .modal-mask {
       display: none;
       position: fixed;
@@ -294,9 +267,7 @@
 </head>
 <body>
 
-  <!-- =========================================================
-     VIEW 1：獨立登入頁模組 (Login View)
-     ========================================================= -->
+  <!-- VIEW 1：登入頁 -->
   <div id="view-login" class="page-view active">
     <div class="login-container">
       <div class="login-logo" id="siteLogoIcon">✈️</div>
@@ -313,9 +284,7 @@
     </div>
   </div>
 
-  <!-- =========================================================
-     VIEW 2：獨立專案大廳模組 (Dashboard View)
-     ========================================================= -->
+  <!-- VIEW 2：專案大廳 -->
   <div id="view-dashboard" class="page-view">
     <div class="navbar">
       <div class="navbar-brand">
@@ -338,16 +307,13 @@
     </div>
   </div>
 
-  <!-- =========================================================
-     VIEW 3：獨立專案內部模組 (Project Detail View)
-     ========================================================= -->
+  <!-- VIEW 3：專案內部 -->
   <div id="view-project" class="page-view">
     <div class="navbar">
       <div style="display:flex; align-items:center; gap:8px;">
         <button class="btn-logout" onclick="navigateToDashboard()">← 返回大廳</button>
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
-      <!-- 管理員專屬齒輪 (僅 Owner 可見) -->
       <button id="adminSettingsBtn" class="btn-logout" style="display:none; background:var(--brand-main); color:#FFF; border:none;" onclick="openAdminSettingsModal()">⚙️ 專案設定</button>
     </div>
 
@@ -359,8 +325,10 @@
       </div>
 
       <div id="projectTabContent" style="margin-top: 16px;">
-        <div style="text-align:center; padding:40px; color:var(--sub-text); font-weight:700;">
-          已完成解耦！此區域連動 Firebase 該專案之行程與記帳資料庫。
+        <div style="background:#FFF; border-radius:16px; padding:24px; text-align:center; border:1.5px solid var(--brand-border); box-shadow:var(--shadow-md);">
+          <div style="font-size:32px; margin-bottom:8px;">✨</div>
+          <div style="font-size:16px; font-weight:800; color:var(--brand-dark);">專案獨立資料庫準備就緒</div>
+          <div style="font-size:13px; color:var(--sub-text); margin-top:4px; font-weight:600;">已與雲端資料連結，可開始進行專屬行程規劃與多幣別記帳。</div>
         </div>
       </div>
     </div>
@@ -382,21 +350,12 @@
           <label class="form-label">旅遊日期區間</label>
           <input type="text" id="newProjDates" class="form-control" placeholder="例如：2027/01/09 – 01/17 (9天)" required>
         </div>
-        <div class="form-group">
-          <label class="form-label">基準結算幣別</label>
-          <select id="newProjBaseCurrency" class="form-control">
-            <option value="TWD" selected>NT$ TWD - 新台幣</option>
-            <option value="EUR">💶 EUR - 歐元</option>
-            <option value="JPY">💴 JPY - 日圓</option>
-            <option value="USD">💵 USD - 美元</option>
-          </select>
-        </div>
         <button type="submit" class="btn-submit">建立專案並進入</button>
       </form>
     </div>
   </div>
 
-  <!-- Modal 2: 管理員專屬「⚙️ 專案設定」彈窗 -->
+  <!-- Modal 2: ⚙️ 專案設定彈窗 -->
   <div id="adminSettingsModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -420,10 +379,6 @@
   </div>
 
   <script>
-    /* =========================================================
-       ⚙️ 網站品牌與文案設定檔 (Site Configuration)
-       未來想改網站名字、Logo 或特色簡介，改這裡即可！
-       ========================================================= */
     const SITE_CONFIG = {
       appName: "TripPulse 質感旅畔",
       appSubtitle: "隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家",
@@ -435,29 +390,25 @@
       ]
     };
 
-    // 模擬目前使用者 (未來直接接入 Firebase Auth)
     let currentUser = {
       name: "錢粘 (Robert)",
       email: "robertcl.kung@ogilvy.com"
     };
 
-    // 示範專案數據庫 (預留寫入 Firebase)
     let mockProjects = [
       {
         id: "proj_kansai_2026",
         title: "2026 日本關西家族之旅",
         dates: "2026/11/19 – 11/24 (6天5夜)",
         ownerEmail: "robertcl.kung@ogilvy.com",
-        members: ["robertcl.kung@ogilvy.com", "lisha@example.com"],
-        baseCurrency: "TWD"
+        members: ["robertcl.kung@ogilvy.com", "lisha@example.com"]
       },
       {
         id: "proj_europe_2027",
         title: "2027 生日東歐獨旅",
         dates: "2027/01/09 – 01/17 (9天)",
         ownerEmail: "robertcl.kung@ogilvy.com",
-        members: ["robertcl.kung@ogilvy.com"],
-        baseCurrency: "TWD"
+        members: ["robertcl.kung@ogilvy.com"]
       }
     ];
 
@@ -467,7 +418,6 @@
       initSiteConfig();
     });
 
-    // 初始化文案與設定檔
     function initSiteConfig() {
       document.getElementById('siteLogoIcon').innerText = SITE_CONFIG.logoIcon;
       document.getElementById('dashLogoIcon').innerText = SITE_CONFIG.logoIcon;
@@ -487,24 +437,20 @@
       `).join('');
     }
 
-    // 切換視圖引擎 (View Switcher)
     function switchView(viewId) {
       document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
       document.getElementById('view-' + viewId).classList.add('active');
     }
 
-    // Google 登入
     function handleGoogleLogin() {
       switchView('dashboard');
       renderDashboardProjects();
     }
 
-    // 登出
     function handleLogout() {
       switchView('login');
     }
 
-    // 渲染專案大廳
     function renderDashboardProjects() {
       const grid = document.getElementById('projectGridList');
       grid.innerHTML = mockProjects.map(p => {
@@ -520,13 +466,12 @@
                 ${isOwner ? '👑 專案建立者' : '👥 受邀團員'}
               </span>
             </div>
-            <div class="project-members">成員: ${p.members.length} 位 · 基準幣別: ${p.baseCurrency}</div>
+            <div class="project-members">成員: ${p.members.length} 位 · 結算幣別: TWD (台幣)</div>
           </div>
         `;
       }).join('');
     }
 
-    // 進入單一專案
     function enterProject(projectId) {
       activeProjectId = projectId;
       const proj = mockProjects.find(p => p.id === projectId);
@@ -534,7 +479,6 @@
 
       document.getElementById('activeProjectTitle').innerText = proj.title;
 
-      // 權限檢查：只有 Owner 顯示「⚙️ 專案設定」
       const adminBtn = document.getElementById('adminSettingsBtn');
       if (proj.ownerEmail === currentUser.email) {
         adminBtn.style.display = 'block';
@@ -560,11 +504,10 @@
       e.preventDefault();
       const title = document.getElementById('newProjTitle').value.trim();
       const dates = document.getElementById('newProjDates').value.trim();
-      const baseCurrency = document.getElementById('newProjBaseCurrency').value;
 
       const newProj = {
         id: 'proj_' + Date.now(),
-        title, dates, baseCurrency,
+        title, dates,
         ownerEmail: currentUser.email,
         members: [currentUser.email]
       };
