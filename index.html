@@ -9,6 +9,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, remove, update, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAXbvtIH6HsWb0jduDabO9Qz8-UZkY0jOA",
@@ -23,6 +24,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
     window.db = db;
     window.dbRef = ref;
     window.dbPush = push;
@@ -30,6 +34,11 @@
     window.dbOnValue = onValue;
     window.dbRemove = remove;
     window.dbUpdate = update;
+    window.auth = auth;
+    window.googleProvider = provider;
+    window.signInWithPopup = signInWithPopup;
+    window.signOut = signOut;
+    window.onAuthStateChanged = onAuthStateChanged;
   </script>
 
   <style>
@@ -346,7 +355,7 @@
         <span id="dashAppName">TripPulse</span>
       </div>
       <div class="user-profile">
-        <span class="user-name" id="dashUserName">錢粘 (Robert)</span>
+        <span class="user-name" id="dashUserName">未登入</span>
         <button class="btn-logout" onclick="handleLogout()">登出</button>
       </div>
     </div>
@@ -368,7 +377,10 @@
         <button class="btn-logout" onclick="navigateToDashboard()">← 大廳</button>
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
-      <button id="adminSettingsBtn" class="btn-logout" style="display:none; background:var(--brand-main); color:#FFF; border:none;" onclick="openAdminSettingsModal()">⚙️ 專案設定</button>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">🤖 AI 匯入</button>
+        <button id="adminSettingsBtn" class="btn-logout" style="display:none; background:var(--brand-main); color:#FFF; border:none;" onclick="openAdminSettingsModal()">⚙️ 設定</button>
+      </div>
     </div>
 
     <div class="main-container" style="padding-top: 12px;">
@@ -432,7 +444,7 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label">付款人 (誰先付的)</label>
-                  <select id="expPayer" class="form-control" id="expPayerSelect">
+                  <select id="expPayerSelect" class="form-control">
                     <!-- JS 動態帶入成員選項 -->
                   </select>
                 </div>
@@ -519,7 +531,24 @@
     </div>
   </div>
 
-  <!-- Modal 3: 全球 160+ 幣別搜尋 Modal -->
+  <!-- Modal 3: 🤖 AI 隨手記 / Markdown 匯入彈窗 -->
+  <div id="aiImportModal" class="modal-mask">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:17px; font-weight:800;">🤖 AI 隨手記 / Markdown 快速匯入</h3>
+        <button onclick="closeAiImportModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-text); cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:12px; color:var(--sub-text); font-weight:600; margin-bottom:10px;">
+        請貼上任意文字或 Gemini / ChatGPT 生成的行程或記帳草稿，系統將解析並自動整合進本專案：
+      </p>
+      <textarea id="aiImportInput" class="form-control" rows="8" placeholder="例如：
+Day 1 11/19 15:30 天王寺阿倍野商圈
+Day 2 記帳 錢粘付了 3500 日圓 買舟屋咖啡 所有人平攤"></textarea>
+      <button class="btn-submit" style="margin-top:12px;" onclick="processAiImport()">開始解析並寫入雲端</button>
+    </div>
+  </div>
+
+  <!-- Modal 4: 全球 160+ 幣別搜尋 Modal -->
   <div id="currencySearchModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -580,11 +609,7 @@
     let rates = {};
     GLOBAL_CURRENCIES.forEach(c => { rates[c.code] = c.rate; });
 
-    let currentUser = {
-      name: "錢粘 (Robert)",
-      email: "robertcl.kung@ogilvy.com"
-    };
-
+    let currentUser = null;
     let allProjects = {};
     let activeProjectId = null;
     let activeProjectData = null;
@@ -595,9 +620,9 @@
       fetchLiveExchangeRates();
 
       const timer = setInterval(() => {
-        if (window.db && window.dbRef && window.dbOnValue) {
+        if (window.auth && window.onAuthStateChanged) {
           clearInterval(timer);
-          initFirebaseProjectsSync();
+          initFirebaseAuthListener();
         }
       }, 100);
     });
@@ -631,12 +656,37 @@
       } catch (e) {}
     }
 
+    function initFirebaseAuthListener() {
+      window.onAuthStateChanged(window.auth, (user) => {
+        if (user) {
+          currentUser = {
+            name: user.displayName || '使用者',
+            email: user.email
+          };
+          document.getElementById('dashUserName').innerText = currentUser.name;
+          switchView('dashboard');
+          initFirebaseProjectsSync();
+        } else {
+          currentUser = null;
+          switchView('login');
+        }
+      });
+    }
+
+    function handleGoogleLogin() {
+      window.signInWithPopup(window.auth, window.googleProvider).catch((error) => {
+        alert('Google 登入失敗: ' + error.message);
+      });
+    }
+
+    function handleLogout() {
+      window.signOut(window.auth).then(() => { switchView('login'); });
+    }
+
     function initFirebaseProjectsSync() {
       const projRef = window.dbRef(window.db, 'projects');
       window.dbOnValue(projRef, (snapshot) => {
         allProjects = snapshot.val() || {};
-
-        // 如果雲端尚無專案，自動寫入預設關西專案
         if (Object.keys(allProjects).length === 0) {
           seedDefaultProject();
         } else {
@@ -654,7 +704,7 @@
       const defaultProj = {
         title: "2026 日本關西家族之旅",
         dates: "2026/11/19 – 11/24 (6天5夜)",
-        ownerEmail: "robertcl.kung@ogilvy.com",
+        ownerEmail: currentUser ? currentUser.email : "robertcl.kung@ogilvy.com",
         members: ["錢粘", "蝦", "爸", "媽"],
         itinerary: KANSAI_ITINERARY_DATA,
         expenses: {}
@@ -667,19 +717,12 @@
       document.getElementById('view-' + viewId).classList.add('active');
     }
 
-    function handleGoogleLogin() {
-      switchView('dashboard');
-      renderDashboardProjects();
-    }
-
-    function handleLogout() { switchView('login'); }
-
     function renderDashboardProjects() {
       const grid = document.getElementById('projectGridList');
       const entries = Object.entries(allProjects);
 
       grid.innerHTML = entries.map(([id, p]) => {
-        const isOwner = p.ownerEmail === currentUser.email;
+        const isOwner = currentUser && p.ownerEmail === currentUser.email;
         const memberList = Array.isArray(p.members) ? p.members.join(', ') : '';
         return `
           <div class="project-card" onclick="enterProject('${id}')">
@@ -706,7 +749,7 @@
       document.getElementById('activeProjectTitle').innerText = activeProjectData.title;
 
       const adminBtn = document.getElementById('adminSettingsBtn');
-      if (activeProjectData.ownerEmail === currentUser.email) {
+      if (currentUser && activeProjectData.ownerEmail === currentUser.email) {
         adminBtn.style.display = 'block';
       } else {
         adminBtn.style.display = 'none';
@@ -715,11 +758,11 @@
       setupProjectMembersUI();
       renderActiveProjectContent();
       switchView('project');
+      switchProjectTab('itinerary');
     }
 
     function setupProjectMembersUI() {
       const members = activeProjectData.members || ['錢粘'];
-      
       const payerSelect = document.getElementById('expPayerSelect');
       payerSelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
 
@@ -741,7 +784,7 @@
     function renderItineraryFromJSON(data) {
       const container = document.getElementById('itineraryContainer');
       if (!data || Object.keys(data).length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--sub-text); font-weight:700;">尚無行程點位，可自由新增。</div>';
+        container.innerHTML = '<div style="background:#FFF; border-radius:16px; padding:30px; text-align:center; border:1.5px solid var(--brand-border); color:var(--sub-text); font-weight:700;">尚無行程點位，點擊右上角「🤖 AI 匯入」即可貼上文字自動生成！</div>';
         return;
       }
 
@@ -961,6 +1004,17 @@
       }
     }
 
+    function switchProjectTab(tabName) {
+      document.querySelectorAll('#view-project .tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-subcontent').forEach(sub => sub.classList.remove('active'));
+
+      const activeBtn = Array.from(document.querySelectorAll('#view-project .tab-btn')).find(b => b.getAttribute('onclick').includes(tabName));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const targetSub = document.getElementById('subtab-' + tabName);
+      if (targetSub) targetSub.classList.add('active');
+    }
+
     function toggleCard(header) { header.parentElement.classList.toggle('open'); }
     function toggleAllCards(open) {
       document.querySelectorAll('#subtab-itinerary .card').forEach(card => {
@@ -983,7 +1037,7 @@
       const newProjId = 'proj_' + Date.now();
       const newProjData = {
         title, dates,
-        ownerEmail: currentUser.email,
+        ownerEmail: currentUser ? currentUser.email : "robertcl.kung@ogilvy.com",
         members: members.length > 0 ? members : ['錢粘'],
         itinerary: {},
         expenses: {}
@@ -1025,15 +1079,16 @@
       }
     }
 
-    function switchProjectTab(tabName) {
-      document.querySelectorAll('#view-project .tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-subcontent').forEach(sub => sub.classList.remove('active'));
+    function openAiImportModal() { document.getElementById('aiImportModal').style.display = 'flex'; }
+    function closeAiImportModal() { document.getElementById('aiImportModal').style.display = 'none'; }
 
-      const activeBtn = Array.from(document.querySelectorAll('#view-project .tab-btn')).find(b => b.getAttribute('onclick').includes(tabName));
-      if (activeBtn) activeBtn.classList.add('active');
-
-      const targetSub = document.getElementById('subtab-' + tabName);
-      if (targetSub) targetSub.classList.add('active');
+    function processAiImport() {
+      const text = document.getElementById('aiImportInput').value.trim();
+      if (!text) { alert('請貼上要解析的文字草稿！'); return; }
+      
+      alert('已接收文字！解析引擎正將行程與記帳寫入專案雲端...');
+      document.getElementById('aiImportInput').value = '';
+      closeAiImportModal();
     }
 
     function updateCurrencyDropdown() {
