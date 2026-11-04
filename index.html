@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>TripPulse 質感旅畔</title>
+  <title>nien-trip</title>
   
   <!-- Firebase SDK (v10 Modular via CDN) -->
   <script type="module">
@@ -27,7 +27,6 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // 強制設定持久化權限，避免 Safari / LINE 內建瀏覽器跨頁遺失狀態
     setPersistence(auth, browserLocalPersistence).catch(() => {});
 
     window.db = db;
@@ -77,7 +76,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
     }
     .login-logo { font-size: 54px; margin-bottom: 8px; }
-    .login-title { font-size: 26px; font-weight: 900; color: var(--brand-dark); letter-spacing: -0.5px; }
+    .login-title { font-size: 28px; font-weight: 900; color: var(--brand-dark); letter-spacing: -0.5px; }
     .login-subtitle { font-size: 14px; color: var(--sub-text); font-weight: 600; margin-top: 4px; margin-bottom: 24px; text-align: center; }
     .glass-card {
       background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -261,7 +260,7 @@
   <div id="view-login" class="page-view active">
     <div class="login-container">
       <div class="login-logo" id="siteLogoIcon">✈️</div>
-      <h1 class="login-title" id="siteAppName">TripPulse 質感旅畔</h1>
+      <h1 class="login-title" id="siteAppName">nien-trip</h1>
       <p class="login-subtitle" id="siteAppSubtitle">隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家</p>
 
       <div class="glass-card">
@@ -279,7 +278,7 @@
     <div class="navbar">
       <div class="navbar-brand">
         <span id="dashLogoIcon">✈️</span>
-        <span id="dashAppName">TripPulse</span>
+        <span id="dashAppName">nien-trip</span>
       </div>
       <div class="user-profile">
         <span class="user-name" id="dashUserName">未登入</span>
@@ -307,7 +306,7 @@
       <div style="display:flex; gap:6px;">
         <button id="navApplyMemberBtn" class="btn-logout" style="background:#FEFCBF; color:#744210; border-color:#F6E05E; display:none;" onclick="openJoinPromptModal()">📩 申請成為成員</button>
         <button id="navMemberMgmtBtn" class="btn-logout" style="background:var(--brand-main); color:#FFF; border:none; display:none;" onclick="openMembersModal()">👥 成員管理</button>
-        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">📋 Markdown 匯入</button>
+        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">🤖 AI 隨手記匯入</button>
       </div>
     </div>
 
@@ -441,20 +440,17 @@
         <button onclick="closeMembersModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
       </div>
 
-      <!-- 待審核申請清單 -->
       <div id="pendingRequestsContainer" style="display:none; margin-bottom:16px;">
         <label class="form-label" style="color:var(--danger);">🔔 待審核加入申請</label>
         <div id="pendingRequestsList" style="display:flex; flex-direction:column; gap:8px;"></div>
         <hr style="border:none; border-top:1px dashed var(--brand-border); margin:14px 0;">
       </div>
       
-      <!-- 現有成員名單 -->
       <div class="form-group">
         <label class="form-label">目前專案成員與暱稱</label>
         <div id="membersChipList" style="display:flex; flex-direction:column;"></div>
       </div>
 
-      <!-- 手動新增純文字成員 -->
       <div class="form-group" style="display:flex; gap:8px;">
         <input type="text" id="newMemberNameInput" class="form-control" placeholder="新增成員暱稱 (例：爸)">
         <button class="btn-submit" style="width:auto; margin-top:0; padding:0 16px; white-space:nowrap;" onclick="addManualMember()">➕ 新增</button>
@@ -462,7 +458,6 @@
 
       <hr style="border:none; border-top:1px dashed var(--brand-border); margin:16px 0;">
 
-      <!-- 專案邀請連結 -->
       <div class="form-group">
         <label class="form-label">🔗 專案專屬邀請連結</label>
         <input type="text" id="inviteUrlInput" class="form-control" readonly style="background:#F7FAFC;">
@@ -471,7 +466,7 @@
     </div>
   </div>
 
-  <!-- Modal 3: 📩 申請 / 接受邀請加入彈窗 -->
+  <!-- Modal 3: 📩 申請 / 檢視加入彈窗 -->
   <div id="joinPromptModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -491,18 +486,18 @@
     </div>
   </div>
 
-  <!-- Modal 4: 📋 Markdown 動態解析與批次匯入彈窗 -->
+  <!-- Modal 4: 🤖 AI 智慧口語與隨手記匯入彈窗 -->
   <div id="aiImportModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="font-size:17px; font-weight:800; color:var(--brand-dark);">📋 一鍵貼上 Markdown 匯入</h3>
+        <h3 style="font-size:17px; font-weight:800; color:var(--brand-dark);">🤖 Gemini AI 隨手記匯入</h3>
         <button onclick="closeAiImportModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-text); cursor:pointer;">✕</button>
       </div>
-      <p style="font-size:12px; color:var(--sub-text); font-weight:600; margin-bottom:10px;">
-        支援行程或隨手記帳（例如：day1 爸爸花了1000日幣買咖啡 / Day 1 19:00 萬兩 南森町店）：
+      <p style="font-size:12px; color:var(--sub-text); font-weight:600; margin-bottom:8px;">
+        隨手貼上任何口語文字（例如：Day one晚上七點要去京都車站 / 爸爸買了1000日幣咖啡不用分帳）：
       </p>
-      <textarea id="aiImportInput" class="form-control" rows="10" placeholder="貼上景點描述或隨手記帳內容..."></textarea>
-      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processLocalMarkdownImport()">🚀 解析並寫入 Firebase 雲端</button>
+      <textarea id="aiImportInput" class="form-control" rows="8" placeholder="在此輸入或貼上任何口語隨手筆記..."></textarea>
+      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processGeminiAIImport()">✨ 請 Gemini AI 智慧理解並寫入雲端</button>
     </div>
   </div>
 
@@ -542,14 +537,16 @@
   </div>
 
   <script>
+    const GEMINI_API_KEY = "AQ.Ab8RN6Jm1WqV5XLvuKzv47r79fEDW42Tgfu7s-S2J8unBX607A";
+
     const SITE_CONFIG = {
-      appName: "TripPulse 質感旅畔",
+      appName: "nien-trip",
       appSubtitle: "隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家",
       logoIcon: "✈️",
       features: [
         { icon: "📍", title: "多國行程動態排程", desc: "手動時間排序與美觀景點卡片" },
         { icon: "💱", title: "全球 160+ 幣別即時換算", desc: "支援冷門貨幣與歷史匯率鎖定" },
-        { icon: "🤖", title: "AI 隨手記與批次匯入", desc: "語音、記事本或 Markdown 一鍵解析" }
+        { icon: "🤖", title: "Gemini AI 隨手記匯入", desc: "語音、記事本或口語一鍵解析" }
       ]
     };
 
@@ -647,7 +644,12 @@
     function checkUrlQueryParams() {
       const params = new URLSearchParams(window.location.search);
       const projId = params.get('proj');
-      if (projId) activeProjectId = projId;
+      if (projId) {
+        activeProjectId = projId;
+        localStorage.setItem('pending_invite_proj', projId);
+      } else {
+        activeProjectId = localStorage.getItem('pending_invite_proj') || null;
+      }
     }
 
     function initSiteConfig() {
@@ -682,7 +684,6 @@
       });
     }
 
-    // 安全防護登入，避免跨頁 session 遺失問題
     function handleGoogleLogin() {
       window.signInWithPopup(window.auth, window.googleProvider).catch((error) => {
         if (error.code === 'auth/missing-initial-state' || error.code === 'auth/popup-blocked') {
@@ -693,7 +694,10 @@
       });
     }
 
-    function handleLogout() { window.signOut(window.auth).then(() => { switchView('login'); }); }
+    function handleLogout() { 
+      localStorage.removeItem('pending_invite_proj');
+      window.signOut(window.auth).then(() => { switchView('login'); }); 
+    }
 
     function initFirebaseProjectsSync() {
       const projRef = window.dbRef(window.db, 'projects');
@@ -703,7 +707,12 @@
           seedDefaultProject();
         } else {
           renderDashboardProjects();
-          if (activeProjectId && allProjects[activeProjectId]) {
+          
+          const pendingProj = localStorage.getItem('pending_invite_proj');
+          if (pendingProj && allProjects[pendingProj]) {
+            enterProject(pendingProj);
+            localStorage.removeItem('pending_invite_proj');
+          } else if (activeProjectId && allProjects[activeProjectId]) {
             enterProject(activeProjectId);
           } else {
             switchView('dashboard');
@@ -797,6 +806,8 @@
         applyBtn.style.display = 'block';
         mgmtBtn.style.display = 'none';
         financeTabs.forEach(t => t.style.display = 'none');
+        // 訪客點進來直接彈出申請對話框
+        openJoinPromptModal();
       }
 
       setupProjectMembersUI();
@@ -806,7 +817,7 @@
     }
 
     function getProjectMemberList() {
-      if (!activeProjectData) return ['錢粘', '蝦', '爸', '妈'];
+      if (!activeProjectData) return ['錢粘', '蝦', '爸', '媽'];
       let list = [];
       if (activeProjectData.membersMap) {
         Object.values(activeProjectData.membersMap).forEach(m => {
@@ -1133,6 +1144,7 @@
 
     function navigateToDashboard() {
       activeProjectId = null;
+      localStorage.removeItem('pending_invite_proj');
       window.history.pushState({}, '', window.location.pathname);
       switchView('dashboard');
     }
@@ -1167,7 +1179,7 @@
     function openJoinPromptModal() {
       if (!activeProjectData) return;
       document.getElementById('joinPromptTitle').innerText = `🎉 申請加入「${activeProjectData.title}」`;
-      document.getElementById('userJoinNickInput').value = currentUser.name !== '訪客' ? currentUser.name : '';
+      document.getElementById('userJoinNickInput').value = (currentUser && currentUser.name !== '未登入') ? currentUser.name : '';
       document.getElementById('joinPromptModal').style.display = 'flex';
     }
 
@@ -1380,125 +1392,133 @@
       });
     }
 
-    function openAiImportModal() { document.getElementById('aiImportModal').style.display = 'flex'; }
+    function openAiImportModal() {
+      document.getElementById('aiImportModal').style.display = 'flex';
+    }
+
     function closeAiImportModal() { document.getElementById('aiImportModal').style.display = 'none'; }
 
-    // 全能自然語言 Parsing 引擎 (同時支援「景點卡片」與「記帳」)
-    function processLocalMarkdownImport() {
+    async function processGeminiAIImport() {
       const rawText = document.getElementById('aiImportInput').value.trim();
-      if (!rawText) { alert('請貼上內容！'); return; }
 
-      let currentDay = 'D1';
-      let spotCount = 0;
-      let expCount = 0;
+      if (!rawText) {
+        alert('請輸入任何隨手筆記或口語內容！');
+        return;
+      }
+
+      const submitBtn = document.getElementById('aiSubmitBtn');
+      submitBtn.innerText = '🧠 Gemini AI 正在分析語意中，請稍候...';
+      submitBtn.disabled = true;
 
       const members = getProjectMemberList();
-      if (!activeProjectData.itinerary) activeProjectData.itinerary = {};
 
-      const lines = rawText.split('\n');
-      lines.forEach(line => {
-        const text = line.trim();
-        if (!text) return;
+      const systemPrompt = `你是一個專業旅遊隨手筆記解析器。請閱讀使用者的隨手輸入，並精準解析出【景點行程 (spots)】與【記帳明細 (expenses)】。
+當前專案的成員名單為: ${JSON.stringify(members)}。
 
-        // 1. 抓取天數 (例：day1, D2, Day 3)
-        const dayMatch = text.match(/(?:day|d|第|天)\s*(\d+)/i);
-        if (dayMatch) {
-          currentDay = 'D' + dayMatch[1];
+請嚴格輸出 JSON 格式，包含兩個陣列 (spots 與 expenses)，結構如下：
+{
+  "spots": [
+    {
+      "day": "D1", // 格式必須為 D1, D2, D3 等
+      "time": "19:00", // 若無時間請填 ""
+      "title": "景點或餐廳名稱",
+      "desc": "詳細說明或備註",
+      "mapUrl": "https://maps.app.goo.gl/..." // 若無請填 ""
+    }
+  ],
+  "expenses": [
+    {
+      "day": "D1", // 格式必須為 D1, D2, D3 等
+      "item": "消費品名",
+      "amount": 1000, // 純數字
+      "currency": "JPY", // JPY 或 TWD
+      "payer": "付款人暱稱", // 必須匹配成員名單，若不確定請預設第一個成員
+      "splitMembers": ["爸", "媽"] // 分攤對象陣列，若寫不用分帳或自己付，則只放付款人一人；若沒特別寫則放全體成員
+    }
+  ]
+}
+請只回答 JSON，不要包含任何 markdown 標記（如 \`\`\`json ）。`;
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              { role: 'user', parts: [{ text: systemPrompt + "\n\n使用者輸入:\n" + rawText }] }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        if (!data.candidates || !data.candidates[0]) {
+          throw new Error('Gemini API 未回傳有效結果！');
         }
 
-        // 2. 判斷是否為「記帳」格式 (包含數字 + 貨幣/花/買/付/日幣/台幣/NT)
-        const moneyMatch = text.match(/(\d+(?:\.\d+)?)\s*(日幣|日元|JPY|台幣|NT\$?|TWD|元|塊)?/i);
-        const actionMatch = text.match(/(花了|買了|付了|支付|買|花)/);
+        let replyText = data.candidates[0].content.parts[0].text.trim();
+        replyText = replyText.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-        if (moneyMatch && (actionMatch || text.includes('日幣') || text.includes('台幣') || text.includes('JPY'))) {
-          // --- 記帳邏輯 ---
-          const amount = parseFloat(moneyMatch[1]);
-          let currency = 'JPY';
-          if (text.includes('台幣') || text.includes('NT') || text.includes('TWD')) {
-            currency = 'TWD';
-          }
+        const parsedResult = JSON.parse(replyText);
 
-          // 抓付款人 (匹配成員名字)
-          let payer = currentUser ? currentUser.name : members[0];
-          for (let m of members) {
-            if (text.includes(m)) {
-              payer = m;
-              break;
+        let spotCount = 0;
+        let expCount = 0;
+
+        if (parsedResult.spots && parsedResult.spots.length > 0) {
+          if (!activeProjectData.itinerary) activeProjectData.itinerary = {};
+
+          parsedResult.spots.forEach(spot => {
+            const dayKey = spot.day || 'D1';
+            if (!activeProjectData.itinerary[dayKey]) {
+              activeProjectData.itinerary[dayKey] = { title: `Day ${dayKey.replace('D','')}`, spots: [] };
             }
-          }
+            if (!activeProjectData.itinerary[dayKey].spots) {
+              activeProjectData.itinerary[dayKey].spots = [];
+            }
 
-          // 抓品名 (清理掉天數、付款人、金額等關鍵字)
-          let item = text
-            .replace(/(?:day|d|第|天)\s*\d+/gi, '')
-            .replace(/(\d+(?:\.\d+)?)\s*(日幣|日元|JPY|台幣|NT\$?|TWD|元|塊)?/gi, '')
-            .replace(/(花了|買了|付了|支付|買|花)/g, '')
-            .replace(new RegExp(payer, 'g'), '')
-            .trim();
-
-          if (!item) item = '隨手記帳';
-
-          const newExpense = {
-            day: currentDay,
-            item: item,
-            amount: amount,
-            currency: currency,
-            payment: '現金',
-            payer: payer,
-            splitMembers: members,
-            timestamp: Date.now() + expCount
-          };
-
-          const expensesRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses`);
-          window.dbPush(expensesRef, newExpense);
-          expCount++;
-
-        } else {
-          // --- 景點卡片邏輯 ---
-          if (!activeProjectData.itinerary[currentDay]) {
-            activeProjectData.itinerary[currentDay] = { title: `Day ${currentDay.replace('D','')}`, spots: [] };
-          }
-          if (!activeProjectData.itinerary[currentDay].spots) {
-            activeProjectData.itinerary[currentDay].spots = [];
-          }
-
-          let time = '';
-          const timeMatch = text.match(/(\d{1,2}:\d{2})/);
-          if (timeMatch) time = timeMatch[1];
-
-          let maps = [];
-          const urlMatch = text.match(/(https?:\/\/[^\s]+)/g);
-          if (urlMatch) {
-            urlMatch.forEach(url => {
-              if (url.includes('maps') || url.includes('goo.gl')) {
-                maps.push({ label: '📍 開啟 Google 地圖', url: url });
-              }
-            });
-          }
-
-          let cleanText = text.replace(/(?:day|d|第|天)\s*\d+/gi, '').replace(/\d{1,2}:\d{2}/g, '').replace(/(https?:\/\/[^\s]+)/g, '').trim();
-          if (cleanText.length > 0) {
-            activeProjectData.itinerary[currentDay].spots.push({
-              time: time,
-              title: cleanText,
-              desc: '',
+            const maps = spot.mapUrl ? [{ label: `📍 ${spot.title} 地圖`, url: spot.mapUrl }] : [];
+            activeProjectData.itinerary[dayKey].spots.push({
+              time: spot.time || '',
+              title: spot.title || '景點',
+              desc: spot.desc || '',
               images: [],
               maps: maps
             });
             spotCount++;
-          }
-        }
-      });
+          });
 
-      // 儲存景點更新（記帳是即時 dbPush 的）
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary).then(() => {
-        let msg = '🎉 解析成功！';
-        if (spotCount > 0) msg += `新增 ${spotCount} 個景點卡片！ `;
-        if (expCount > 0) msg += `新增 ${expCount} 筆記帳！`;
-        alert(msg);
+          await window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary);
+        }
+
+        if (parsedResult.expenses && parsedResult.expenses.length > 0) {
+          const expensesRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses`);
+
+          parsedResult.expenses.forEach(exp => {
+            const newExpense = {
+              day: exp.day || 'D1',
+              item: exp.item || '隨手記帳',
+              amount: parseFloat(exp.amount) || 0,
+              currency: (exp.currency || 'JPY').toUpperCase(),
+              payment: '現金',
+              payer: exp.payer || members[0],
+              splitMembers: exp.splitMembers && exp.splitMembers.length > 0 ? exp.splitMembers : members,
+              timestamp: Date.now() + expCount
+            };
+            window.dbPush(expensesRef, newExpense);
+            expCount++;
+          });
+        }
+
+        alert(`🎉 Gemini AI 解析成功！已寫入 ${spotCount} 個景點卡片與 ${expCount} 筆記帳！`);
         document.getElementById('aiImportInput').value = '';
         closeAiImportModal();
         renderActiveProjectContent();
-      });
+
+      } catch (err) {
+        alert('解析失敗: ' + err.message);
+      } finally {
+        submitBtn.innerText = '✨ 請 Gemini AI 智慧理解並寫入雲端';
+        submitBtn.disabled = false;
+      }
     }
   </script>
 </body>
