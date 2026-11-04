@@ -1,4 +1,3 @@
-// 已填入完整的 AQ. 開頭最新金鑰並啟用相容授權機制
 window.GEMINI_API_KEY = "AQ.Ab8RN6IYFcamWmCMTz_620vncxoR71LJYLJRi0h-UuyBU4YhTQ";
 
 window.openAiImportModal = function() {
@@ -37,8 +36,8 @@ window.processGeminiAIImport = async function() {
 }`;
 
   try {
-    // 透過 x-goog-api-key 標頭進行驗證授權
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+    // 已指定為最新 gemini-2.5-flash 模型 Endpoint
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -56,7 +55,7 @@ window.processGeminiAIImport = async function() {
     const data = await response.json();
 
     if (data.error) {
-      throw new Error(`Google API 拒絕存取 (${data.error.code}): ${data.error.message}`);
+      throw new Error(`Google API 回應錯誤 (${data.error.code}): ${data.error.message}`);
     }
 
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
@@ -71,7 +70,7 @@ window.processGeminiAIImport = async function() {
     let spotCount = 0;
     let expCount = 0;
 
-    // 寫入行程
+    // 同步寫入行程
     if (parsed.spots && parsed.spots.length > 0 && window.activeProjectId) {
       if (!window.activeProjectData.itinerary) window.activeProjectData.itinerary = {};
       parsed.spots.forEach(spot => {
@@ -94,7 +93,7 @@ window.processGeminiAIImport = async function() {
       }
     }
 
-    // 寫入記帳
+    // 同步寫入記帳
     if (parsed.expenses && parsed.expenses.length > 0 && window.activeProjectId) {
       parsed.expenses.forEach(exp => {
         if (window.dbPush && window.dbRef) {
@@ -122,3 +121,4 @@ window.processGeminiAIImport = async function() {
     }
   }
 };
+
