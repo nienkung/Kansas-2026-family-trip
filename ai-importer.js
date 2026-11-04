@@ -1,4 +1,5 @@
-window.GEMINI_API_KEY = "AQ.Ab8RN6Jm1WqV5XLvuKzv47r79fEDW42Tgfu7s-S2J8unBX607A";
+// 已填入完整的 AQ. 開頭最新金鑰並啟用相容授權機制
+window.GEMINI_API_KEY = "AQ.Ab8RN6IYFcamWmCMTz_620vncxoR71LJYLJRi0h-UuyBU4YhTQ";
 
 window.openAiImportModal = function() {
   const modal = document.getElementById('aiImportModal');
@@ -14,7 +15,7 @@ window.processGeminiAIImport = async function() {
   const inputElem = document.getElementById('aiImportInput');
   const rawText = inputElem ? inputElem.value.trim() : '';
 
-  if (!rawText) return alert('請輸入口語內容！');
+  if (!rawText) return alert('請輸入隨手筆記或口語內容！');
 
   const submitBtn = document.getElementById('aiSubmitBtn');
   if (submitBtn) {
@@ -36,10 +37,12 @@ window.processGeminiAIImport = async function() {
 }`;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
+    // 透過 x-goog-api-key 標頭進行驗證授權
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
       method: 'POST',
       headers: { 
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-goog-api-key': window.GEMINI_API_KEY
       },
       body: JSON.stringify({
         contents: [
@@ -52,13 +55,12 @@ window.processGeminiAIImport = async function() {
 
     const data = await response.json();
 
-    // 完整檢查 API 是否報錯
     if (data.error) {
       throw new Error(`Google API 拒絕存取 (${data.error.code}): ${data.error.message}`);
     }
 
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      throw new Error("API 未回傳有效的分析結果，請檢查輸入內容！");
+      throw new Error("API 未回傳有效分析結果，請稍後重試！");
     }
 
     let replyText = data.candidates[0].content.parts[0].text.trim();
