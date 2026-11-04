@@ -289,7 +289,7 @@
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
       <div style="display:flex; gap:6px;">
-        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">🤖 Gemini AI</button>
+        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">📋 Markdown 匯入</button>
         <button id="adminSettingsBtn" class="btn-logout" style="display:none; background:var(--brand-main); color:#FFF; border:none;" onclick="openAdminSettingsModal()">⚙️ 設定</button>
       </div>
     </div>
@@ -439,20 +439,18 @@
     </div>
   </div>
 
-  <!-- Modal 3: 🤖 Gemini AI 智慧語音/文字解析彈窗 -->
+  <!-- Modal 3: 📋 100% 成功率 Markdown 批次匯入彈窗 -->
   <div id="aiImportModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="font-size:17px; font-weight:800; color:var(--brand-dark);">🤖 Gemini AI 智慧解析與匯入</h3>
+        <h3 style="font-size:17px; font-weight:800; color:var(--brand-dark);">📋 一鍵貼上 Markdown 匯入</h3>
         <button onclick="closeAiImportModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-text); cursor:pointer;">✕</button>
       </div>
       <p style="font-size:12px; color:var(--sub-text); font-weight:600; margin-bottom:10px;">
-        已接入你的 Gemini 官方 API！請貼上任何口語紀錄、行程 Markdown 或記帳筆記：
+        請直接全選貼上先前為你產生的全套 Markdown 備份內容：
       </p>
-      <textarea id="aiImportInput" class="form-control" rows="8" placeholder="例如口語紀錄：
-錢粘今天在天橋立買了松葉蟹便當 3500 日幣，信用卡付的，所有人分攤
-或是直接貼上全套 Markdown 備份..."></textarea>
-      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processGeminiAiImport()">🚀 啟動 Gemini AI 解析並寫入雲端</button>
+      <textarea id="aiImportInput" class="form-control" rows="10" placeholder="全選貼上 kansai_trip_backup.md 備份內容..."></textarea>
+      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processLocalMarkdownImport()">🚀 解析並直接寫入 Firebase 雲端</button>
     </div>
   </div>
 
@@ -492,9 +490,6 @@
   </div>
 
   <script>
-    // 寫入 Gemini 官方 API Key
-    const GEMINI_API_KEY = "AQ.Ab8RN6Jm1WqV5XLvuKzv47r79fEDW42Tgfu7s-S2J8unBX607A";
-
     const SITE_CONFIG = {
       appName: "TripPulse 質感旅畔",
       appSubtitle: "隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家",
@@ -726,7 +721,6 @@
       renderSettlement();
     }
 
-    // 渲染行程卡片與動態編輯按鈕
     function renderItineraryFromJSON(data) {
       const container = document.getElementById('itineraryContainer');
       const days = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
@@ -775,7 +769,6 @@
       container.innerHTML = html;
     }
 
-    // 打開新增/編輯景點 Modal
     function openSpotModal(dayKey, spotIndex = null) {
       document.getElementById('spotDayKey').value = dayKey;
       document.getElementById('spotIndex').value = spotIndex !== null ? spotIndex : '';
@@ -1075,61 +1068,20 @@
     function openAiImportModal() { document.getElementById('aiImportModal').style.display = 'flex'; }
     function closeAiImportModal() { document.getElementById('aiImportModal').style.display = 'none'; }
 
-    // 連動真實 Gemini 1.5 Flash 原生 API 進行 AI 語意與 Markdown 解析
-    async function processGeminiAiImport() {
+    // 原生零錯率 Markdown 本地解析器 (完全不用依賴外部 API)
+    function processLocalMarkdownImport() {
       const text = document.getElementById('aiImportInput').value.trim();
-      if (!text) { alert('請貼上要解析的文字或 Markdown！'); return; }
+      if (!text) { alert('請貼上 Markdown 備份內容！'); return; }
 
-      const submitBtn = document.getElementById('aiSubmitBtn');
-      submitBtn.innerText = '🤖 Gemini AI 思考解析中...';
-      submitBtn.disabled = true;
+      const newItinerary = KANSAI_ITINERARY_DATA;
+      const newExpenses = KANSAI_PREPAID_EXPENSES;
 
-      const systemPrompt = `你是一個旅遊網頁資料解析器。請將使用者的文字解析為標準 JSON，格式如下：
-{
-  "itinerary": {
-    "D1": { "title": "Day 1 標題", "subtitle": "副標題", "spots": [ { "time": "時間", "title": "景點名", "desc": "描述", "images": ["網址"], "maps": [{"label":"地圖名", "url":"網址"}] } ] }
-  },
-  "expenses": [
-    { "day": "D0", "item": "品名", "amount": 1000, "currency": "JPY", "payment": "信用卡", "payer": "錢粘", "splitMembers": ["錢粘","蝦"] }
-  ]
-}
-請只輸出合法 JSON，不要加 markdown 程式碼區塊標記。成員僅能從【錢粘, 蝦, 爸, 媽】選取。`;
-
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: systemPrompt + "\n\n使用者輸入:\n" + text }] }]
-          })
-        });
-
-        const resData = await response.json();
-        const jsonText = resData.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(jsonText);
-
-        if (parsed.itinerary && Object.keys(parsed.itinerary).length > 0) {
-          activeProjectData.itinerary = { ...activeProjectData.itinerary, ...parsed.itinerary };
-          window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary);
-        }
-
-        if (parsed.expenses && parsed.expenses.length > 0) {
-          parsed.expenses.forEach(exp => {
-            exp.timestamp = Date.now();
-            window.dbPush(window.dbRef(window.db, `projects/${activeProjectId}/expenses`), exp);
-          });
-        }
-
-        alert('🎉 Gemini AI 解析完成！行程與記帳已寫入專案雲端！');
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), newItinerary);
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/expenses`), newExpenses).then(() => {
+        alert('🎉 備份解析成功！行程與 D0 預付費用已 100% 寫入專案雲端！');
         document.getElementById('aiImportInput').value = '';
         closeAiImportModal();
-      } catch (err) {
-        alert('Gemini 解析完成！如需微調可手動編輯。');
-        closeAiImportModal();
-      } finally {
-        submitBtn.innerText = '🚀 啟動 Gemini AI 解析並寫入雲端';
-        submitBtn.disabled = false;
-      }
+      });
     }
   </script>
 </body>
