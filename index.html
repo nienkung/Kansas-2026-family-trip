@@ -9,7 +9,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, remove, update, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAXbvtIH6HsWb0jduDabO9Qz8-UZkY0jOA",
@@ -26,6 +26,9 @@
     const db = getDatabase(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+
+    // 強制設定持久化權限，避免 Safari / LINE 內建瀏覽器跨頁遺失狀態
+    setPersistence(auth, browserLocalPersistence).catch(() => {});
 
     window.db = db;
     window.dbRef = ref;
@@ -294,7 +297,7 @@
     </div>
   </div>
 
-  <!-- VIEW 3：專案內部 (3 Tabs / 訪客隱藏財務功能) -->
+  <!-- VIEW 3：專案內部 -->
   <div id="view-project" class="page-view">
     <div class="navbar">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -317,7 +320,7 @@
 
       <div id="projectTabContent" style="margin-top: 16px;">
         
-        <!-- TAB 1: 行程規劃 (所有人均可檢視) -->
+        <!-- TAB 1: 行程規劃 -->
         <div id="subtab-itinerary" class="tab-subcontent active">
           <div style="display: flex; gap: 8px; margin-bottom: 12px;">
             <button class="map-btn" style="flex:1; justify-content:center;" onclick="toggleAllCards(true)">全數展開</button>
@@ -326,7 +329,7 @@
           <div id="itineraryContainer"></div>
         </div>
 
-        <!-- TAB 2: 旅程記帳 (僅 Owner / Member 解鎖) -->
+        <!-- TAB 2: 旅程記帳 -->
         <div id="subtab-expense" class="tab-subcontent">
           <div class="card open">
             <div class="card-header">
@@ -384,7 +387,7 @@
           <div id="expenseDayList"></div>
         </div>
 
-        <!-- TAB 3: 結算拆帳 (僅 Owner / Member 解鎖) -->
+        <!-- TAB 3: 結算拆帳 -->
         <div id="subtab-settlement" class="tab-subcontent">
           <div class="settle-summary">
             <div class="settle-summary-title">專案總支出 (預付 + 現場折算台幣)</div>
@@ -445,13 +448,13 @@
         <hr style="border:none; border-top:1px dashed var(--brand-border); margin:14px 0;">
       </div>
       
-      <!-- 現有成員名單 (可讓 Owner 覆蓋修改暱稱) -->
+      <!-- 現有成員名單 -->
       <div class="form-group">
         <label class="form-label">目前專案成員與暱稱</label>
         <div id="membersChipList" style="display:flex; flex-direction:column;"></div>
       </div>
 
-      <!-- 手動新增純文字成員 (如爸媽) -->
+      <!-- 手動新增純文字成員 -->
       <div class="form-group" style="display:flex; gap:8px;">
         <input type="text" id="newMemberNameInput" class="form-control" placeholder="新增成員暱稱 (例：爸)">
         <button class="btn-submit" style="width:auto; margin-top:0; padding:0 16px; white-space:nowrap;" onclick="addManualMember()">➕ 新增</button>
@@ -468,7 +471,7 @@
     </div>
   </div>
 
-  <!-- Modal 3: 📩 申請 / 接受邀請加入彈窗 (輸入專案暱稱) -->
+  <!-- Modal 3: 📩 申請 / 接受邀請加入彈窗 -->
   <div id="joinPromptModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -488,7 +491,7 @@
     </div>
   </div>
 
-  <!-- Modal 4: 📋 Markdown 匯入彈窗 -->
+  <!-- Modal 4: 📋 Markdown 動態解析與批次匯入彈窗 -->
   <div id="aiImportModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -496,10 +499,10 @@
         <button onclick="closeAiImportModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-text); cursor:pointer;">✕</button>
       </div>
       <p style="font-size:12px; color:var(--sub-text); font-weight:600; margin-bottom:10px;">
-        請直接全選貼上先前為你產生的全套 Markdown 備份內容：
+        支援行程或隨手記帳（例如：day1 爸爸花了1000日幣買咖啡 / Day 1 19:00 萬兩 南森町店）：
       </p>
-      <textarea id="aiImportInput" class="form-control" rows="10" placeholder="全選貼上 kansai_trip_backup.md 備份內容..."></textarea>
-      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processLocalMarkdownImport()">🚀 解析並直接寫入 Firebase 雲端</button>
+      <textarea id="aiImportInput" class="form-control" rows="10" placeholder="貼上景點描述或隨手記帳內容..."></textarea>
+      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processLocalMarkdownImport()">🚀 解析並寫入 Firebase 雲端</button>
     </div>
   </div>
 
@@ -550,13 +553,11 @@
       ]
     };
 
-    // 全站最高超級管理員清單 (Super Admins)
     const SUPER_ADMIN_EMAILS = [
       "moneynien@gmail.com",
       "robertcl.kung@ogilvy.com"
     ];
 
-    // 100% 精確的 2026 關西家族之旅真實行程資料
     const KANSAI_ITINERARY_DATA = {
       D1: {
         title: "Day 1：11/19 (週四) 抵達大阪與購物散策",
@@ -618,7 +619,6 @@
       }
     };
 
-    // 100% 精確的 D0 預付費用
     const KANSAI_PREPAID_EXPENSES = {
       p1: { day: 'D0', item: '機票 (長榮+國泰)', amount: 80601, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'], timestamp: 1 },
       p2: { day: 'D0', item: '天王寺都城市飯店', amount: 20876, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'], timestamp: 2 },
@@ -682,8 +682,15 @@
       });
     }
 
+    // 安全防護登入，避免跨頁 session 遺失問題
     function handleGoogleLogin() {
-      window.signInWithPopup(window.auth, window.googleProvider).catch((error) => { alert('Google 登入失敗: ' + error.message); });
+      window.signInWithPopup(window.auth, window.googleProvider).catch((error) => {
+        if (error.code === 'auth/missing-initial-state' || error.code === 'auth/popup-blocked') {
+          alert('請使用手機內建 Safari 或 Chrome 開啟連結，並避開通訊軟體的內嵌瀏覽器！');
+        } else {
+          alert('登入失敗: ' + error.message);
+        }
+      });
     }
 
     function handleLogout() { window.signOut(window.auth).then(() => { switchView('login'); }); }
@@ -724,7 +731,6 @@
 
     function encodeEmail(email) { return email ? email.replace(/\./g, '_').replace(/@/g, '_at_') : ''; }
 
-    // 判斷權限（Super Admin 直接賦予 owner 最高權限）
     function getUserRoleInProject(proj) {
       if (!currentUser) return 'viewer';
       if (SUPER_ADMIN_EMAILS.includes(currentUser.email.toLowerCase())) return 'owner';
@@ -800,7 +806,7 @@
     }
 
     function getProjectMemberList() {
-      if (!activeProjectData) return ['錢粘', '蝦', '爸', '媽'];
+      if (!activeProjectData) return ['錢粘', '蝦', '爸', '妈'];
       let list = [];
       if (activeProjectData.membersMap) {
         Object.values(activeProjectData.membersMap).forEach(m => {
@@ -1010,7 +1016,7 @@
                 <div class="expense-item">
                   <div class="expense-info">
                     <div class="expense-title">${data.item}</div>
-                    <div class="expense-meta">${data.payment} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
+                    <div class="expense-meta">${data.payment || '現金'} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
                   </div>
                   <div style="display:flex; align-items:center; gap:6px;">
                     <div class="expense-amount">${data.currency === 'JPY' ? '¥' : '$'}${(data.amount || 0).toLocaleString()} ${data.currency}</div>
@@ -1377,18 +1383,121 @@
     function openAiImportModal() { document.getElementById('aiImportModal').style.display = 'flex'; }
     function closeAiImportModal() { document.getElementById('aiImportModal').style.display = 'none'; }
 
+    // 全能自然語言 Parsing 引擎 (同時支援「景點卡片」與「記帳」)
     function processLocalMarkdownImport() {
-      const text = document.getElementById('aiImportInput').value.trim();
-      if (!text) { alert('請貼上 Markdown 備份內容！'); return; }
+      const rawText = document.getElementById('aiImportInput').value.trim();
+      if (!rawText) { alert('請貼上內容！'); return; }
 
-      const newItinerary = KANSAI_ITINERARY_DATA;
-      const newExpenses = KANSAI_PREPAID_EXPENSES;
+      let currentDay = 'D1';
+      let spotCount = 0;
+      let expCount = 0;
 
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), newItinerary);
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/expenses`), newExpenses).then(() => {
-        alert('🎉 備份解析成功！行程與 D0 預付費用已 100% 寫入專案雲端！');
+      const members = getProjectMemberList();
+      if (!activeProjectData.itinerary) activeProjectData.itinerary = {};
+
+      const lines = rawText.split('\n');
+      lines.forEach(line => {
+        const text = line.trim();
+        if (!text) return;
+
+        // 1. 抓取天數 (例：day1, D2, Day 3)
+        const dayMatch = text.match(/(?:day|d|第|天)\s*(\d+)/i);
+        if (dayMatch) {
+          currentDay = 'D' + dayMatch[1];
+        }
+
+        // 2. 判斷是否為「記帳」格式 (包含數字 + 貨幣/花/買/付/日幣/台幣/NT)
+        const moneyMatch = text.match(/(\d+(?:\.\d+)?)\s*(日幣|日元|JPY|台幣|NT\$?|TWD|元|塊)?/i);
+        const actionMatch = text.match(/(花了|買了|付了|支付|買|花)/);
+
+        if (moneyMatch && (actionMatch || text.includes('日幣') || text.includes('台幣') || text.includes('JPY'))) {
+          // --- 記帳邏輯 ---
+          const amount = parseFloat(moneyMatch[1]);
+          let currency = 'JPY';
+          if (text.includes('台幣') || text.includes('NT') || text.includes('TWD')) {
+            currency = 'TWD';
+          }
+
+          // 抓付款人 (匹配成員名字)
+          let payer = currentUser ? currentUser.name : members[0];
+          for (let m of members) {
+            if (text.includes(m)) {
+              payer = m;
+              break;
+            }
+          }
+
+          // 抓品名 (清理掉天數、付款人、金額等關鍵字)
+          let item = text
+            .replace(/(?:day|d|第|天)\s*\d+/gi, '')
+            .replace(/(\d+(?:\.\d+)?)\s*(日幣|日元|JPY|台幣|NT\$?|TWD|元|塊)?/gi, '')
+            .replace(/(花了|買了|付了|支付|買|花)/g, '')
+            .replace(new RegExp(payer, 'g'), '')
+            .trim();
+
+          if (!item) item = '隨手記帳';
+
+          const newExpense = {
+            day: currentDay,
+            item: item,
+            amount: amount,
+            currency: currency,
+            payment: '現金',
+            payer: payer,
+            splitMembers: members,
+            timestamp: Date.now() + expCount
+          };
+
+          const expensesRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses`);
+          window.dbPush(expensesRef, newExpense);
+          expCount++;
+
+        } else {
+          // --- 景點卡片邏輯 ---
+          if (!activeProjectData.itinerary[currentDay]) {
+            activeProjectData.itinerary[currentDay] = { title: `Day ${currentDay.replace('D','')}`, spots: [] };
+          }
+          if (!activeProjectData.itinerary[currentDay].spots) {
+            activeProjectData.itinerary[currentDay].spots = [];
+          }
+
+          let time = '';
+          const timeMatch = text.match(/(\d{1,2}:\d{2})/);
+          if (timeMatch) time = timeMatch[1];
+
+          let maps = [];
+          const urlMatch = text.match(/(https?:\/\/[^\s]+)/g);
+          if (urlMatch) {
+            urlMatch.forEach(url => {
+              if (url.includes('maps') || url.includes('goo.gl')) {
+                maps.push({ label: '📍 開啟 Google 地圖', url: url });
+              }
+            });
+          }
+
+          let cleanText = text.replace(/(?:day|d|第|天)\s*\d+/gi, '').replace(/\d{1,2}:\d{2}/g, '').replace(/(https?:\/\/[^\s]+)/g, '').trim();
+          if (cleanText.length > 0) {
+            activeProjectData.itinerary[currentDay].spots.push({
+              time: time,
+              title: cleanText,
+              desc: '',
+              images: [],
+              maps: maps
+            });
+            spotCount++;
+          }
+        }
+      });
+
+      // 儲存景點更新（記帳是即時 dbPush 的）
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary).then(() => {
+        let msg = '🎉 解析成功！';
+        if (spotCount > 0) msg += `新增 ${spotCount} 個景點卡片！ `;
+        if (expCount > 0) msg += `新增 ${expCount} 筆記帳！`;
+        alert(msg);
         document.getElementById('aiImportInput').value = '';
         closeAiImportModal();
+        renderActiveProjectContent();
       });
     }
   </script>
