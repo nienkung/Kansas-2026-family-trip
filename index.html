@@ -4,45 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>nien-trip</title>
-  
-  <!-- Firebase SDK (v10 Modular via CDN) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, update, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAXbvtIH6HsWb0jduDabO9Qz8-UZkY0jOA",
-      authDomain: "kansai-family-trip-2026.firebaseapp.com",
-      databaseURL: "https://kansai-family-trip-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "kansai-family-trip-2026",
-      storageBucket: "kansai-family-trip-2026.firebasestorage.app",
-      messagingSenderId: "567305731001",
-      appId: "1:567305731001:web:6d6f70d3294595a65c1468",
-      measurementId: "G-ZKPNN1TE2S"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    setPersistence(auth, browserLocalPersistence).catch(() => {});
-
-    window.db = db;
-    window.dbRef = ref;
-    window.dbPush = push;
-    window.dbSet = set;
-    window.dbOnValue = onValue;
-    window.dbRemove = remove;
-    window.dbUpdate = update;
-    window.auth = auth;
-    window.googleProvider = provider;
-    window.signInWithPopup = signInWithPopup;
-    window.signOut = signOut;
-    window.onAuthStateChanged = onAuthStateChanged;
-  </script>
-
   <style>
     :root {
       --brand-main: #00A896;
@@ -58,19 +19,13 @@
       --danger: #E53E3E;
       --radius-card: 18px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--brand-bg);
-      color: var(--brand-dark);
-      line-height: 1.6;
-      min-height: 100vh;
+      background-color: var(--brand-bg); color: var(--brand-dark); line-height: 1.6; min-height: 100vh;
     }
-
     .page-view { display: none; width: 100%; min-height: 100vh; }
     .page-view.active { display: block; }
-
     .login-container {
       max-width: 440px; margin: 0 auto; padding: 40px 20px;
       display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
@@ -82,18 +37,11 @@
       background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--brand-border); border-radius: var(--radius-card); padding: 24px; width: 100%; box-shadow: var(--shadow-lg);
     }
-    .feature-list { margin-bottom: 24px; }
-    .feature-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-    .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-    .feature-text h4 { font-size: 14px; font-weight: 800; color: var(--brand-dark); }
-    .feature-text p { font-size: 12px; color: var(--sub-text); font-weight: 600; }
-
     .btn-google {
       width: 100%; background: #FFFFFF; color: #333333; border: 1.5px solid #CBD5E0;
       padding: 12px 16px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
-
     .navbar {
       position: sticky; top: 0; background: rgba(230, 255, 250, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       z-index: 100; padding: 14px 20px; border-bottom: 1px solid var(--brand-border);
@@ -106,22 +54,11 @@
       background: var(--brand-light); color: var(--sub-text); border: 1px solid var(--brand-border);
       padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
-
     .main-container { max-width: 600px; margin: 0 auto; padding: 20px 16px 80px; }
-    .section-title {
-      font-size: 18px; font-weight: 800; color: var(--brand-dark); margin-bottom: 14px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .btn-add-project {
-      background: var(--brand-main); color: #FFF; border: none; padding: 8px 14px;
-      border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 168, 150, 0.3);
-    }
+    .section-title { font-size: 18px; font-weight: 800; color: var(--brand-dark); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .btn-add-project { background: var(--brand-main); color: #FFF; border: none; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 168, 150, 0.3); }
     .project-grid { display: flex; flex-direction: column; gap: 14px; }
-    .project-card {
-      background: #FFFFFF; border: 1.5px solid var(--brand-border); border-radius: var(--radius-card);
-      padding: 16px; box-shadow: var(--shadow-md); cursor: pointer; transition: transform 0.2s ease;
-    }
-    .project-card:active { transform: scale(0.99); }
+    .project-card { background: #FFFFFF; border: 1.5px solid var(--brand-border); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-md); cursor: pointer; }
     .project-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .project-name { font-size: 17px; font-weight: 800; color: var(--brand-dark); }
     .project-dates { font-size: 13px; color: var(--brand-main); font-weight: 700; margin-top: 2px; }
@@ -130,141 +67,52 @@
     .role-member { background: #EBF8FF; color: #2B6CB0; border: 1px solid #90CDF4; }
     .role-viewer { background: #EDF2F7; color: #4A5568; border: 1px solid #CBD5E0; }
     .project-members { margin-top: 10px; font-size: 12px; color: var(--sub-text); font-weight: 600; }
-
-    .tab-bar {
-      display: flex; background: #FFFFFF; border-radius: 14px; padding: 4px; margin-top: 10px;
-      border: 1px solid var(--brand-border); box-shadow: var(--shadow-sm);
-    }
-    .tab-btn {
-      flex: 1; padding: 9px 4px; font-size: 14px; font-weight: 800; color: var(--sub-text);
-      background: transparent; border: none; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s ease;
-    }
+    .tab-bar { display: flex; background: #FFFFFF; border-radius: 14px; padding: 4px; margin-top: 10px; border: 1px solid var(--brand-border); box-shadow: var(--shadow-sm); }
+    .tab-btn { flex: 1; padding: 9px 4px; font-size: 14px; font-weight: 800; color: var(--sub-text); background: transparent; border: none; border-radius: 10px; cursor: pointer; text-align: center; }
     .tab-btn.active { background: var(--brand-main); color: #FFFFFF; box-shadow: 0 2px 6px rgba(0, 168, 150, 0.3); }
-
     .tab-subcontent { display: none; }
     .tab-subcontent.active { display: block; }
-
-    .card {
-      background: var(--card-bg); border-radius: 18px; margin-bottom: 16px;
-      border: 1.5px solid var(--brand-border); box-shadow: var(--shadow-md); overflow: hidden;
-    }
-    .card-header {
-      padding: 16px; display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; user-select: none; background: #FFFFFF;
-    }
+    .card { background: var(--card-bg); border-radius: 18px; margin-bottom: 16px; border: 1.5px solid var(--brand-border); box-shadow: var(--shadow-md); overflow: hidden; }
+    .card-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #FFFFFF; }
     .card-title { font-size: 17px; font-weight: 800; color: var(--brand-dark); }
     .card-subtitle { font-size: 13px; color: var(--brand-main); font-weight: 700; margin-top: 2px; }
     .chevron { width: 20px; height: 20px; transition: transform 0.3s ease; stroke: var(--brand-main); flex-shrink: 0; margin-left: 8px; }
     .card.open .chevron { transform: rotate(180deg); }
     .card-content { display: none; padding: 16px; border-top: 1px solid var(--brand-border); background: #FAFDFC; }
     .card.open .card-content { display: block; }
-
-    .spot-card {
-      background: #FFFFFF; border: 1px solid var(--brand-border); border-radius: 14px;
-      padding: 14px; margin-top: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); position: relative;
-    }
-    .spot-time {
-      display: inline-block; background: #E6FFFA; color: var(--brand-main); font-size: 12px;
-      font-weight: 800; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--brand-border);
-    }
+    .spot-card { background: #FFFFFF; border: 1px solid var(--brand-border); border-radius: 14px; padding: 14px; margin-top: 12px; position: relative; }
+    .spot-time { display: inline-block; background: #E6FFFA; color: var(--brand-main); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--brand-border); }
     .spot-title { font-size: 16px; font-weight: 800; color: var(--brand-dark); padding-right: 70px; }
     .spot-desc { font-size: 14px; color: var(--sub-text); font-weight: 600; margin-top: 6px; line-height: 1.5; white-space: pre-line; }
-    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-    .img-box { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--brand-border); background: var(--brand-light); aspect-ratio: 4/3; }
-    .img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .map-btn {
-      display: inline-flex; align-items: center; gap: 5px; background: var(--brand-main); color: #fff;
-      padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 2px 4px rgba(0, 168, 150, 0.2);
-    }
-
+    .map-btn { display: inline-flex; align-items: center; gap: 5px; background: var(--brand-main); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; text-decoration: none; }
     .spot-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; }
-    .btn-spot-edit, .btn-spot-del {
-      border: none; padding: 3px 7px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer;
-    }
+    .btn-spot-edit, .btn-spot-del { border: none; padding: 3px 7px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; }
     .btn-spot-edit { background: var(--brand-light); color: var(--brand-main); border: 1px solid var(--brand-border); }
     .btn-spot-del { background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2; }
-
     .form-group { margin-bottom: 12px; }
     .form-label { font-size: 13px; font-weight: 700; color: var(--brand-dark); margin-bottom: 4px; display: block; }
-    .form-control {
-      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--brand-border);
-      font-size: 15px; font-weight: 600; outline: none; background: #FFF;
-    }
-    .form-control:focus { border-color: var(--brand-main); }
-    .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
-    .checkbox-label {
-      display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700;
-      cursor: pointer; background: #E6FFFA; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--brand-border);
-    }
-    .btn-submit {
-      width: 100%; background: var(--brand-main); color: #FFF; padding: 12px; border: none;
-      border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3); margin-top: 6px;
-    }
-    .expense-item {
-      background: #FFF; border: 1px solid var(--brand-border); border-radius: 12px; padding: 12px;
-      margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
-    }
+    .form-control { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--brand-border); font-size: 15px; font-weight: 600; outline: none; background: #FFF; }
+    .btn-submit { width: 100%; background: var(--brand-main); color: #FFF; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3); margin-top: 6px; }
+    .expense-item { background: #FFF; border: 1px solid var(--brand-border); border-radius: 12px; padding: 12px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
     .expense-info { flex: 1; }
     .expense-title { font-size: 15px; font-weight: 800; color: var(--brand-dark); }
     .expense-meta { font-size: 12px; color: var(--sub-text); margin-top: 2px; font-weight: 600; }
     .expense-amount { font-size: 16px; font-weight: 800; color: var(--brand-main); text-align: right; }
-    .btn-delete {
-      background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;
-    }
-
-    .member-chip {
-      display: flex; align-items: center; justify-content: space-between;
-      background: #FFFFFF; border: 1px solid var(--brand-border); padding: 8px 12px;
-      border-radius: 10px; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--brand-dark);
-    }
-    .member-chip .btn-actions { display: flex; gap: 6px; }
-    .member-chip button {
-      background: var(--brand-light); color: var(--brand-main); border: 1px solid var(--brand-border);
-      padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer;
-    }
-    .member-chip button.del { background: #FFF5F5; color: var(--danger); border-color: #FEB2B2; }
-
-    .settle-summary {
-      background: #FFF; border: 2px solid var(--brand-main); border-radius: 16px; padding: 16px; margin-bottom: 16px; text-align: center; box-shadow: var(--shadow-md);
-    }
-    .settle-summary-title { font-size: 14px; color: var(--sub-text); font-weight: 700; }
-    .settle-summary-val { font-size: 24px; font-weight: 900; color: var(--brand-dark); margin: 4px 0; }
-    .member-settle-card {
-      background: #FFF; border: 1.5px solid var(--brand-border); border-radius: 14px; padding: 14px; margin-bottom: 12px;
-    }
-    .member-name { font-size: 16px; font-weight: 800; color: var(--brand-dark); }
-    .member-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--sub-text); }
-    .member-status {
-      margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--brand-border); font-size: 15px; font-weight: 800; display: flex; justify-content: space-between;
-    }
-    .text-plus { color: #2B6CB0; }
-    .text-minus { color: var(--danger); }
-    .transfer-guide {
-      background: var(--brand-light); border: 1.5px dashed var(--brand-main); border-radius: 14px; padding: 14px; margin-top: 16px;
-    }
-    .transfer-title { font-size: 15px; font-weight: 800; color: var(--brand-dark); margin-bottom: 8px; }
-    .transfer-item { font-size: 14px; font-weight: 700; color: var(--brand-main); margin-top: 4px; }
-
-    .modal-mask {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 16px;
-    }
-    .modal-box {
-      background: #FFF; width: 100%; max-width: 500px; border-radius: 18px; padding: 20px; border: 2px solid var(--brand-main); max-height: 90vh; overflow-y: auto;
-    }
+    .btn-delete { background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .modal-mask { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
+    .modal-box { background: #FFF; width: 100%; max-width: 500px; border-radius: 18px; padding: 20px; border: 2px solid var(--brand-main); max-height: 90vh; overflow-y: auto; }
   </style>
 </head>
 <body>
 
-  <!-- VIEW 1：登入頁 -->
+  <!-- View 1: 登入頁 -->
   <div id="view-login" class="page-view active">
     <div class="login-container">
-      <div class="login-logo" id="siteLogoIcon">✈️</div>
-      <h1 class="login-title" id="siteAppName">nien-trip</h1>
-      <p class="login-subtitle" id="siteAppSubtitle">隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家</p>
-
+      <div class="login-logo">✈️</div>
+      <h1 class="login-title">nien-trip</h1>
+      <p class="login-subtitle">隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家</p>
       <div class="glass-card">
-        <div class="feature-list" id="siteFeaturesList"></div>
         <button class="btn-google" onclick="handleGoogleLogin()">
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
           以 Google 帳號繼續
@@ -273,30 +121,25 @@
     </div>
   </div>
 
-  <!-- VIEW 2：專案大廳 -->
+  <!-- View 2: 大廳 -->
   <div id="view-dashboard" class="page-view">
     <div class="navbar">
-      <div class="navbar-brand">
-        <span id="dashLogoIcon">✈️</span>
-        <span id="dashAppName">nien-trip</span>
-      </div>
+      <div class="navbar-brand">✈️ nien-trip</div>
       <div class="user-profile">
         <span class="user-name" id="dashUserName">未登入</span>
         <button class="btn-logout" onclick="handleLogout()">登出</button>
       </div>
     </div>
-
     <div class="main-container">
       <div class="section-title">
         <span>🗂️ 全站公開旅遊專案</span>
         <button class="btn-add-project" onclick="openNewProjectModal()">＋ 建立新專案</button>
       </div>
-
       <div class="project-grid" id="projectGridList"></div>
     </div>
   </div>
 
-  <!-- VIEW 3：專案內部 -->
+  <!-- View 3: 專案內部 -->
   <div id="view-project" class="page-view">
     <div class="navbar">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -304,1222 +147,78 @@
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
       <div style="display:flex; gap:6px;">
-        <button id="navApplyMemberBtn" class="btn-logout" style="background:#FEFCBF; color:#744210; border-color:#F6E05E; display:none;" onclick="openJoinPromptModal()">📩 申請成為成員</button>
-        <button id="navMemberMgmtBtn" class="btn-logout" style="background:var(--brand-main); color:#FFF; border:none; display:none;" onclick="openMembersModal()">👥 成員管理</button>
-        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">🤖 AI 隨手記匯入</button>
+        <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main);" onclick="openAiImportModal()">🤖 AI 隨手記</button>
       </div>
     </div>
 
     <div class="main-container" style="padding-top: 12px;">
-      <div class="tab-bar" id="projectTabBar">
+      <div class="tab-bar">
         <button class="tab-btn active" onclick="switchProjectTab('itinerary')">📍行程規劃</button>
         <button class="tab-btn finance-tab" onclick="switchProjectTab('expense')">📝旅程記帳</button>
         <button class="tab-btn finance-tab" onclick="switchProjectTab('settlement')">⚖️結算拆帳</button>
       </div>
 
       <div id="projectTabContent" style="margin-top: 16px;">
-        
-        <!-- TAB 1: 行程規劃 -->
         <div id="subtab-itinerary" class="tab-subcontent active">
-          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-            <button class="map-btn" style="flex:1; justify-content:center;" onclick="toggleAllCards(true)">全數展開</button>
-            <button class="map-btn" style="flex:1; justify-content:center; background:var(--sub-text);" onclick="toggleAllCards(false)">全數收合</button>
-          </div>
           <div id="itineraryContainer"></div>
         </div>
 
-        <!-- TAB 2: 旅程記帳 -->
         <div id="subtab-expense" class="tab-subcontent">
           <div class="card open">
-            <div class="card-header">
-              <div class="card-title">➕ 新增記帳</div>
-            </div>
+            <div class="card-header"><div class="card-title">➕ 新增記帳</div></div>
             <div class="card-content" style="display:block;">
               <form id="expenseForm" onsubmit="saveExpense(event)">
                 <div class="form-group">
                   <label class="form-label">選擇天數</label>
-                  <select id="expDay" class="form-control">
-                    <option value="D0">D0 (出發前預付項目)</option>
-                    <option value="D1" selected>Day 1</option>
-                    <option value="D2">Day 2</option>
-                    <option value="D3">Day 3</option>
-                    <option value="D4">Day 4</option>
-                    <option value="D5">Day 5</option>
-                    <option value="D6">Day 6</option>
-                  </select>
+                  <select id="expDay" class="form-control"></select>
                 </div>
                 <div class="form-group">
                   <label class="form-label">消費品名</label>
-                  <input type="text" id="expItem" class="form-control" placeholder="例如：天橋立蟹便當" required>
+                  <input type="text" id="expItem" class="form-control" required>
                 </div>
                 <div class="form-group">
                   <label class="form-label">金額</label>
-                  <input type="number" step="any" id="expAmount" class="form-control" placeholder="例如：3500" required>
+                  <input type="number" step="any" id="expAmount" class="form-control" required>
                 </div>
                 <div class="form-group">
                   <label class="form-label">選擇幣別</label>
-                  <select id="expCurrency" class="form-control">
-                    <option value="JPY" selected>💴 JPY - 日圓</option>
-                    <option value="TWD">NT$ TWD - 新台幣</option>
-                  </select>
+                  <select id="expCurrency" class="form-control"></select>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">付款方式</label>
-                  <select id="expPayment" class="form-control">
-                    <option value="信用卡" selected>💳 信用卡</option>
-                    <option value="現金">💴 現金</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">付款人 (誰先付的)</label>
-                  <select id="expPayerSelect" class="form-control"></select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">分攤對象 (可複選)</label>
-                  <div class="checkbox-group" id="expSplitMembersContainer"></div>
-                </div>
-                <button type="submit" class="btn-submit">新增記帳 (同步至專案雲端)</button>
+                <button type="submit" class="btn-submit">新增記帳</button>
               </form>
             </div>
           </div>
-
           <div id="expenseDayList"></div>
         </div>
 
-        <!-- TAB 3: 結算拆帳 -->
         <div id="subtab-settlement" class="tab-subcontent">
-          <div class="settle-summary">
-            <div class="settle-summary-title">專案總支出 (預付 + 現場折算台幣)</div>
-            <div class="settle-summary-val" id="totalGroupExpense">TWD $0</div>
-            <div style="font-size: 13px; color: var(--sub-text); margin-top: 4px; font-weight: 600;" id="perPersonShare">全團人均參考：TWD $0</div>
-          </div>
-
-          <div style="font-size: 15px; font-weight: 800; color: var(--brand-dark); margin-bottom: 10px;">👥 成員個人結算</div>
-          <div id="memberSettleList"></div>
-
-          <div class="transfer-guide">
-            <div class="transfer-title">💡 建議最簡找補方案</div>
-            <div id="transferInstructions">計算中...</div>
+          <div style="text-align:center; padding:20px; background:#fff; border-radius:16px;">
+            <div style="font-size:14px; color:var(--sub-text);">專案總支出</div>
+            <div style="font-size:24px; font-weight:900;" id="totalGroupExpense">TWD $0</div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Modal 1: 建立新專案彈窗 -->
-  <div id="newProjectModal" class="modal-mask">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">➕ 建立新旅遊專案</h3>
-        <button onclick="closeNewProjectModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
-      </div>
-      <form onsubmit="saveNewProject(event)">
-        <div class="form-group">
-          <label class="form-label">專案名稱</label>
-          <input type="text" id="newProjTitle" class="form-control" placeholder="例如：2027 生日東歐獨旅" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">旅遊日期區間</label>
-          <input type="text" id="newProjDates" class="form-control" placeholder="例如：2027/01/09 – 01/17 (9天)" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">您在這個專案的暱稱</label>
-          <input type="text" id="newProjOwnerNick" class="form-control" placeholder="例如：錢粘 或 錢總" value="錢粘" required>
-        </div>
-        <button type="submit" class="btn-submit">建立專案並進入</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal 2: 👥 成員管理與審核彈窗 -->
-  <div id="membersModal" class="modal-mask">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">👥 成員管理與邀請</h3>
-        <button onclick="closeMembersModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
-      </div>
-
-      <div id="pendingRequestsContainer" style="display:none; margin-bottom:16px;">
-        <label class="form-label" style="color:var(--danger);">🔔 待審核加入申請</label>
-        <div id="pendingRequestsList" style="display:flex; flex-direction:column; gap:8px;"></div>
-        <hr style="border:none; border-top:1px dashed var(--brand-border); margin:14px 0;">
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">目前專案成員與暱稱</label>
-        <div id="membersChipList" style="display:flex; flex-direction:column;"></div>
-      </div>
-
-      <div class="form-group" style="display:flex; gap:8px;">
-        <input type="text" id="newMemberNameInput" class="form-control" placeholder="新增成員暱稱 (例：爸)">
-        <button class="btn-submit" style="width:auto; margin-top:0; padding:0 16px; white-space:nowrap;" onclick="addManualMember()">➕ 新增</button>
-      </div>
-
-      <hr style="border:none; border-top:1px dashed var(--brand-border); margin:16px 0;">
-
-      <div class="form-group">
-        <label class="form-label">🔗 專案專屬邀請連結</label>
-        <input type="text" id="inviteUrlInput" class="form-control" readonly style="background:#F7FAFC;">
-        <button class="btn-submit" style="background:var(--brand-dark); margin-top:8px;" onclick="copyInviteLink()">📋 複製邀請網址發送給好友</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 3: 📩 申請 / 檢視加入彈窗 -->
-  <div id="joinPromptModal" class="modal-mask">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);" id="joinPromptTitle">🎉 加入專案團隊</h3>
-        <button onclick="closeJoinPromptModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
-      </div>
-      <p style="font-size:13px; color:var(--sub-text); font-weight:600; margin-bottom:12px;" id="joinPromptDesc">
-        加入成員後即可解鎖【旅程記帳】與【結算拆帳】功能！
-      </p>
-      <form onsubmit="submitJoinRequest(event)">
-        <div class="form-group">
-          <label class="form-label">請輸入您在這個專案想使用的暱稱：</label>
-          <input type="text" id="userJoinNickInput" class="form-control" placeholder="例如：蝦、小明、Robert" required>
-        </div>
-        <button type="submit" class="btn-submit" id="submitJoinBtn">送出申請 / 加入成員</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal 4: 🤖 AI 智慧口語與隨手記匯入彈窗 -->
+  <!-- AI Modal -->
   <div id="aiImportModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="font-size:17px; font-weight:800; color:var(--brand-dark);">🤖 Gemini AI 隨手記匯入</h3>
-        <button onclick="closeAiImportModal()" style="background:none; border:none; font-size:20px; font-weight:800; color:var(--sub-text); cursor:pointer;">✕</button>
+        <h3 style="font-size:17px; font-weight:800;">🤖 Gemini AI 隨手記匯入</h3>
+        <button onclick="closeAiImportModal()" style="background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
       </div>
-      <p style="font-size:12px; color:var(--sub-text); font-weight:600; margin-bottom:8px;">
-        隨手貼上任何口語文字（例如：Day one晚上七點要去京都車站 / 爸爸買了1000日幣咖啡不用分帳）：
-      </p>
-      <textarea id="aiImportInput" class="form-control" rows="8" placeholder="在此輸入或貼上任何口語隨手筆記..."></textarea>
-      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processGeminiAIImport()">✨ 請 Gemini AI 智慧理解並寫入雲端</button>
+      <textarea id="aiImportInput" class="form-control" rows="8" placeholder="輸入或貼上任何口語隨手筆記..."></textarea>
+      <button id="aiSubmitBtn" class="btn-submit" style="margin-top:12px;" onclick="processGeminiAIImport()">✨ Gemini AI 智慧理解寫入</button>
     </div>
   </div>
 
-  <!-- Modal 5: 📍 新增/編輯景點彈窗 -->
-  <div id="spotModal" class="modal-mask">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);" id="spotModalTitle">📍 新增景點卡片</h3>
-        <button onclick="closeSpotModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
-      </div>
-      <form onsubmit="saveSpotForm(event)">
-        <input type="hidden" id="spotDayKey">
-        <input type="hidden" id="spotIndex">
-        <div class="form-group">
-          <label class="form-label">時間 (選填)</label>
-          <input type="text" id="spotTime" class="form-control" placeholder="例如：09:30 或 15:00">
-        </div>
-        <div class="form-group">
-          <label class="form-label">景點 / 餐廳名稱</label>
-          <input type="text" id="spotTitleInput" class="form-control" placeholder="例如：⛩️ 國寶平等院" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">詳細說明 / 備註</label>
-          <textarea id="spotDescInput" class="form-control" rows="3" placeholder="景點特色描述或注意事項"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Google 地圖連結 (選填)</label>
-          <input type="url" id="spotMapUrl" class="form-control" placeholder="https://maps.app.goo.gl/...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">圖片網址 (選填，以逗號分隔)</label>
-          <input type="text" id="spotImgUrl" class="form-control" placeholder="https://...jpg, https://...png">
-        </div>
-        <button type="submit" class="btn-submit">儲存景點卡片</button>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    const GEMINI_API_KEY = "AQ.Ab8RN6Jm1WqV5XLvuKzv47r79fEDW42Tgfu7s-S2J8unBX607A";
-
-    const SITE_CONFIG = {
-      appName: "nien-trip",
-      appSubtitle: "隨心規劃，智慧拆帳｜專屬於你的質感旅遊管家",
-      logoIcon: "✈️",
-      features: [
-        { icon: "📍", title: "多國行程動態排程", desc: "手動時間排序與美觀景點卡片" },
-        { icon: "💱", title: "全球 160+ 幣別即時換算", desc: "支援冷門貨幣與歷史匯率鎖定" },
-        { icon: "🤖", title: "Gemini AI 隨手記匯入", desc: "語音、記事本或口語一鍵解析" }
-      ]
-    };
-
-    const SUPER_ADMIN_EMAILS = [
-      "moneynien@gmail.com",
-      "robertcl.kung@ogilvy.com"
-    ];
-
-    const KANSAI_ITINERARY_DATA = {
-      D1: {
-        title: "Day 1：11/19 (週四) 抵達大阪與購物散策",
-        subtitle: "關空 Haruka 直達天王寺 + 阿倍野商圈散步",
-        spots: [
-          { time: "", title: "✈️ 航班抵達資訊", desc: "長榮 BR182 (高雄 KHH 07:05 ➔ 10:55 關空 KIX)\n國泰 CX564 (桃園 TPE 11:15 ➔ 14:45 關空 KIX)" },
-          { time: "", title: "🛍️ 天王寺阿倍野商圈", desc: "結合熱門百貨與舒適步調，漫步 Q's Mall 與 MIO 百貨公司，非常適合全家大小輕鬆逛街購物與隨時休息。" },
-          { time: "", title: "🏨 天王寺都城市飯店 (Miyako City Osaka Tennoji)", desc: "直通天王寺車站與阿倍野商圈，交通極為便利，且房間寬敞舒適。", images: ["https://voniblog.com/wp-content/uploads/2025/01/%E5%A4%A7%E9%98%AA%E5%A4%A9%E7%8E%8B%E5%AF%BA-%E9%83%BD%E5%9F%8E%E5%B8%82%E9%85%92%E5%BA%97-MIYAKO-HOTELS-RESORTS-02.jpg", "https://www.miyakohotels.ne.jp/datas/cache/images/2022/03/01/1000x1000_ea1e9d427fb5664c32c517a73e421e58_a9da26447db85e021edcda47c1aa474566d6379e.jpg"], maps: [{ label: "📍 開啟飯店 Google 地圖", url: "https://maps.app.goo.gl/A7jEunCzg2wHTnFv5?g_st=ic" }] }
-        ]
-      },
-      D2: {
-        title: "Day 2：11/20 (週五) 奈良文化漫遊與大阪麻婆豆腐",
-        subtitle: "春日大社 + 浮見堂 + 世界最大無印良品",
-        spots: [
-          { time: "", title: "⛩️ 春日大社", desc: "古木參天的千古神社，走入石燈籠陣中，能深切感受莊嚴古樸的自然寧靜氣氛。", images: ["https://imagedelivery.net/Ahwf2rDz3ZiXm1qkpDKg1w/live/-/media/1DF124B3165D45E69862D0C75CE925A3.jpg/w=1536,q=65,format=auto"], maps: [{ label: "📍 春日大社地圖", url: "https://maps.app.goo.gl/9VxYxDV89vdRZNj8A?g_st=ic" }] },
-          { time: "", title: "🦌 奈良公園與浮見堂", desc: "綠意盎然的公園裡，能近距離餵食可愛小鹿，並欣賞湖畔浮見堂倒影倒映於水面之美。", images: ["https://assets.funliday.com/posts/wp-content/uploads/2024/08/23213330/306955644_462576185900232_8164762936253156203_n.jpg"], maps: [{ label: "📍 浮見堂地圖", url: "https://maps.app.goo.gl/s8pEs1Fbe1vtTA1N7?g_st=ic" }] },
-          { time: "", title: "🛍️ 無印良品 離子モール橿原", desc: "超大規格的世界最大級旗艦店，提供極為齊全的商品與舒適放鬆的逛街體驗。", images: ["https://media.loom-app.com/roomie/dist/images/2025/03/shrkm250320_muji8.jpg?w=1200"], maps: [{ label: "📍 橿原MUJI地圖", url: "https://maps.app.goo.gl/9Bp5W8kfTkfMqs6y6" }] },
-          { time: "", title: "🌶️ 晚餐首選：陳麻婆豆腐", desc: "起源於四川的百年名店，麻辣鮮香極致道地，是極具人氣的配飯首選名店。", maps: [{ label: "📍 LUCUA 1100店", url: "https://maps.app.goo.gl/QBFsGPnsrv1yW5rt8?g_st=ic" }, { label: "📍 STORM 難波CITY店", url: "https://maps.app.goo.gl/n5F4pfk1pkWDVVTf8?g_st=ic" }] }
-        ]
-      },
-      D3: {
-        title: "Day 3：11/21 (週六) 海之京都伊根舟屋漫遊",
-        subtitle: "海上計程船 + 舟屋單車 + 蟹會席溫泉飯店",
-        spots: [
-          { time: "", title: "🚤 Re:ine 伊根灣海上計程船", desc: "搭乘小巧靈活的海上計程船，能以近距離視角親近伊根舟屋臨海而建的獨特風貌。", images: ["https://static.wixstatic.com/media/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg/v1/fill/w_640,h_880,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/dd34e5_29f4e2541e4d40759a4a8cc02c79418f~mv2.jpg"], maps: [{ label: "📍 Re:INE 乘船處地圖", url: "https://maps.app.goo.gl/HtWBWziEJAK9hWFi9?g_st=ic" }] },
-          { time: "", title: "🚲 伊根免費單車漫遊", desc: "免費騎乘單車悠閒穿梭於古樸漁村巷弄間，是漫遊伊根最極致舒心的體驗方式。", images: ["https://joshuaworldtravel.com/wp-content/uploads/2020/12/P1140192-1.jpg"] },
-          { time: "", title: "☕ 午餐首選：INE CAFE / 神慈や / 鮨割烹 海宮", desc: "INE CAFE：臨海而建純白咖啡廳。\n神慈や：溫馨在地食堂。\n海宮：無敵海景割烹壽司。", images: ["https://static.gltjp.com/glt/data/directory/18000/17121/20250625_105548_294572df_w1920.webp"], maps: [{ label: "📍 INE CAFE", url: "https://maps.app.goo.gl/AQKCRnZCvWeVMSop6?g_st=ic" }, { label: "📍 神慈や", url: "https://maps.app.goo.gl/eRJmZtvKbmhp57zQA?g_st=ic" }] },
-          { time: "", title: "♨️ 住宿：天橋立飯店 (Amanohashidate Hotel)", desc: "坐擁天橋立絕景與優質溫泉，晚餐能在飯店內細細品嚐精緻豐盛的松葉蟹日式會席料理。", images: ["https://www.amanohashidate-htl.co.jp/common/img/ogp.jpg", "https://followtotravel.com/wp-content/uploads/2025/06/jp-amano-hashidate2.jpg"], maps: [{ label: "📍 天橋立飯店地圖", url: "https://maps.app.goo.gl/NqJNvzzciZVCxtNq7?g_st=ic" }] }
-        ]
-      },
-      D4: {
-        title: "Day 4：11/22 (週日) 雙觀景、蟹便當與丹後青松號",
-        subtitle: "飛龍觀 + 空中單車 + 鐵道海景 + 東洋亭",
-        spots: [
-          { time: "", title: "🐉 天橋立 View Land 飛龍觀與觀光船", desc: "搭乘纜車登上展望台倒過來觀賞沙洲呈現飛上青天的龍形奇景，並能體驗懸空行駛的高空單車。", images: ["https://res.klook.com/image/upload/activities/j3k6yir8av6hruayiumw.jpg", "https://www.viewland.jp/tw/wp-content/uploads/2026/10/6A412326547EAA7F31FB84032DC74945CFC0AAEE-250x170.png"], maps: [{ label: "📍 View Land纜車", url: "https://maps.app.goo.gl/H6T1GFKNiaMpyoRz5?g_st=ic" }] },
-          { time: "", title: "🦀 海鮮工房 橋立物產 松葉蟹直賣", desc: "專營松葉蟹與新鮮海產外帶便當，買好便當帶上青松號觀光列車品嚐最在地優質的海味。", images: ["https://megapx-assets.dcard.tw/videos/ead8dba0-de16-4910-b49a-4dea1e189163/thumbnails/720.jpeg"], maps: [{ label: "📍 橋立物產地圖", url: "https://maps.app.goo.gl/QD7ATmmpguViv8fPA?g_st=ic" }] },
-          { time: "", title: "🚃 丹後青松號與由良川鐵道景觀", desc: "水戶岡銳治設計的復古木質車廂，當列車行駛於水面鐵橋之上，宛如乘風破浪行駛於海面。", images: ["https://banbi.tw/wp-content/uploads/20190416190308_15.jpg", "https://image.kkday.com/v2/image/get/c_fit%2Cq_55%2Ct_webp%2Cw_960/s1.kkday.com/product_249694/20240919150811_I9pLO/jpg"] },
-          { time: "", title: "🍳 晚餐美饌：Grill Capital 東洋亭", desc: "京都百年洋食老店，以招牌鋁箔包漢堡排與冰鎮鮮美整顆番茄沙拉聞名遐邇。", images: ["https://www.kyoto-station-building.co.jp/app/uploads/2025/02/img_toyotei2-1.jpg"], maps: [{ label: "📍 伊勢丹店", url: "https://maps.app.goo.gl/R1ZhNskY4FmHKwsS9?g_st=ic" }] },
-          { time: "", title: "🏨 住宿：京都八條都飯店 (Miyako Hotel Kyoto Hachijo)", desc: "位於京都車站八條口正對面，位置極佳，且周邊機能極度齊全方便漫遊。", images: ["https://www.miyakohotels.ne.jp/datas/cache/images/2022/02/02/1100x2048_ea1e9d427fb5664c32c517a73e421e58_bcc40520da46ef3e73476a959b8335d182a887d9.jpg"], maps: [{ label: "📍 京都八條都飯店地圖", url: "https://maps.app.goo.gl/1VeekM67i8ctg9FV6?g_st=ic" }] }
-        ]
-      },
-      D5: {
-        title: "Day 5：11/23 (週一) 宇治世界遺產與源氏文化深度遊",
-        subtitle: "國寶平等院 + 源氏物語博物館 + 中村藤吉",
-        spots: [
-          { time: "", title: "⛩️ 國寶平等院", desc: "佇立於池畔的鳳凰堂宛如淨土極樂宮殿，展現平安時代極致的建築美學與歷史底蘊。", images: ["https://curly.com.tw/wp-content/uploads/2024/12/DSCF5201.jpg"], maps: [{ label: "📍 平等院地圖", url: "https://maps.app.goo.gl/5ncyy7xh3bEjc1DF6?g_st=ic" }] },
-          { time: "", title: "📖 宇治市源氏物語博物館", desc: "透過精緻展品與多媒體造景，沉浸式體驗源氏物語的光影與平安時代美感。", images: ["https://www.tyh.kimonorental.shop/wp-content/uploads/2024/09/0099-1024x683.jpg"], maps: [{ label: "📍 博物館地圖", url: "https://maps.app.goo.gl/3USKnkG2tJiaj5nD6?g_st=ic" }] },
-          { time: "", title: "🍵 中村藤吉 平等院店", desc: "位於宇治川畔的老字號茶屋，能邊欣賞水岸風貌，邊品嚐濃郁道地的抹茶甜點與餐點。", images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkyaSAsu3Csm7VmaIDTZTKwBLpEN6j2NEZVgOSTqjbHd5oFqudc3ltUKg&s=10"], maps: [{ label: "📍 中村藤吉地圖", url: "https://maps.app.goo.gl/dnXftCDur96nXuto9?g_st=ic" }] }
-        ]
-      },
-      D6: {
-        title: "Day 6：11/24 (週二) 返台與機場接駁",
-        subtitle: "Option 1 臨空城Outlet / Option 2 京都漫遊",
-        spots: [
-          { time: "", title: "🛍️ 方案 1：臨空城 Outlet 購物", desc: "鄰近關西機場的購物天堂，擁有豐富品牌與寬敞舒心的逛街環境。", images: ["https://image.co-trip.jp/content/book_contents/27010016_3896_1.jpg"], maps: [{ label: "📍 臨空城 Outlet 地圖", url: "https://maps.app.goo.gl/CF3onCV5KVxyuQWn6?g_st=ic" }] },
-          { time: "", title: "☕ 方案 2：爸媽留京都飯店周邊漫遊", desc: "爸媽可在京都八條都飯店周邊悠閒逛街散步，下午搭乘 Haruka 直達關空會合搭機。" },
-          { time: "", title: "✈️ 回程航班資訊", desc: "國泰 CX565 (關空 KIX 16:15 ➔ 18:30 桃園 TPE)\n長榮 BR147 (關空 KIX 20:20 ➔ 22:55 高雄 KHH)" }
-        ]
-      }
-    };
-
-    const KANSAI_PREPAID_EXPENSES = {
-      p1: { day: 'D0', item: '機票 (長榮+國泰)', amount: 80601, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'], timestamp: 1 },
-      p2: { day: 'D0', item: '天王寺都城市飯店', amount: 20876, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'], timestamp: 2 },
-      p3: { day: 'D0', item: '天橋立飯店', amount: 38532, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'], timestamp: 3 },
-      p4: { day: 'D0', item: '京都八條都飯店', amount: 40336, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '爸', '媽'], timestamp: 4 },
-      p5: { day: 'D0', item: 'SoftBank 5G eSIM', amount: 1039, currency: 'TWD', payment: '信用卡', payer: '錢粘', splitMembers: ['錢粘', '蝦', '媽'], timestamp: 5 }
-    };
-
-    let FIXED_RATE = 0.2;
-    let currentUser = null;
-    let allProjects = {};
-    let activeProjectId = null;
-    let activeProjectData = null;
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initSiteConfig();
-      checkUrlQueryParams();
-      const timer = setInterval(() => {
-        if (window.auth && window.onAuthStateChanged) {
-          clearInterval(timer);
-          initFirebaseAuthListener();
-        }
-      }, 100);
-    });
-
-    function checkUrlQueryParams() {
-      const params = new URLSearchParams(window.location.search);
-      const projId = params.get('proj');
-      if (projId) {
-        activeProjectId = projId;
-        localStorage.setItem('pending_invite_proj', projId);
-      } else {
-        activeProjectId = localStorage.getItem('pending_invite_proj') || null;
-      }
-    }
-
-    function initSiteConfig() {
-      document.getElementById('siteLogoIcon').innerText = SITE_CONFIG.logoIcon;
-      document.getElementById('dashLogoIcon').innerText = SITE_CONFIG.logoIcon;
-      document.getElementById('siteAppName').innerText = SITE_CONFIG.appName;
-      document.getElementById('dashAppName').innerText = SITE_CONFIG.appName;
-      document.getElementById('siteAppSubtitle').innerText = SITE_CONFIG.appSubtitle;
-
-      const featContainer = document.getElementById('siteFeaturesList');
-      featContainer.innerHTML = SITE_CONFIG.features.map(f => `
-        <div class="feature-item">
-          <div class="feature-icon">${f.icon}</div>
-          <div class="feature-text">
-            <h4>${f.title}</h4>
-            <p>${f.desc}</p>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function initFirebaseAuthListener() {
-      window.onAuthStateChanged(window.auth, (user) => {
-        if (user) {
-          currentUser = { name: user.displayName || '錢粘', email: user.email };
-          document.getElementById('dashUserName').innerText = `${currentUser.name} (${currentUser.email})`;
-          initFirebaseProjectsSync();
-        } else {
-          currentUser = null;
-          switchView('login');
-        }
-      });
-    }
-
-    function handleGoogleLogin() {
-      window.signInWithPopup(window.auth, window.googleProvider).catch((error) => {
-        if (error.code === 'auth/missing-initial-state' || error.code === 'auth/popup-blocked') {
-          alert('請使用手機內建 Safari 或 Chrome 開啟連結，並避開通訊軟體的內嵌瀏覽器！');
-        } else {
-          alert('登入失敗: ' + error.message);
-        }
-      });
-    }
-
-    function handleLogout() { 
-      localStorage.removeItem('pending_invite_proj');
-      window.signOut(window.auth).then(() => { switchView('login'); }); 
-    }
-
-    function initFirebaseProjectsSync() {
-      const projRef = window.dbRef(window.db, 'projects');
-      window.dbOnValue(projRef, (snapshot) => {
-        allProjects = snapshot.val() || {};
-        if (Object.keys(allProjects).length === 0) {
-          seedDefaultProject();
-        } else {
-          renderDashboardProjects();
-          
-          const pendingProj = localStorage.getItem('pending_invite_proj');
-          if (pendingProj && allProjects[pendingProj]) {
-            enterProject(pendingProj);
-            localStorage.removeItem('pending_invite_proj');
-          } else if (activeProjectId && allProjects[activeProjectId]) {
-            enterProject(activeProjectId);
-          } else {
-            switchView('dashboard');
-          }
-        }
-      });
-    }
-
-    function seedDefaultProject() {
-      const defaultId = 'proj_kansai_2026';
-      const defaultProj = {
-        title: "2026 日本關西家族之旅",
-        dates: "2026/11/19 – 11/24 (6天5夜)",
-        ownerEmail: "moneynien@gmail.com",
-        membersMap: {
-          "moneynien_at_gmail_com": { email: "moneynien@gmail.com", nick: "錢粘", role: "owner" },
-          "robertcl_kung_at_ogilvy_com": { email: "robertcl.kung@ogilvy.com", nick: "錢粘", role: "owner" }
-        },
-        membersList: ["錢粘", "蝦", "爸", "媽"],
-        itinerary: KANSAI_ITINERARY_DATA,
-        expenses: KANSAI_PREPAID_EXPENSES
-      };
-      window.dbSet(window.dbRef(window.db, 'projects/' + defaultId), defaultProj);
-    }
-
-    function encodeEmail(email) { return email ? email.replace(/\./g, '_').replace(/@/g, '_at_') : ''; }
-
-    function getUserRoleInProject(proj) {
-      if (!currentUser) return 'viewer';
-      if (SUPER_ADMIN_EMAILS.includes(currentUser.email.toLowerCase())) return 'owner';
-      if (proj && proj.ownerEmail && proj.ownerEmail.toLowerCase() === currentUser.email.toLowerCase()) return 'owner';
-      
-      const encoded = encodeEmail(currentUser.email);
-      if (proj && proj.membersMap && proj.membersMap[encoded]) {
-        return proj.membersMap[encoded].role || 'member';
-      }
-      return 'viewer';
-    }
-
-    function switchView(viewId) {
-      document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
-      document.getElementById('view-' + viewId).classList.add('active');
-    }
-
-    function renderDashboardProjects() {
-      const grid = document.getElementById('projectGridList');
-      const entries = Object.entries(allProjects);
-      grid.innerHTML = entries.map(([id, p]) => {
-        const role = getUserRoleInProject(p);
-        let roleBadge = '<span class="role-badge role-viewer">👀 訪客 (僅看行程)</span>';
-        if (role === 'owner') roleBadge = '<span class="role-badge role-owner">👑 擁有者</span>';
-        else if (role === 'member') roleBadge = '<span class="role-badge role-member">👥 專案成員</span>';
-
-        const memberDisplay = p.membersList ? p.membersList.join(', ') : '';
-        return `
-          <div class="project-card" onclick="enterProject('${id}')">
-            <div class="project-header">
-              <div>
-                <div class="project-name">${p.title}</div>
-                <div class="project-dates">📅 ${p.dates}</div>
-              </div>
-              ${roleBadge}
-            </div>
-            <div class="project-members">記帳對象: ${memberDisplay}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function enterProject(projectId) {
-      activeProjectId = projectId;
-      activeProjectData = allProjects[projectId];
-      if (!activeProjectData) return;
-
-      document.getElementById('activeProjectTitle').innerText = activeProjectData.title;
-
-      const userRole = getUserRoleInProject(activeProjectData);
-      const applyBtn = document.getElementById('navApplyMemberBtn');
-      const mgmtBtn = document.getElementById('navMemberMgmtBtn');
-      const financeTabs = document.querySelectorAll('.finance-tab');
-
-      if (userRole === 'owner') {
-        applyBtn.style.display = 'none';
-        mgmtBtn.style.display = 'block';
-        financeTabs.forEach(t => t.style.display = 'block');
-      } else if (userRole === 'member') {
-        applyBtn.style.display = 'none';
-        mgmtBtn.style.display = 'none';
-        financeTabs.forEach(t => t.style.display = 'block');
-      } else {
-        applyBtn.style.display = 'block';
-        mgmtBtn.style.display = 'none';
-        financeTabs.forEach(t => t.style.display = 'none');
-        // 訪客點進來直接彈出申請對話框
-        openJoinPromptModal();
-      }
-
-      setupProjectMembersUI();
-      renderActiveProjectContent();
-      switchView('project');
-      switchProjectTab('itinerary');
-    }
-
-    function getProjectMemberList() {
-      if (!activeProjectData) return ['錢粘', '蝦', '爸', '媽'];
-      let list = [];
-      if (activeProjectData.membersMap) {
-        Object.values(activeProjectData.membersMap).forEach(m => {
-          if (m.nick && !list.includes(m.nick)) list.push(m.nick);
-        });
-      }
-      if (activeProjectData.membersList) {
-        activeProjectData.membersList.forEach(m => {
-          if (!list.includes(m)) list.push(m);
-        });
-      }
-      return list.length > 0 ? list : ['錢粘', '蝦', '爸', '媽'];
-    }
-
-    function setupProjectMembersUI() {
-      const members = getProjectMemberList();
-      const payerSelect = document.getElementById('expPayerSelect');
-      payerSelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
-
-      const splitBox = document.getElementById('expSplitMembersContainer');
-      splitBox.innerHTML = members.map(m => `
-        <label class="checkbox-label">
-          <input type="checkbox" name="splitMember" value="${m}" checked> ${m}
-        </label>
-      `).join('');
-    }
-
-    function renderActiveProjectContent() {
-      if (!activeProjectData) return;
-      renderItineraryFromJSON(activeProjectData.itinerary || {});
-      renderExpenses();
-      renderSettlement();
-    }
-
-    function renderItineraryFromJSON(data) {
-      const container = document.getElementById('itineraryContainer');
-      const days = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
-      
-      let html = '';
-      days.forEach((dayKey, idx) => {
-        const day = data[dayKey] || { title: `Day ${idx+1}`, subtitle: '', spots: [] };
-        const isOpen = idx === 0 ? 'open' : '';
-
-        html += `
-          <div class="card ${isOpen}">
-            <div class="card-header" onclick="toggleCard(this)">
-              <div>
-                <div class="card-title">${day.title}</div>
-                <div class="card-subtitle">${day.subtitle || ''}</div>
-              </div>
-              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
-            </div>
-            <div class="card-content">
-              <button class="btn-add-project" style="width:100%; margin-bottom:12px;" onclick="openSpotModal('${dayKey}')">＋ 新增 ${dayKey} 景點卡片</button>
-              ${day.spots ? day.spots.map((spot, sIdx) => `
-                <div class="spot-card">
-                  <div class="spot-actions">
-                    <button class="btn-spot-edit" onclick="openSpotModal('${dayKey}', ${sIdx})">✏️ 編輯</button>
-                    <button class="btn-spot-del" onclick="deleteSpot('${dayKey}', ${sIdx})">🗑️ 刪除</button>
-                  </div>
-                  ${spot.time ? `<span class="spot-time">⏰ ${spot.time}</span>` : ''}
-                  <div class="spot-title">${spot.title}</div>
-                  <div class="spot-desc">${spot.desc}</div>
-                  ${spot.images && spot.images.length > 0 ? `
-                    <div class="img-grid">
-                      ${spot.images.map(imgUrl => `<div class="img-box"><img src="${imgUrl}" alt="景點照片"></div>`).join('')}
-                    </div>
-                  ` : ''}
-                  ${spot.maps && spot.maps.length > 0 ? `
-                    <div class="btn-group">
-                      ${spot.maps.map(map => `<a href="${map.url}" class="map-btn" target="_blank">${map.label}</a>`).join('')}
-                    </div>
-                  ` : ''}
-                </div>
-              `).join('') : ''}
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    function openSpotModal(dayKey, spotIndex = null) {
-      document.getElementById('spotDayKey').value = dayKey;
-      document.getElementById('spotIndex').value = spotIndex !== null ? spotIndex : '';
-
-      if (spotIndex !== null && activeProjectData.itinerary[dayKey].spots[spotIndex]) {
-        const spot = activeProjectData.itinerary[dayKey].spots[spotIndex];
-        document.getElementById('spotModalTitle').innerText = '✏️ 編輯景點卡片';
-        document.getElementById('spotTime').value = spot.time || '';
-        document.getElementById('spotTitleInput').value = spot.title || '';
-        document.getElementById('spotDescInput').value = spot.desc || '';
-        document.getElementById('spotMapUrl').value = (spot.maps && spot.maps[0]) ? spot.maps[0].url : '';
-        document.getElementById('spotImgUrl').value = (spot.images) ? spot.images.join(', ') : '';
-      } else {
-        document.getElementById('spotModalTitle').innerText = '📍 新增景點卡片';
-        document.getElementById('spotTime').value = '';
-        document.getElementById('spotTitleInput').value = '';
-        document.getElementById('spotDescInput').value = '';
-        document.getElementById('spotMapUrl').value = '';
-        document.getElementById('spotImgUrl').value = '';
-      }
-
-      document.getElementById('spotModal').style.display = 'flex';
-    }
-
-    function closeSpotModal() { document.getElementById('spotModal').style.display = 'none'; }
-
-    function saveSpotForm(e) {
-      e.preventDefault();
-      const dayKey = document.getElementById('spotDayKey').value;
-      const spotIdxRaw = document.getElementById('spotIndex').value;
-      const time = document.getElementById('spotTime').value.trim();
-      const title = document.getElementById('spotTitleInput').value.trim();
-      const desc = document.getElementById('spotDescInput').value.trim();
-      const mapUrl = document.getElementById('spotMapUrl').value.trim();
-      const imgUrlsRaw = document.getElementById('spotImgUrl').value.trim();
-
-      const images = imgUrlsRaw ? imgUrlsRaw.split(',').map(u => u.trim()).filter(u => u.length > 0) : [];
-      const maps = mapUrl ? [{ label: `📍 ${title} 地圖`, url: mapUrl }] : [];
-
-      const newSpot = { time, title, desc, images, maps };
-
-      if (!activeProjectData.itinerary) activeProjectData.itinerary = {};
-      if (!activeProjectData.itinerary[dayKey]) activeProjectData.itinerary[dayKey] = { title: dayKey, spots: [] };
-      if (!activeProjectData.itinerary[dayKey].spots) activeProjectData.itinerary[dayKey].spots = [];
-
-      if (spotIdxRaw !== '') {
-        activeProjectData.itinerary[dayKey].spots[parseInt(spotIdxRaw)] = newSpot;
-      } else {
-        activeProjectData.itinerary[dayKey].spots.push(newSpot);
-      }
-
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary).then(() => {
-        closeSpotModal();
-      });
-    }
-
-    function deleteSpot(dayKey, spotIndex) {
-      if (confirm('確定要刪除這個景點嗎？')) {
-        activeProjectData.itinerary[dayKey].spots.splice(spotIndex, 1);
-        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary);
-      }
-    }
-
-    function saveExpense(e) {
-      e.preventDefault();
-      if (!activeProjectId) return;
-
-      const day = document.getElementById('expDay').value;
-      const item = document.getElementById('expItem').value.trim();
-      const amount = parseFloat(document.getElementById('expAmount').value);
-      const currency = document.getElementById('expCurrency').value;
-      const payment = document.getElementById('expPayment').value;
-      const payer = document.getElementById('expPayerSelect').value;
-      
-      const splitCheckboxes = document.querySelectorAll('input[name="splitMember"]:checked');
-      const splitMembers = Array.from(splitCheckboxes).map(cb => cb.value);
-
-      if (!item || isNaN(amount) || amount <= 0 || splitMembers.length === 0) {
-        alert('請填寫品名、金額與分攤成員！');
-        return;
-      }
-
-      const newExpense = { day, item, amount, currency, payment, payer, splitMembers, timestamp: Date.now() };
-      const expensesRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses`);
-      window.dbPush(expensesRef, newExpense);
-
-      document.getElementById('expItem').value = '';
-      document.getElementById('expAmount').value = '';
-    }
-
-    function deleteExpense(id) {
-      if (confirm('確定刪除這筆記帳嗎？')) {
-        const itemRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses/${id}`);
-        window.dbRemove(itemRef);
-      }
-    }
-
-    function renderExpenses() {
-      const container = document.getElementById('expenseDayList');
-      const expenses = activeProjectData.expenses || {};
-      const days = ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
-
-      let html = '';
-      days.forEach(day => {
-        const items = Object.entries(expenses).filter(([id, data]) => data.day === day);
-        let dayTotalTWD = 0;
-        items.forEach(([id, data]) => {
-          const amt = data.amount || 0;
-          const curr = data.currency || 'JPY';
-          dayTotalTWD += curr === 'JPY' ? amt * FIXED_RATE : amt;
-        });
-
-        html += `
-          <div class="card ${items.length > 0 ? 'open' : ''}">
-            <div class="card-header" onclick="toggleCard(this)">
-              <div>
-                <div class="card-title">${day} 明細</div>
-                <div class="card-subtitle">小計：約 TWD $${Math.round(dayTotalTWD).toLocaleString()}</div>
-              </div>
-              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>
-            </div>
-            <div class="card-content">
-              ${items.length === 0 ? '<div style="font-size:13px; color:var(--sub-text);">尚無紀錄</div>' : ''}
-              ${items.map(([id, data]) => `
-                <div class="expense-item">
-                  <div class="expense-info">
-                    <div class="expense-title">${data.item}</div>
-                    <div class="expense-meta">${data.payment || '現金'} · ${data.payer} 先付 · 分攤: ${data.splitMembers ? data.splitMembers.join(', ') : ''}</div>
-                  </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <div class="expense-amount">${data.currency === 'JPY' ? '¥' : '$'}${(data.amount || 0).toLocaleString()} ${data.currency}</div>
-                    <button class="btn-delete" onclick="deleteExpense('${id}')">刪除</button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    function renderSettlement() {
-      const expenses = activeProjectData.expenses || {};
-      const members = getProjectMemberList();
-
-      let paidTWD = {};
-      let owedTWD = {};
-      members.forEach(m => { paidTWD[m] = 0; owedTWD[m] = 0; });
-
-      let totalGroupTWD = 0;
-      Object.values(expenses).forEach(item => {
-        const amt = item.amount || 0;
-        const curr = item.currency || 'JPY';
-        const twd = curr === 'JPY' ? amt * FIXED_RATE : amt;
-
-        totalGroupTWD += twd;
-        if (paidTWD[item.payer] !== undefined) paidTWD[item.payer] += twd;
-        if (item.splitMembers && item.splitMembers.length > 0) {
-          const shareTWD = twd / item.splitMembers.length;
-          item.splitMembers.forEach(m => {
-            if (owedTWD[m] !== undefined) owedTWD[m] += shareTWD;
-          });
-        }
-      });
-
-      const perPersonTWD = totalGroupTWD / (members.length || 1);
-      document.getElementById('totalGroupExpense').innerText = `TWD $${Math.round(totalGroupTWD).toLocaleString()}`;
-      document.getElementById('perPersonShare').innerText = `全團人均參考：TWD $${Math.round(perPersonTWD).toLocaleString()}`;
-
-      let memberHtml = '';
-      let balances = {};
-
-      members.forEach(m => {
-        const net = paidTWD[m] - owedTWD[m];
-        balances[m] = net;
-
-        memberHtml += `
-          <div class="member-settle-card">
-            <div class="member-name">${m}</div>
-            <div class="member-row"><span>實際掏出 (包含代墊):</span><span>TWD $${Math.round(paidTWD[m]).toLocaleString()}</span></div>
-            <div class="member-row"><span>應分攤總額:</span><span>TWD $${Math.round(owedTWD[m]).toLocaleString()}</span></div>
-            <div class="member-status">
-              <span>結算狀態:</span>
-              <span class="${net >= 0 ? 'text-plus' : 'text-minus'}">
-                ${net >= 0 ? '應收回 TWD $' + Math.round(net).toLocaleString() : '應補繳 TWD $' + Math.round(Math.abs(net)).toLocaleString()}
-              </span>
-            </div>
-          </div>
-        `;
-      });
-      document.getElementById('memberSettleList').innerHTML = memberHtml;
-      calculateTransfers(balances);
-    }
-
-    function calculateTransfers(balances) {
-      let debtors = [];
-      let creditors = [];
-      Object.entries(balances).forEach(([name, amount]) => {
-        const rounded = Math.round(amount);
-        if (rounded < -1) debtors.push({ name, amount: Math.abs(rounded) });
-        else if (rounded > 1) creditors.push({ name, amount: rounded });
-      });
-
-      let instructions = [];
-      let i = 0, j = 0;
-      while (i < debtors.length && j < creditors.length) {
-        let debtor = debtors[i];
-        let creditor = creditors[j];
-        let amount = Math.min(debtor.amount, creditor.amount);
-        instructions.push(`👉 <strong>${debtor.name}</strong> 需支付給 <strong>${creditor.name}</strong>：TWD $${amount.toLocaleString()}`);
-        debtor.amount -= amount;
-        creditor.amount -= amount;
-        if (debtor.amount === 0) i++;
-        if (creditor.amount === 0) j++;
-      }
-
-      if (instructions.length === 0) {
-        document.getElementById('transferInstructions').innerHTML = '<div class="transfer-item">🎉 目前收支完美平衡，無需找補！</div>';
-      } else {
-        document.getElementById('transferInstructions').innerHTML = instructions.map(inst => `<div class="transfer-item">${inst}</div>`).join('');
-      }
-    }
-
-    function switchProjectTab(tabName) {
-      document.querySelectorAll('#view-project .tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-subcontent').forEach(sub => sub.classList.remove('active'));
-
-      const activeBtn = Array.from(document.querySelectorAll('#view-project .tab-btn')).find(b => b.getAttribute('onclick').includes(tabName));
-      if (activeBtn) activeBtn.classList.add('active');
-
-      const targetSub = document.getElementById('subtab-' + tabName);
-      if (targetSub) targetSub.classList.add('active');
-    }
-
-    function toggleCard(header) { header.parentElement.classList.toggle('open'); }
-    function toggleAllCards(open) {
-      document.querySelectorAll('#subtab-itinerary .card').forEach(card => {
-        if(open) card.classList.add('open'); else card.classList.remove('open');
-      });
-    }
-
-    function navigateToDashboard() {
-      activeProjectId = null;
-      localStorage.removeItem('pending_invite_proj');
-      window.history.pushState({}, '', window.location.pathname);
-      switchView('dashboard');
-    }
-
-    function openNewProjectModal() { document.getElementById('newProjectModal').style.display = 'flex'; }
-    function closeNewProjectModal() { document.getElementById('newProjectModal').style.display = 'none'; }
-
-    function saveNewProject(e) {
-      e.preventDefault();
-      const title = document.getElementById('newProjTitle').value.trim();
-      const dates = document.getElementById('newProjDates').value.trim();
-      const ownerNick = document.getElementById('newProjOwnerNick').value.trim();
-
-      const newProjId = 'proj_' + Date.now();
-      const encodedEmail = encodeEmail(currentUser.email);
-      const newProjData = {
-        title, dates,
-        ownerEmail: currentUser.email,
-        membersMap: {
-          [encodedEmail]: { email: currentUser.email, nick: ownerNick, role: 'owner' }
-        },
-        membersList: [ownerNick],
-        itinerary: {}, expenses: {}
-      };
-
-      window.dbSet(window.dbRef(window.db, 'projects/' + newProjId), newProjData).then(() => {
-        closeNewProjectModal();
-        enterProject(newProjId);
-      });
-    }
-
-    function openJoinPromptModal() {
-      if (!activeProjectData) return;
-      document.getElementById('joinPromptTitle').innerText = `🎉 申請加入「${activeProjectData.title}」`;
-      document.getElementById('userJoinNickInput').value = (currentUser && currentUser.name !== '未登入') ? currentUser.name : '';
-      document.getElementById('joinPromptModal').style.display = 'flex';
-    }
-
-    function closeJoinPromptModal() { document.getElementById('joinPromptModal').style.display = 'none'; }
-
-    function submitJoinRequest(e) {
-      e.preventDefault();
-      const nick = document.getElementById('userJoinNickInput').value.trim();
-      if (!nick) return;
-
-      const encodedEmail = encodeEmail(currentUser.email);
-      const requestData = { email: currentUser.email, nick, requestedAt: Date.now() };
-
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/joinRequests/${encodedEmail}`), requestData).then(() => {
-        alert('🎉 申請已送出！請等待專案擁有者 (Owner) 審核同意外即可解鎖記帳功能！');
-        closeJoinPromptModal();
-      });
-    }
-
-    function openMembersModal() {
-      if (!activeProjectData) return;
-      renderPendingRequestsList();
-      renderMembersChipList();
-      
-      const inviteUrl = window.location.origin + window.location.pathname + '?proj=' + activeProjectId;
-      document.getElementById('inviteUrlInput').value = inviteUrl;
-      document.getElementById('membersModal').style.display = 'flex';
-    }
-
-    function closeMembersModal() { document.getElementById('membersModal').style.display = 'none'; }
-
-    function renderPendingRequestsList() {
-      const container = document.getElementById('pendingRequestsContainer');
-      const list = document.getElementById('pendingRequestsList');
-      const reqs = activeProjectData.joinRequests || {};
-      const entries = Object.entries(reqs);
-
-      if (entries.length === 0) {
-        container.style.display = 'none';
-        return;
-      }
-
-      container.style.display = 'block';
-      list.innerHTML = entries.map(([encEmail, req]) => `
-        <div class="member-chip" style="background:#FFF5F5; border-color:#FEB2B2;">
-          <div>
-            <div>👤 <strong>${req.nick}</strong></div>
-            <div style="font-size:11px; color:var(--sub-text);">${req.email}</div>
-          </div>
-          <div class="btn-actions">
-            <button style="background:var(--brand-main); color:#FFF; border:none;" onclick="approveJoinRequest('${encEmail}', '${req.email}', '${req.nick}')">同意加入</button>
-            <button class="del" onclick="rejectJoinRequest('${encEmail}')">拒絕</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function approveJoinRequest(encEmail, email, nick) {
-      if (!activeProjectData.membersMap) activeProjectData.membersMap = {};
-      activeProjectData.membersMap[encEmail] = { email, nick, role: 'member' };
-
-      if (!activeProjectData.membersList) activeProjectData.membersList = [];
-      if (!activeProjectData.membersList.includes(nick)) activeProjectData.membersList.push(nick);
-
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersMap`), activeProjectData.membersMap);
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList);
-      window.dbRemove(window.dbRef(window.db, `projects/${activeProjectId}/joinRequests/${encEmail}`)).then(() => {
-        alert(`已成功同意 ${nick} 加入成員！`);
-        renderPendingRequestsList();
-        renderMembersChipList();
-        setupProjectMembersUI();
-        renderSettlement();
-      });
-    }
-
-    function rejectJoinRequest(encEmail) {
-      window.dbRemove(window.dbRef(window.db, `projects/${activeProjectId}/joinRequests/${encEmail}`)).then(() => {
-        renderPendingRequestsList();
-      });
-    }
-
-    function renderMembersChipList() {
-      const listContainer = document.getElementById('membersChipList');
-      let html = '';
-
-      if (activeProjectData.membersMap) {
-        Object.entries(activeProjectData.membersMap).forEach(([encEmail, m]) => {
-          html += `
-            <div class="member-chip">
-              <div>
-                <div>👤 <strong>${m.nick}</strong> <span class="role-badge ${m.role === 'owner' ? 'role-owner' : 'role-member'}">${m.role === 'owner' ? '👑 Owner' : '👥 Member'}</span></div>
-                <div style="font-size:11px; color:var(--sub-text);">${m.email}</div>
-              </div>
-              <div class="btn-actions">
-                <button onclick="overrideMemberNick('${encEmail}', '${m.nick}')">✏️ 修改暱稱</button>
-                ${m.role !== 'owner' ? `<button class="del" onclick="removeMapMember('${encEmail}', '${m.nick}')">移除</button>` : ''}
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      if (activeProjectData.membersList) {
-        activeProjectData.membersList.forEach((nick, idx) => {
-          const isMapped = activeProjectData.membersMap && Object.values(activeProjectData.membersMap).some(m => m.nick === nick);
-          if (!isMapped) {
-            html += `
-              <div class="member-chip">
-                <div>👤 <strong>${nick}</strong> <span class="role-badge role-member">純名單</span></div>
-                <div class="btn-actions">
-                  <button onclick="overrideListNick(${idx}, '${nick}')">✏️ 修改暱稱</button>
-                  <button class="del" onclick="removeListMember(${idx})">移除</button>
-                </div>
-              </div>
-            `;
-          }
-        });
-      }
-
-      listContainer.innerHTML = html;
-    }
-
-    function overrideMemberNick(encEmail, currentNick) {
-      const newNick = prompt(`請輸入 ${currentNick} 的新暱稱：`, currentNick);
-      if (!newNick || newNick.trim() === '') return;
-
-      const trimmed = newNick.trim();
-      activeProjectData.membersMap[encEmail].nick = trimmed;
-
-      if (activeProjectData.membersList) {
-        const idx = activeProjectData.membersList.indexOf(currentNick);
-        if (idx !== -1) activeProjectData.membersList[idx] = trimmed;
-        else activeProjectData.membersList.push(trimmed);
-      }
-
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersMap`), activeProjectData.membersMap);
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
-        renderMembersChipList();
-        setupProjectMembersUI();
-        renderSettlement();
-      });
-    }
-
-    function overrideListNick(idx, currentNick) {
-      const newNick = prompt(`請輸入 ${currentNick} 的新暱稱：`, currentNick);
-      if (!newNick || newNick.trim() === '') return;
-
-      activeProjectData.membersList[idx] = newNick.trim();
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
-        renderMembersChipList();
-        setupProjectMembersUI();
-        renderSettlement();
-      });
-    }
-
-    function addManualMember() {
-      const input = document.getElementById('newMemberNameInput');
-      const newNick = input.value.trim();
-      if (!newNick) return;
-
-      if (!activeProjectData.membersList) activeProjectData.membersList = [];
-      if (activeProjectData.membersList.includes(newNick)) {
-        alert('該暱稱已在名單中！');
-        return;
-      }
-
-      activeProjectData.membersList.push(newNick);
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
-        input.value = '';
-        renderMembersChipList();
-        setupProjectMembersUI();
-        renderSettlement();
-      });
-    }
-
-    function removeMapMember(encEmail, nick) {
-      if (confirm(`確定要移除成員 ${nick} 嗎？`)) {
-        delete activeProjectData.membersMap[encEmail];
-        if (activeProjectData.membersList) {
-          activeProjectData.membersList = activeProjectData.membersList.filter(m => m !== nick);
-        }
-        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersMap`), activeProjectData.membersMap);
-        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
-          renderMembersChipList();
-          setupProjectMembersUI();
-          renderSettlement();
-        });
-      }
-    }
-
-    function removeListMember(idx) {
-      if (confirm('確定要移除此成員嗎？')) {
-        activeProjectData.membersList.splice(idx, 1);
-        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
-          renderMembersChipList();
-          setupProjectMembersUI();
-          renderSettlement();
-        });
-      }
-    }
-
-    function copyInviteLink() {
-      const urlInput = document.getElementById('inviteUrlInput');
-      urlInput.select();
-      navigator.clipboard.writeText(urlInput.value).then(() => {
-        alert('🎉 專案邀請連結已成功複製！發送給好友即可直接開啟此專案！');
-      }).catch(() => {
-        document.execCommand('copy');
-        alert('🎉 專案邀請連結已成功複製！');
-      });
-    }
-
-    function openAiImportModal() {
-      document.getElementById('aiImportModal').style.display = 'flex';
-    }
-
-    function closeAiImportModal() { document.getElementById('aiImportModal').style.display = 'none'; }
-
-    async function processGeminiAIImport() {
-      const rawText = document.getElementById('aiImportInput').value.trim();
-
-      if (!rawText) {
-        alert('請輸入任何隨手筆記或口語內容！');
-        return;
-      }
-
-      const submitBtn = document.getElementById('aiSubmitBtn');
-      submitBtn.innerText = '🧠 Gemini AI 正在分析語意中，請稍候...';
-      submitBtn.disabled = true;
-
-      const members = getProjectMemberList();
-
-      const systemPrompt = `你是一個專業旅遊隨手筆記解析器。請閱讀使用者的隨手輸入，並精準解析出【景點行程 (spots)】與【記帳明細 (expenses)】。
-當前專案的成員名單為: ${JSON.stringify(members)}。
-
-請嚴格輸出 JSON 格式，包含兩個陣列 (spots 與 expenses)，結構如下：
-{
-  "spots": [
-    {
-      "day": "D1", // 格式必須為 D1, D2, D3 等
-      "time": "19:00", // 若無時間請填 ""
-      "title": "景點或餐廳名稱",
-      "desc": "詳細說明或備註",
-      "mapUrl": "https://maps.app.goo.gl/..." // 若無請填 ""
-    }
-  ],
-  "expenses": [
-    {
-      "day": "D1", // 格式必須為 D1, D2, D3 等
-      "item": "消費品名",
-      "amount": 1000, // 純數字
-      "currency": "JPY", // JPY 或 TWD
-      "payer": "付款人暱稱", // 必須匹配成員名單，若不確定請預設第一個成員
-      "splitMembers": ["爸", "媽"] // 分攤對象陣列，若寫不用分帳或自己付，則只放付款人一人；若沒特別寫則放全體成員
-    }
-  ]
-}
-請只回答 JSON，不要包含任何 markdown 標記（如 \`\`\`json ）。`;
-
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              { role: 'user', parts: [{ text: systemPrompt + "\n\n使用者輸入:\n" + rawText }] }
-            ]
-          })
-        });
-
-        const data = await response.json();
-        if (!data.candidates || !data.candidates[0]) {
-          throw new Error('Gemini API 未回傳有效結果！');
-        }
-
-        let replyText = data.candidates[0].content.parts[0].text.trim();
-        replyText = replyText.replace(/```json/gi, '').replace(/```/g, '').trim();
-
-        const parsedResult = JSON.parse(replyText);
-
-        let spotCount = 0;
-        let expCount = 0;
-
-        if (parsedResult.spots && parsedResult.spots.length > 0) {
-          if (!activeProjectData.itinerary) activeProjectData.itinerary = {};
-
-          parsedResult.spots.forEach(spot => {
-            const dayKey = spot.day || 'D1';
-            if (!activeProjectData.itinerary[dayKey]) {
-              activeProjectData.itinerary[dayKey] = { title: `Day ${dayKey.replace('D','')}`, spots: [] };
-            }
-            if (!activeProjectData.itinerary[dayKey].spots) {
-              activeProjectData.itinerary[dayKey].spots = [];
-            }
-
-            const maps = spot.mapUrl ? [{ label: `📍 ${spot.title} 地圖`, url: spot.mapUrl }] : [];
-            activeProjectData.itinerary[dayKey].spots.push({
-              time: spot.time || '',
-              title: spot.title || '景點',
-              desc: spot.desc || '',
-              images: [],
-              maps: maps
-            });
-            spotCount++;
-          });
-
-          await window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/itinerary`), activeProjectData.itinerary);
-        }
-
-        if (parsedResult.expenses && parsedResult.expenses.length > 0) {
-          const expensesRef = window.dbRef(window.db, `projects/${activeProjectId}/expenses`);
-
-          parsedResult.expenses.forEach(exp => {
-            const newExpense = {
-              day: exp.day || 'D1',
-              item: exp.item || '隨手記帳',
-              amount: parseFloat(exp.amount) || 0,
-              currency: (exp.currency || 'JPY').toUpperCase(),
-              payment: '現金',
-              payer: exp.payer || members[0],
-              splitMembers: exp.splitMembers && exp.splitMembers.length > 0 ? exp.splitMembers : members,
-              timestamp: Date.now() + expCount
-            };
-            window.dbPush(expensesRef, newExpense);
-            expCount++;
-          });
-        }
-
-        alert(`🎉 Gemini AI 解析成功！已寫入 ${spotCount} 個景點卡片與 ${expCount} 筆記帳！`);
-        document.getElementById('aiImportInput').value = '';
-        closeAiImportModal();
-        renderActiveProjectContent();
-
-      } catch (err) {
-        alert('解析失敗: ' + err.message);
-      } finally {
-        submitBtn.innerText = '✨ 請 Gemini AI 智慧理解並寫入雲端';
-        submitBtn.disabled = false;
-      }
-    }
-  </script>
+  <!-- 依序載入 6 個專屬模組 -->
+  <script type="module" src="./firebase-config.js"></script>
+  <script src="./app-state.js"></script>
+  <script src="./dashboard.js"></script>
+  <script src="./itinerary.js"></script>
+  <script src="./expenses.js"></script>
+  <script src="./ai-importer.js"></script>
 </body>
 </html>
