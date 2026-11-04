@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', () => {
-  // 安全等待 Firebase Auth 載入完成
+  // 安全輪詢等待 Auth 模組完成
   const checkAuthTimer = setInterval(() => {
     if (window.auth && window.onAuthStateChanged) {
       clearInterval(checkAuthTimer);
@@ -15,6 +15,11 @@ window.initFirebaseAuthListener = function() {
         window.currentUser = { name: user.displayName || '錢粘', email: user.email };
         const nameElem = document.getElementById('dashUserName');
         if (nameElem) nameElem.innerText = window.currentUser.name;
+        
+        // 1. 成功登入，切換至大廳畫面
+        window.switchView('dashboard');
+        
+        // 2. 開始讀取雲端專案資料
         window.initFirebaseProjectsSync();
       } else {
         window.currentUser = null;
@@ -32,15 +37,22 @@ window.handleGoogleLogin = function() {
     return;
   }
 
-  // 執行 Google 登入並處理彈窗被阻擋問題
   window.signInWithPopup(window.auth, window.googleProvider)
     .then((result) => {
-      console.log("登入成功:", result.user);
+      // 3. 點選 Email 登入成功後，立刻手動更新狀態並切換頁面
+      const user = result.user;
+      window.currentUser = { name: user.displayName || '錢粘', email: user.email };
+      const nameElem = document.getElementById('dashUserName');
+      if (nameElem) nameElem.innerText = window.currentUser.name;
+      
+      // 切換至大廳並讀取資料
+      window.switchView('dashboard');
+      window.initFirebaseProjectsSync();
     })
     .catch((err) => {
       console.error("Google 登入失敗:", err);
       if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
-        alert('登入視窗已被瀏覽器阻擋！請使用 Safari / Chrome 開啟本頁，並關閉「阻擋快顯視窗」設定。');
+        alert('登入視窗已被瀏覽器阻擋！請使用 Safari / Chrome 開啟本頁。');
       } else {
         alert('登入失敗: ' + err.message);
       }
