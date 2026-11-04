@@ -126,6 +126,7 @@
     .role-badge { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; display: inline-block; }
     .role-owner { background: #FEFCBF; color: #744210; border: 1px solid #F6E05E; }
     .role-member { background: #EBF8FF; color: #2B6CB0; border: 1px solid #90CDF4; }
+    .role-viewer { background: #EDF2F7; color: #4A5568; border: 1px solid #CBD5E0; }
     .project-members { margin-top: 10px; font-size: 12px; color: var(--sub-text); font-weight: 600; }
 
     .tab-bar {
@@ -211,14 +212,16 @@
     }
 
     .member-chip {
-      display: inline-flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       background: #FFFFFF; border: 1px solid var(--brand-border); padding: 8px 12px;
       border-radius: 10px; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--brand-dark);
     }
+    .member-chip .btn-actions { display: flex; gap: 6px; }
     .member-chip button {
-      background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2;
-      padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; margin-left: 8px;
+      background: var(--brand-light); color: var(--brand-main); border: 1px solid var(--brand-border);
+      padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer;
     }
+    .member-chip button.del { background: #FFF5F5; color: var(--danger); border-color: #FEB2B2; }
 
     .settle-summary {
       background: #FFF; border: 2px solid var(--brand-main); border-radius: 16px; padding: 16px; margin-bottom: 16px; text-align: center; box-shadow: var(--shadow-md);
@@ -283,7 +286,7 @@
 
     <div class="main-container">
       <div class="section-title">
-        <span>🗂️ 我的旅遊專案</span>
+        <span>🗂️ 全站公開旅遊專案</span>
         <button class="btn-add-project" onclick="openNewProjectModal()">＋ 建立新專案</button>
       </div>
 
@@ -291,7 +294,7 @@
     </div>
   </div>
 
-  <!-- VIEW 3：專案內部 (3 Tabs) -->
+  <!-- VIEW 3：專案內部 (3 Tabs / 訪客只留行程卡片) -->
   <div id="view-project" class="page-view">
     <div class="navbar">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -299,21 +302,22 @@
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
       <div style="display:flex; gap:6px;">
-        <button class="btn-logout" style="background:var(--brand-main); color:#FFF; border:none;" onclick="openMembersModal()">👥 成員管理</button>
+        <button id="navApplyMemberBtn" class="btn-logout" style="background:#FEFCBF; color:#744210; border-color:#F6E05E; display:none;" onclick="openJoinPromptModal()">📩 申請成為成員</button>
+        <button id="navMemberMgmtBtn" class="btn-logout" style="background:var(--brand-main); color:#FFF; border:none; display:none;" onclick="openMembersModal()">👥 成員管理</button>
         <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">📋 Markdown 匯入</button>
       </div>
     </div>
 
     <div class="main-container" style="padding-top: 12px;">
-      <div class="tab-bar">
+      <div class="tab-bar" id="projectTabBar">
         <button class="tab-btn active" onclick="switchProjectTab('itinerary')">📍行程規劃</button>
-        <button class="tab-btn" onclick="switchProjectTab('expense')">📝旅程記帳</button>
-        <button class="tab-btn" onclick="switchProjectTab('settlement')">⚖️結算拆帳</button>
+        <button class="tab-btn finance-tab" onclick="switchProjectTab('expense')">📝旅程記帳</button>
+        <button class="tab-btn finance-tab" onclick="switchProjectTab('settlement')">⚖️結算拆帳</button>
       </div>
 
       <div id="projectTabContent" style="margin-top: 16px;">
         
-        <!-- TAB 1: 行程規劃 -->
+        <!-- TAB 1: 行程規劃 (所有人均可檢視) -->
         <div id="subtab-itinerary" class="tab-subcontent active">
           <div style="display: flex; gap: 8px; margin-bottom: 12px;">
             <button class="map-btn" style="flex:1; justify-content:center;" onclick="toggleAllCards(true)">全數展開</button>
@@ -322,7 +326,7 @@
           <div id="itineraryContainer"></div>
         </div>
 
-        <!-- TAB 2: 旅程記帳 -->
+        <!-- TAB 2: 旅程記帳 (僅 Owner / Member 解鎖) -->
         <div id="subtab-expense" class="tab-subcontent">
           <div class="card open">
             <div class="card-header">
@@ -380,7 +384,7 @@
           <div id="expenseDayList"></div>
         </div>
 
-        <!-- TAB 3: 結算拆帳 -->
+        <!-- TAB 3: 結算拆帳 (僅 Owner / Member 解鎖) -->
         <div id="subtab-settlement" class="tab-subcontent">
           <div class="settle-summary">
             <div class="settle-summary-title">專案總支出 (預付 + 現場折算台幣)</div>
@@ -418,32 +422,39 @@
           <input type="text" id="newProjDates" class="form-control" placeholder="例如：2027/01/09 – 01/17 (9天)" required>
         </div>
         <div class="form-group">
-          <label class="form-label">成員名單 (以逗號分隔)</label>
-          <input type="text" id="newProjMembers" class="form-control" placeholder="錢粘, 蝦, 爸, 媽" value="錢粘, 蝦, 爸, 媽" required>
+          <label class="form-label">您在這個專案的暱稱</label>
+          <input type="text" id="newProjOwnerNick" class="form-control" placeholder="例如：錢粘 或 錢總" required>
         </div>
         <button type="submit" class="btn-submit">建立專案並進入</button>
       </form>
     </div>
   </div>
 
-  <!-- Modal 2: 👥 成員管理與生成邀請連結彈窗 -->
+  <!-- Modal 2: 👥 成員管理與審核彈窗 -->
   <div id="membersModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">👥 成員管理與專案邀請</h3>
+        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">👥 成員管理與邀請</h3>
         <button onclick="closeMembersModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
       </div>
+
+      <!-- 待審核申請清單 -->
+      <div id="pendingRequestsContainer" style="display:none; margin-bottom:16px;">
+        <label class="form-label" style="color:var(--danger);">🔔 待審核加入申請</label>
+        <div id="pendingRequestsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+        <hr style="border:none; border-top:1px dashed var(--brand-border); margin:14px 0;">
+      </div>
       
-      <!-- 現有成員列表 -->
+      <!-- 現有成員名單 (可讓 Owner 覆蓋修改暱稱) -->
       <div class="form-group">
-        <label class="form-label">目前團員名單</label>
+        <label class="form-label">目前專案成員與暱稱</label>
         <div id="membersChipList" style="display:flex; flex-direction:column;"></div>
       </div>
 
-      <!-- 新增單一成員 -->
+      <!-- 手動新增純文字成員 (如爸媽) -->
       <div class="form-group" style="display:flex; gap:8px;">
-        <input type="text" id="newMemberNameInput" class="form-control" placeholder="新增成員姓名 (例：小明)">
-        <button class="btn-submit" style="width:auto; margin-top:0; padding:0 16px; white-space:nowrap;" onclick="addSingleMember()">➕ 新增</button>
+        <input type="text" id="newMemberNameInput" class="form-control" placeholder="新增成員暱稱 (例：爸)">
+        <button class="btn-submit" style="width:auto; margin-top:0; padding:0 16px; white-space:nowrap;" onclick="addManualMember()">➕ 新增</button>
       </div>
 
       <hr style="border:none; border-top:1px dashed var(--brand-border); margin:16px 0;">
@@ -452,12 +463,32 @@
       <div class="form-group">
         <label class="form-label">🔗 專案專屬邀請連結</label>
         <input type="text" id="inviteUrlInput" class="form-control" readonly style="background:#F7FAFC;">
-        <button class="btn-submit" style="background:var(--brand-dark); margin-top:8px;" onclick="copyInviteLink()">📋 複製邀請連結發送給團員</button>
+        <button class="btn-submit" style="background:var(--brand-dark); margin-top:8px;" onclick="copyInviteLink()">📋 複製邀請網址發送給好友</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal 3: 📋 Markdown 匯入彈窗 -->
+  <!-- Modal 3: 📩 申請 / 接受邀請加入彈窗 (輸入專案暱稱) -->
+  <div id="joinPromptModal" class="modal-mask">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);" id="joinPromptTitle">🎉 加入專案團隊</h3>
+        <button onclick="closeJoinPromptModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:13px; color:var(--sub-text); font-weight:600; margin-bottom:12px;" id="joinPromptDesc">
+        加入成員後即可解鎖【旅程記帳】與【結算拆帳】功能！
+      </p>
+      <form onsubmit="submitJoinRequest(event)">
+        <div class="form-group">
+          <label class="form-label">請輸入您在這個專案想使用的暱稱：</label>
+          <input type="text" id="userJoinNickInput" class="form-control" placeholder="例如：蝦、小明、Robert" required>
+        </div>
+        <button type="submit" class="btn-submit" id="submitJoinBtn">送出申請 / 加入成員</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: 📋 Markdown 匯入彈窗 -->
   <div id="aiImportModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -472,7 +503,7 @@
     </div>
   </div>
 
-  <!-- Modal 4: 📍 新增/編輯景點彈窗 -->
+  <!-- Modal 5: 📍 新增/編輯景點彈窗 -->
   <div id="spotModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -635,7 +666,7 @@
     function initFirebaseAuthListener() {
       window.onAuthStateChanged(window.auth, (user) => {
         if (user) {
-          currentUser = { name: user.displayName || '錢粘', email: user.email };
+          currentUser = { name: user.displayName || '訪客', email: user.email };
           document.getElementById('dashUserName').innerText = currentUser.name;
           initFirebaseProjectsSync();
         } else {
@@ -674,11 +705,26 @@
         title: "2026 日本關西家族之旅",
         dates: "2026/11/19 – 11/24 (6天5夜)",
         ownerEmail: currentUser ? currentUser.email : "robertcl.kung@ogilvy.com",
-        members: ["錢粘", "蝦", "爸", "媽"],
+        membersMap: {
+          "robertcl_kung_at_ogilvy_com": { email: "robertcl.kung@ogilvy.com", nick: "錢粘", role: "owner" }
+        },
+        membersList: ["錢粘", "蝦", "爸", "媽"],
         itinerary: KANSAI_ITINERARY_DATA,
         expenses: KANSAI_PREPAID_EXPENSES
       };
       window.dbSet(window.dbRef(window.db, 'projects/' + defaultId), defaultProj);
+    }
+
+    function encodeEmail(email) { return email ? email.replace(/\./g, '_').replace(/@/g, '_at_') : ''; }
+
+    function getUserRoleInProject(proj) {
+      if (!currentUser || !proj) return 'viewer';
+      if (proj.ownerEmail === currentUser.email) return 'owner';
+      const encoded = encodeEmail(currentUser.email);
+      if (proj.membersMap && proj.membersMap[encoded]) {
+        return proj.membersMap[encoded].role || 'member';
+      }
+      return 'viewer';
     }
 
     function switchView(viewId) {
@@ -690,8 +736,12 @@
       const grid = document.getElementById('projectGridList');
       const entries = Object.entries(allProjects);
       grid.innerHTML = entries.map(([id, p]) => {
-        const isOwner = currentUser && p.ownerEmail === currentUser.email;
-        const memberList = Array.isArray(p.members) ? p.members.join(', ') : '';
+        const role = getUserRoleInProject(p);
+        let roleBadge = '<span class="role-badge role-viewer">👀 訪客 (僅看行程)</span>';
+        if (role === 'owner') roleBadge = '<span class="role-badge role-owner">👑 擁有者</span>';
+        else if (role === 'member') roleBadge = '<span class="role-badge role-member">👥 專案成員</span>';
+
+        const memberDisplay = p.membersList ? p.membersList.join(', ') : '';
         return `
           <div class="project-card" onclick="enterProject('${id}')">
             <div class="project-header">
@@ -699,9 +749,9 @@
                 <div class="project-name">${p.title}</div>
                 <div class="project-dates">📅 ${p.dates}</div>
               </div>
-              <span class="role-badge ${isOwner ? 'role-owner' : 'role-member'}">${isOwner ? '👑 建立者' : '👥 受邀成員'}</span>
+              ${roleBadge}
             </div>
-            <div class="project-members">成員: ${memberList}</div>
+            <div class="project-members">記帳對象: ${memberDisplay}</div>
           </div>
         `;
       }).join('');
@@ -714,14 +764,49 @@
 
       document.getElementById('activeProjectTitle').innerText = activeProjectData.title;
 
+      const userRole = getUserRoleInProject(activeProjectData);
+      const applyBtn = document.getElementById('navApplyMemberBtn');
+      const mgmtBtn = document.getElementById('navMemberMgmtBtn');
+      const financeTabs = document.querySelectorAll('.finance-tab');
+
+      if (userRole === 'owner') {
+        applyBtn.style.display = 'none';
+        mgmtBtn.style.display = 'block';
+        financeTabs.forEach(t => t.style.display = 'block');
+      } else if (userRole === 'member') {
+        applyBtn.style.display = 'none';
+        mgmtBtn.style.display = 'none';
+        financeTabs.forEach(t => t.style.display = 'block');
+      } else {
+        applyBtn.style.display = 'block';
+        mgmtBtn.style.display = 'none';
+        financeTabs.forEach(t => t.style.display = 'none');
+      }
+
       setupProjectMembersUI();
       renderActiveProjectContent();
       switchView('project');
       switchProjectTab('itinerary');
     }
 
+    function getProjectMemberList() {
+      if (!activeProjectData) return ['錢粘', '蝦', '爸', '媽'];
+      let list = [];
+      if (activeProjectData.membersMap) {
+        Object.values(activeProjectData.membersMap).forEach(m => {
+          if (m.nick && !list.includes(m.nick)) list.push(m.nick);
+        });
+      }
+      if (activeProjectData.membersList) {
+        activeProjectData.membersList.forEach(m => {
+          if (!list.includes(m)) list.push(m);
+        });
+      }
+      return list.length > 0 ? list : ['錢粘', '蝦', '爸', '媽'];
+    }
+
     function setupProjectMembersUI() {
-      const members = activeProjectData.members || ['錢粘', '蝦', '爸', '媽'];
+      const members = getProjectMemberList();
       const payerSelect = document.getElementById('expPayerSelect');
       payerSelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
 
@@ -932,7 +1017,7 @@
 
     function renderSettlement() {
       const expenses = activeProjectData.expenses || {};
-      const members = activeProjectData.members || ['錢粘', '蝦', '爸', '媽'];
+      const members = getProjectMemberList();
 
       let paidTWD = {};
       let owedTWD = {};
@@ -1043,14 +1128,17 @@
       e.preventDefault();
       const title = document.getElementById('newProjTitle').value.trim();
       const dates = document.getElementById('newProjDates').value.trim();
-      const membersRaw = document.getElementById('newProjMembers').value.trim();
-      const members = membersRaw.split(',').map(m => m.trim()).filter(m => m.length > 0);
+      const ownerNick = document.getElementById('newProjOwnerNick').value.trim();
 
       const newProjId = 'proj_' + Date.now();
+      const encodedEmail = encodeEmail(currentUser.email);
       const newProjData = {
         title, dates,
-        ownerEmail: currentUser ? currentUser.email : "robertcl.kung@ogilvy.com",
-        members: members.length > 0 ? members : ['錢粘'],
+        ownerEmail: currentUser.email,
+        membersMap: {
+          [encodedEmail]: { email: currentUser.email, nick: ownerNick, role: 'owner' }
+        },
+        membersList: [ownerNick],
         itinerary: {}, expenses: {}
       };
 
@@ -1060,9 +1148,34 @@
       });
     }
 
-    // 👥 成員管理彈窗邏輯
+    // 📩 申請 / 加入專案彈窗
+    function openJoinPromptModal() {
+      if (!activeProjectData) return;
+      document.getElementById('joinPromptTitle').innerText = `🎉 申請加入「${activeProjectData.title}」`;
+      document.getElementById('userJoinNickInput').value = currentUser.name !== '訪客' ? currentUser.name : '';
+      document.getElementById('joinPromptModal').style.display = 'flex';
+    }
+
+    function closeJoinPromptModal() { document.getElementById('joinPromptModal').style.display = 'none'; }
+
+    function submitJoinRequest(e) {
+      e.preventDefault();
+      const nick = document.getElementById('userJoinNickInput').value.trim();
+      if (!nick) return;
+
+      const encodedEmail = encodeEmail(currentUser.email);
+      const requestData = { email: currentUser.email, nick, requestedAt: Date.now() };
+
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/joinRequests/${encodedEmail}`), requestData).then(() => {
+        alert('🎉 申請已送出！請等待專案擁有者 (Owner) 審核同意外即可解鎖記帳功能！');
+        closeJoinPromptModal();
+      });
+    }
+
+    // 👥 Owner 成員管理與暱稱覆蓋彈窗
     function openMembersModal() {
       if (!activeProjectData) return;
+      renderPendingRequestsList();
       renderMembersChipList();
       
       const inviteUrl = window.location.origin + window.location.pathname + '?proj=' + activeProjectId;
@@ -1072,30 +1185,143 @@
 
     function closeMembersModal() { document.getElementById('membersModal').style.display = 'none'; }
 
-    function renderMembersChipList() {
-      const members = activeProjectData.members || [];
-      const listContainer = document.getElementById('membersChipList');
-      listContainer.innerHTML = members.map((m, idx) => `
-        <div class="member-chip">
-          <span>👤 ${m}</span>
-          <button onclick="removeMemberByIndex(${idx})">移除</button>
+    function renderPendingRequestsList() {
+      const container = document.getElementById('pendingRequestsContainer');
+      const list = document.getElementById('pendingRequestsList');
+      const reqs = activeProjectData.joinRequests || {};
+      const entries = Object.entries(reqs);
+
+      if (entries.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      list.innerHTML = entries.map(([encEmail, req]) => `
+        <div class="member-chip" style="background:#FFF5F5; border-color:#FEB2B2;">
+          <div>
+            <div>👤 <strong>${req.nick}</strong></div>
+            <div style="font-size:11px; color:var(--sub-text);">${req.email}</div>
+          </div>
+          <div class="btn-actions">
+            <button style="background:var(--brand-main); color:#FFF; border:none;" onclick="approveJoinRequest('${encEmail}', '${req.email}', '${req.nick}')">同意加入</button>
+            <button class="del" onclick="rejectJoinRequest('${encEmail}')">拒絕</button>
+          </div>
         </div>
       `).join('');
     }
 
-    function addSingleMember() {
-      const input = document.getElementById('newMemberNameInput');
-      const newName = input.value.trim();
-      if (!newName) return;
+    function approveJoinRequest(encEmail, email, nick) {
+      if (!activeProjectData.membersMap) activeProjectData.membersMap = {};
+      activeProjectData.membersMap[encEmail] = { email, nick, role: 'member' };
 
-      if (!activeProjectData.members) activeProjectData.members = [];
-      if (activeProjectData.members.includes(newName)) {
-        alert('該成員已在名單中！');
+      if (!activeProjectData.membersList) activeProjectData.membersList = [];
+      if (!activeProjectData.membersList.includes(nick)) activeProjectData.membersList.push(nick);
+
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersMap`), activeProjectData.membersMap);
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList);
+      window.dbRemove(window.dbRef(window.db, `projects/${activeProjectId}/joinRequests/${encEmail}`)).then(() => {
+        alert(`已成功同意 ${nick} 加入成員！`);
+        renderPendingRequestsList();
+        renderMembersChipList();
+        setupProjectMembersUI();
+        renderSettlement();
+      });
+    }
+
+    function rejectJoinRequest(encEmail) {
+      window.dbRemove(window.dbRef(window.db, `projects/${activeProjectId}/joinRequests/${encEmail}`)).then(() => {
+        renderPendingRequestsList();
+      });
+    }
+
+    function renderMembersChipList() {
+      const listContainer = document.getElementById('membersChipList');
+      let html = '';
+
+      if (activeProjectData.membersMap) {
+        Object.entries(activeProjectData.membersMap).forEach(([encEmail, m]) => {
+          html += `
+            <div class="member-chip">
+              <div>
+                <div>👤 <strong>${m.nick}</strong> <span class="role-badge ${m.role === 'owner' ? 'role-owner' : 'role-member'}">${m.role === 'owner' ? '👑 Owner' : '👥 Member'}</span></div>
+                <div style="font-size:11px; color:var(--sub-text);">${m.email}</div>
+              </div>
+              <div class="btn-actions">
+                <button onclick="overrideMemberNick('${encEmail}', '${m.nick}')">✏️ 修改暱稱</button>
+                ${m.role !== 'owner' ? `<button class="del" onclick="removeMapMember('${encEmail}', '${m.nick}')">移除</button>` : ''}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      if (activeProjectData.membersList) {
+        activeProjectData.membersList.forEach((nick, idx) => {
+          const isMapped = activeProjectData.membersMap && Object.values(activeProjectData.membersMap).some(m => m.nick === nick);
+          if (!isMapped) {
+            html += `
+              <div class="member-chip">
+                <div>👤 <strong>${nick}</strong> <span class="role-badge role-member">純名單</span></div>
+                <div class="btn-actions">
+                  <button onclick="overrideListNick(${idx}, '${nick}')">✏️ 修改暱稱</button>
+                  <button class="del" onclick="removeListMember(${idx})">移除</button>
+                </div>
+              </div>
+            `;
+          }
+        });
+      }
+
+      listContainer.innerHTML = html;
+    }
+
+    function overrideMemberNick(encEmail, currentNick) {
+      const newNick = prompt(`請輸入 ${currentNick} 的新暱稱：`, currentNick);
+      if (!newNick || newNick.trim() === '') return;
+
+      const trimmed = newNick.trim();
+      activeProjectData.membersMap[encEmail].nick = trimmed;
+
+      if (activeProjectData.membersList) {
+        const idx = activeProjectData.membersList.indexOf(currentNick);
+        if (idx !== -1) activeProjectData.membersList[idx] = trimmed;
+        else activeProjectData.membersList.push(trimmed);
+      }
+
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersMap`), activeProjectData.membersMap);
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
+        renderMembersChipList();
+        setupProjectMembersUI();
+        renderSettlement();
+      });
+    }
+
+    function overrideListNick(idx, currentNick) {
+      const newNick = prompt(`請輸入 ${currentNick} 的新暱稱：`, currentNick);
+      if (!newNick || newNick.trim() === '') return;
+
+      activeProjectData.membersList[idx] = newNick.trim();
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
+        renderMembersChipList();
+        setupProjectMembersUI();
+        renderSettlement();
+      });
+    }
+
+    function addManualMember() {
+      const input = document.getElementById('newMemberNameInput');
+      const newNick = input.value.trim();
+      if (!newNick) return;
+
+      if (!activeProjectData.membersList) activeProjectData.membersList = [];
+      if (activeProjectData.membersList.includes(newNick)) {
+        alert('該暱稱已在名單中！');
         return;
       }
 
-      activeProjectData.members.push(newName);
-      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/members`), activeProjectData.members).then(() => {
+      activeProjectData.membersList.push(newNick);
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
         input.value = '';
         renderMembersChipList();
         setupProjectMembersUI();
@@ -1103,10 +1329,25 @@
       });
     }
 
-    function removeMemberByIndex(idx) {
-      if (confirm('確定要將此成員移除嗎？')) {
-        activeProjectData.members.splice(idx, 1);
-        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/members`), activeProjectData.members).then(() => {
+    function removeMapMember(encEmail, nick) {
+      if (confirm(`確定要移除成員 ${nick} 嗎？`)) {
+        delete activeProjectData.membersMap[encEmail];
+        if (activeProjectData.membersList) {
+          activeProjectData.membersList = activeProjectData.membersList.filter(m => m !== nick);
+        }
+        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersMap`), activeProjectData.membersMap);
+        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
+          renderMembersChipList();
+          setupProjectMembersUI();
+          renderSettlement();
+        });
+      }
+    }
+
+    function removeListMember(idx) {
+      if (confirm('確定要移除此成員嗎？')) {
+        activeProjectData.membersList.splice(idx, 1);
+        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/membersList`), activeProjectData.membersList).then(() => {
           renderMembersChipList();
           setupProjectMembersUI();
           renderSettlement();
@@ -1118,10 +1359,10 @@
       const urlInput = document.getElementById('inviteUrlInput');
       urlInput.select();
       navigator.clipboard.writeText(urlInput.value).then(() => {
-        alert('🎉 專案邀請連結已成功複製到剪貼簿！發送給團員即可直接進入本行程！');
+        alert('🎉 專案邀請連結已成功複製！發送給好友即可直接開啟此專案！');
       }).catch(() => {
         document.execCommand('copy');
-        alert('🎉 專案邀請連結已成功複製到剪貼簿！');
+        alert('🎉 專案邀請連結已成功複製！');
       });
     }
 
