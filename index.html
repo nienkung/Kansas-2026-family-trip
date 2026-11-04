@@ -210,6 +210,16 @@
       background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
 
+    .member-chip {
+      display: inline-flex; align-items: center; justify-content: space-between;
+      background: #FFFFFF; border: 1px solid var(--brand-border); padding: 8px 12px;
+      border-radius: 10px; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--brand-dark);
+    }
+    .member-chip button {
+      background: #FFF5F5; color: var(--danger); border: 1px solid #FEB2B2;
+      padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; margin-left: 8px;
+    }
+
     .settle-summary {
       background: #FFF; border: 2px solid var(--brand-main); border-radius: 16px; padding: 16px; margin-bottom: 16px; text-align: center; box-shadow: var(--shadow-md);
     }
@@ -289,8 +299,8 @@
         <h2 style="font-size:16px; font-weight:800;" id="activeProjectTitle">載入中...</h2>
       </div>
       <div style="display:flex; gap:6px;">
+        <button class="btn-logout" style="background:var(--brand-main); color:#FFF; border:none;" onclick="openMembersModal()">👥 成員管理</button>
         <button class="btn-logout" style="background:var(--brand-light); color:var(--brand-main); border-color:var(--brand-border);" onclick="openAiImportModal()">📋 Markdown 匯入</button>
-        <button id="adminSettingsBtn" class="btn-logout" style="display:none; background:var(--brand-main); color:#FFF; border:none;" onclick="openAdminSettingsModal()">⚙️ 設定</button>
       </div>
     </div>
 
@@ -416,30 +426,38 @@
     </div>
   </div>
 
-  <!-- Modal 2: ⚙️ 專案設定彈窗 -->
-  <div id="adminSettingsModal" class="modal-mask">
+  <!-- Modal 2: 👥 成員管理與生成邀請連結彈窗 -->
+  <div id="membersModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">⚙️ 專案權限與資訊管理</h3>
-        <button onclick="closeAdminSettingsModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
+        <h3 style="font-size:18px; font-weight:800; color:var(--brand-dark);">👥 成員管理與專案邀請</h3>
+        <button onclick="closeMembersModal()" style="background:none; border:none; font-size:20px; font-weight:800; cursor:pointer;">✕</button>
       </div>
-      <div style="font-size:13px; color:var(--sub-text); margin-bottom:12px; font-weight:700;">
-        👑 您是此專案的建立者 (Owner)，具備最高管理權限。
-      </div>
+      
+      <!-- 現有成員列表 -->
       <div class="form-group">
-        <label class="form-label">修改專案名稱</label>
-        <input type="text" id="adminProjTitle" class="form-control">
+        <label class="form-label">目前團員名單</label>
+        <div id="membersChipList" style="display:flex; flex-direction:column;"></div>
       </div>
+
+      <!-- 新增單一成員 -->
+      <div class="form-group" style="display:flex; gap:8px;">
+        <input type="text" id="newMemberNameInput" class="form-control" placeholder="新增成員姓名 (例：小明)">
+        <button class="btn-submit" style="width:auto; margin-top:0; padding:0 16px; white-space:nowrap;" onclick="addSingleMember()">➕ 新增</button>
+      </div>
+
+      <hr style="border:none; border-top:1px dashed var(--brand-border); margin:16px 0;">
+
+      <!-- 專案邀請連結 -->
       <div class="form-group">
-        <label class="form-label">修改成員名單 (以逗號分隔)</label>
-        <input type="text" id="adminProjMembers" class="form-control">
+        <label class="form-label">🔗 專案專屬邀請連結</label>
+        <input type="text" id="inviteUrlInput" class="form-control" readonly style="background:#F7FAFC;">
+        <button class="btn-submit" style="background:var(--brand-dark); margin-top:8px;" onclick="copyInviteLink()">📋 複製邀請連結發送給團員</button>
       </div>
-      <button class="btn-submit" onclick="saveAdminSettings()">儲存設定修改</button>
-      <button class="btn-submit" style="background:#FFF5F5; color:var(--danger); border:1px solid #FEB2B2; margin-top:12px;" onclick="deleteCurrentProject()">🗑️ 刪除此專案</button>
     </div>
   </div>
 
-  <!-- Modal 3: 📋 100% 成功率 Markdown 批次匯入彈窗 -->
+  <!-- Modal 3: 📋 Markdown 匯入彈窗 -->
   <div id="aiImportModal" class="modal-mask">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -580,6 +598,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       initSiteConfig();
+      checkUrlQueryParams();
       const timer = setInterval(() => {
         if (window.auth && window.onAuthStateChanged) {
           clearInterval(timer);
@@ -587,6 +606,12 @@
         }
       }, 100);
     });
+
+    function checkUrlQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      const projId = params.get('proj');
+      if (projId) activeProjectId = projId;
+    }
 
     function initSiteConfig() {
       document.getElementById('siteLogoIcon').innerText = SITE_CONFIG.logoIcon;
@@ -612,7 +637,6 @@
         if (user) {
           currentUser = { name: user.displayName || '錢粘', email: user.email };
           document.getElementById('dashUserName').innerText = currentUser.name;
-          switchView('dashboard');
           initFirebaseProjectsSync();
         } else {
           currentUser = null;
@@ -636,8 +660,9 @@
         } else {
           renderDashboardProjects();
           if (activeProjectId && allProjects[activeProjectId]) {
-            activeProjectData = allProjects[activeProjectId];
-            renderActiveProjectContent();
+            enterProject(activeProjectId);
+          } else {
+            switchView('dashboard');
           }
         }
       });
@@ -674,7 +699,7 @@
                 <div class="project-name">${p.title}</div>
                 <div class="project-dates">📅 ${p.dates}</div>
               </div>
-              <span class="role-badge ${isOwner ? 'role-owner' : 'role-member'}">${isOwner ? '👑 專案建立者' : '👥 受邀團員'}</span>
+              <span class="role-badge ${isOwner ? 'role-owner' : 'role-member'}">${isOwner ? '👑 建立者' : '👥 受邀成員'}</span>
             </div>
             <div class="project-members">成員: ${memberList}</div>
           </div>
@@ -688,12 +713,6 @@
       if (!activeProjectData) return;
 
       document.getElementById('activeProjectTitle').innerText = activeProjectData.title;
-      const adminBtn = document.getElementById('adminSettingsBtn');
-      if (currentUser && activeProjectData.ownerEmail === currentUser.email) {
-        adminBtn.style.display = 'block';
-      } else {
-        adminBtn.style.display = 'none';
-      }
 
       setupProjectMembersUI();
       renderActiveProjectContent();
@@ -1011,7 +1030,12 @@
       });
     }
 
-    function navigateToDashboard() { switchView('dashboard'); }
+    function navigateToDashboard() {
+      activeProjectId = null;
+      window.history.pushState({}, '', window.location.pathname);
+      switchView('dashboard');
+    }
+
     function openNewProjectModal() { document.getElementById('newProjectModal').style.display = 'flex'; }
     function closeNewProjectModal() { document.getElementById('newProjectModal').style.display = 'none'; }
 
@@ -1036,39 +1060,74 @@
       });
     }
 
-    function openAdminSettingsModal() {
+    // 👥 成員管理彈窗邏輯
+    function openMembersModal() {
       if (!activeProjectData) return;
-      document.getElementById('adminProjTitle').value = activeProjectData.title || '';
-      document.getElementById('adminProjMembers').value = (activeProjectData.members || []).join(', ');
-      document.getElementById('adminSettingsModal').style.display = 'flex';
+      renderMembersChipList();
+      
+      const inviteUrl = window.location.origin + window.location.pathname + '?proj=' + activeProjectId;
+      document.getElementById('inviteUrlInput').value = inviteUrl;
+      document.getElementById('membersModal').style.display = 'flex';
     }
 
-    function closeAdminSettingsModal() { document.getElementById('adminSettingsModal').style.display = 'none'; }
+    function closeMembersModal() { document.getElementById('membersModal').style.display = 'none'; }
 
-    function saveAdminSettings() {
-      if (!activeProjectId) return;
-      const title = document.getElementById('adminProjTitle').value.trim();
-      const membersRaw = document.getElementById('adminProjMembers').value.trim();
-      const members = membersRaw.split(',').map(m => m.trim()).filter(m => m.length > 0);
+    function renderMembersChipList() {
+      const members = activeProjectData.members || [];
+      const listContainer = document.getElementById('membersChipList');
+      listContainer.innerHTML = members.map((m, idx) => `
+        <div class="member-chip">
+          <span>👤 ${m}</span>
+          <button onclick="removeMemberByIndex(${idx})">移除</button>
+        </div>
+      `).join('');
+    }
 
-      window.dbUpdate(window.dbRef(window.db, 'projects/' + activeProjectId), { title, members }).then(() => {
-        closeAdminSettingsModal();
+    function addSingleMember() {
+      const input = document.getElementById('newMemberNameInput');
+      const newName = input.value.trim();
+      if (!newName) return;
+
+      if (!activeProjectData.members) activeProjectData.members = [];
+      if (activeProjectData.members.includes(newName)) {
+        alert('該成員已在名單中！');
+        return;
+      }
+
+      activeProjectData.members.push(newName);
+      window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/members`), activeProjectData.members).then(() => {
+        input.value = '';
+        renderMembersChipList();
+        setupProjectMembersUI();
+        renderSettlement();
       });
     }
 
-    function deleteCurrentProject() {
-      if (confirm('確定要刪除此專案嗎？此動作無法復原！')) {
-        window.dbRemove(window.dbRef(window.db, 'projects/' + activeProjectId)).then(() => {
-          closeAdminSettingsModal();
-          switchView('dashboard');
+    function removeMemberByIndex(idx) {
+      if (confirm('確定要將此成員移除嗎？')) {
+        activeProjectData.members.splice(idx, 1);
+        window.dbSet(window.dbRef(window.db, `projects/${activeProjectId}/members`), activeProjectData.members).then(() => {
+          renderMembersChipList();
+          setupProjectMembersUI();
+          renderSettlement();
         });
       }
+    }
+
+    function copyInviteLink() {
+      const urlInput = document.getElementById('inviteUrlInput');
+      urlInput.select();
+      navigator.clipboard.writeText(urlInput.value).then(() => {
+        alert('🎉 專案邀請連結已成功複製到剪貼簿！發送給團員即可直接進入本行程！');
+      }).catch(() => {
+        document.execCommand('copy');
+        alert('🎉 專案邀請連結已成功複製到剪貼簿！');
+      });
     }
 
     function openAiImportModal() { document.getElementById('aiImportModal').style.display = 'flex'; }
     function closeAiImportModal() { document.getElementById('aiImportModal').style.display = 'none'; }
 
-    // 原生零錯率 Markdown 本地解析器 (完全不用依賴外部 API)
     function processLocalMarkdownImport() {
       const text = document.getElementById('aiImportInput').value.trim();
       if (!text) { alert('請貼上 Markdown 備份內容！'); return; }
