@@ -294,7 +294,7 @@
     </div>
   </div>
 
-  <!-- VIEW 3：專案內部 (3 Tabs / 訪客只留行程卡片) -->
+  <!-- VIEW 3：專案內部 (3 Tabs / 訪客隱藏財務功能) -->
   <div id="view-project" class="page-view">
     <div class="navbar">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -423,7 +423,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">您在這個專案的暱稱</label>
-          <input type="text" id="newProjOwnerNick" class="form-control" placeholder="例如：錢粘 或 錢總" required>
+          <input type="text" id="newProjOwnerNick" class="form-control" placeholder="例如：錢粘 或 錢總" value="錢粘" required>
         </div>
         <button type="submit" class="btn-submit">建立專案並進入</button>
       </form>
@@ -550,6 +550,12 @@
       ]
     };
 
+    // 全站最高超級管理員清單 (Super Admins)
+    const SUPER_ADMIN_EMAILS = [
+      "moneynien@gmail.com",
+      "robertcl.kung@ogilvy.com"
+    ];
+
     // 100% 精確的 2026 關西家族之旅真實行程資料
     const KANSAI_ITINERARY_DATA = {
       D1: {
@@ -666,8 +672,8 @@
     function initFirebaseAuthListener() {
       window.onAuthStateChanged(window.auth, (user) => {
         if (user) {
-          currentUser = { name: user.displayName || '訪客', email: user.email };
-          document.getElementById('dashUserName').innerText = currentUser.name;
+          currentUser = { name: user.displayName || '錢粘', email: user.email };
+          document.getElementById('dashUserName').innerText = `${currentUser.name} (${currentUser.email})`;
           initFirebaseProjectsSync();
         } else {
           currentUser = null;
@@ -704,8 +710,9 @@
       const defaultProj = {
         title: "2026 日本關西家族之旅",
         dates: "2026/11/19 – 11/24 (6天5夜)",
-        ownerEmail: currentUser ? currentUser.email : "robertcl.kung@ogilvy.com",
+        ownerEmail: "moneynien@gmail.com",
         membersMap: {
+          "moneynien_at_gmail_com": { email: "moneynien@gmail.com", nick: "錢粘", role: "owner" },
           "robertcl_kung_at_ogilvy_com": { email: "robertcl.kung@ogilvy.com", nick: "錢粘", role: "owner" }
         },
         membersList: ["錢粘", "蝦", "爸", "媽"],
@@ -717,11 +724,14 @@
 
     function encodeEmail(email) { return email ? email.replace(/\./g, '_').replace(/@/g, '_at_') : ''; }
 
+    // 判斷權限（Super Admin 直接賦予 owner 最高權限）
     function getUserRoleInProject(proj) {
-      if (!currentUser || !proj) return 'viewer';
-      if (proj.ownerEmail === currentUser.email) return 'owner';
+      if (!currentUser) return 'viewer';
+      if (SUPER_ADMIN_EMAILS.includes(currentUser.email.toLowerCase())) return 'owner';
+      if (proj && proj.ownerEmail && proj.ownerEmail.toLowerCase() === currentUser.email.toLowerCase()) return 'owner';
+      
       const encoded = encodeEmail(currentUser.email);
-      if (proj.membersMap && proj.membersMap[encoded]) {
+      if (proj && proj.membersMap && proj.membersMap[encoded]) {
         return proj.membersMap[encoded].role || 'member';
       }
       return 'viewer';
@@ -1148,7 +1158,6 @@
       });
     }
 
-    // 📩 申請 / 加入專案彈窗
     function openJoinPromptModal() {
       if (!activeProjectData) return;
       document.getElementById('joinPromptTitle').innerText = `🎉 申請加入「${activeProjectData.title}」`;
@@ -1172,7 +1181,6 @@
       });
     }
 
-    // 👥 Owner 成員管理與暱稱覆蓋彈窗
     function openMembersModal() {
       if (!activeProjectData) return;
       renderPendingRequestsList();
